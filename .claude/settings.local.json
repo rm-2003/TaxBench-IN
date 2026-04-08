@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.track.toggl.com)",
+      "WebFetch(domain:developers.track.toggl.com)",
+      "WebFetch(domain:engineering.toggl.com)",
+      "Bash(python3:*)",
+      "Bash(pip3 show:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python:*)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)"
+    ]
+  }
+}
