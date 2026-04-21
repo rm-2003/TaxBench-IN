@@ -49,5 +49,37 @@ Slab tax uses **New Regime FY 2025-26** (configurable constants in `tax_calculat
 
 ---
 
-<!-- ## v1.2 -->
-<!-- Add next version here -->
+## v1.1.1
+
+### Input → Output mapping changes from v1.1
+
+| Input Field | Change | Rule | Output Section |
+|---|---|---|---|
+| `Tax Regime` (new field) | Added; `"old"` or `"new"` | Drives standard deduction amount and 80CCD(2) rate | Affects Section 16(ia), Deductions → 80CCD(2) |
+| Section 16(ia) standard deduction | Now regime-aware | Old: ₹50,000; New: ₹75,000 | Under Head Salaries → Section 16(ia) |
+| 80CCE | Removed from input and output JSON | Cap of ₹1.5L on 80C + 80CCC + 80CCD(1) is enforced internally; each section's reported value is scaled proportionally; no explicit 80CCE field anywhere | Deductions → 80C, 80CCC, 80CCD(1) (flat fields) |
+| `80CCD(2) at 10%` + `80CCD(2) at 14%` | Merged into single `80CCD(2)` | New regime: 14% for all; Old + govt: 14%; Old + private: 10% | Deductions → 80CCD(2) |
+
+---
+
+## v1.2 (planned)
+
+### Changes from v1.1.1
+- Section 16(ii) entertainment allowance — government employees; MIN(₹5,000, 20% of Basic Salary, total entertainment allowance received in FY)
+- 80EE and 80P removed (out of scope)
+- Surcharge computation for income >₹50L (slabs pending clarification)
+- Section 87A marginal relief for STCG/LTCG pushing income just above ₹12L
+- Surcharge marginal relief at each slab boundary (pending clarification)
+
+### Synthetic data generator (planned)
+- Extensible factorial generator: one `PARAMETERS` dict entry per income/expense category, each with N labelled factors
+- Case generation via `itertools.product`; each output file includes `_description` and `_expected`
+- Runner `run_generated_tests.py` strips meta fields, runs calculator, verifies expected values
+- Combination strategy and factor value config placement pending final decision
+
+### Placeholders (not yet computed)
+- 80D (health insurance limits)
+- 80E, 80TTA, 80TTB
+- LTCG Other tax rate
+- Age-based differentiation (<60 / 60-80 / >80)
+- Surcharge and marginal relief (pending clarification)

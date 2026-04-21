@@ -29,15 +29,11 @@
     "Gross Total Income": 0,
 
     "Deductions": {
-        "80CCE": {
-            "80C": 0,
-            "80CCC": 0,
-            "80CCD(1)": 0,
-            "Total (capped at 1.5L)": 0
-        },
+        "80C": 0,
+        "80CCC": 0,
+        "80CCD(1)": 0,
         "80CCD(1B)": 0,
-        "80CCD(2) at 10% of Basic+DA": 0,
-        "80CCD(2) at 14% of Basic+DA": 0,
+        "80CCD(2)": 0,
         "80D": 0,
         "80E": 0,
         "80EE": 0,

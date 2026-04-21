@@ -28,7 +28,8 @@ NEW_REGIME_SLABS = [
 
 REBATE_87A_THRESHOLD = 1_200_000   # 12 L (new regime FY 2025-26)
 REBATE_87A_MAX       = 60_000
-STANDARD_DEDUCTION   = 50_000      # Section 16(ia) — regime-agnostic value used here
+STANDARD_DEDUCTION_OLD = 50_000    # Section 16(ia) old regime
+STANDARD_DEDUCTION_NEW = 75_000    # Section 16(ia) new regime
 LTCG_112A_EXEMPT     = 1_25_000    # 1.25 L exemption before 12.5% kicks in
 LTCG_112A_RATE       = 0.125
 STCG_111A_RATE       = 0.20
@@ -91,6 +92,7 @@ def round2(x: float) -> float:
 
 def calculate(inp: dict) -> dict:
     employment = inp.get("Employment Type", "private").lower()
+    regime     = inp.get("Tax Regime", "new").lower()   # "old" or "new"
     city       = inp.get("City", "non-metro").lower()
 
     gs = inp.get("Gross Salary", {})
@@ -129,7 +131,8 @@ def calculate(inp: dict) -> dict:
     lta_10_5         = min(lta_in_salary, lta_claimed)
 
     # Section 16(ia) — standard deduction
-    s16_ia = min(STANDARD_DEDUCTION, gross_salary)
+    std_ded = STANDARD_DEDUCTION_NEW if regime == "new" else STANDARD_DEDUCTION_OLD
+    s16_ia  = min(std_ded, gross_salary)
 
     # Section 16(ii) — entertainment allowance (govt only; no input field)
     s16_ii = 0
@@ -241,22 +244,26 @@ def calculate(inp: dict) -> dict:
     c80cce_uncapped = c80 + c80ccc + c80ccd1
     c80cce_total    = min(c80cce_uncapped, 150_000)
 
-    # Scale down individual components proportionally if capped
+    # Scale down individual components proportionally if capped; third is derived
+    # so the three always sum to exactly c80cce_total (no rounding gap)
     if c80cce_uncapped > 0:
-        scale          = c80cce_total / c80cce_uncapped
-        c80_reported   = round2(c80 * scale)
-        c80ccc_reported = round2(c80ccc * scale)
-        c80ccd1_reported = round2(c80ccd1 * scale)
+        scale            = c80cce_total / c80cce_uncapped
+        c80_reported     = round2(c80 * scale)
+        c80ccc_reported  = round2(c80ccc * scale)
+        c80ccd1_reported = round2(c80cce_total - c80_reported - c80ccc_reported)
     else:
         c80_reported = c80ccc_reported = c80ccd1_reported = 0.0
 
     # 80CCD(1B) — extra 50k outside 80CCE
     c80ccd1b = min(max(0.0, nps_self - c80ccd1), 50_000)
 
-    # 80CCD(2) — employer NPS contribution (show both %)
-    c80ccd2_10pct = min(nps_employer, 0.10 * basic_da)
-    c80ccd2_14pct = min(nps_employer, 0.14 * basic_da)
-    c80ccd2_used  = c80ccd2_14pct if employment == "government" else c80ccd2_10pct
+    # 80CCD(2) — employer NPS contribution
+    # New regime: 14% for all; Old regime: 14% for govt, 10% for others
+    if regime == "new" or employment == "government":
+        c80ccd2_pct = 0.14
+    else:
+        c80ccd2_pct = 0.10
+    c80ccd2 = min(nps_employer, c80ccd2_pct * basic_da)
 
     # 80G — Donations
     c80g = 0.0
@@ -277,7 +284,7 @@ def calculate(inp: dict) -> dict:
     total_deductions = sum([
         c80cce_total,
         c80ccd1b,
-        c80ccd2_used,
+        c80ccd2,
         c80g,
         c80d, c80e, c80ee, c80tta, c80ttb, c80p,
     ])
@@ -347,15 +354,11 @@ def calculate(inp: dict) -> dict:
         },
         "Gross Total Income": round2(gross_total),
         "Deductions": {
-            "80CCE": {
-                "80C":                   round2(c80_reported),
-                "80CCC":                 round2(c80ccc_reported),
-                "80CCD(1)":              round2(c80ccd1_reported),
-                "Total (capped at 1.5L)": round2(c80cce_total),
-            },
-            "80CCD(1B)":                    round2(c80ccd1b),
-            "80CCD(2) at 10% of Basic+DA":  round2(c80ccd2_10pct),
-            "80CCD(2) at 14% of Basic+DA":  round2(c80ccd2_14pct),
+            "80C":       round2(c80_reported),
+            "80CCC":     round2(c80ccc_reported),
+            "80CCD(1)":  round2(c80ccd1_reported),
+            "80CCD(1B)": round2(c80ccd1b),
+            "80CCD(2)":  round2(c80ccd2),
             "80D":   round2(c80d),
             "80E":   round2(c80e),
             "80EE":  round2(c80ee),
