@@ -45,6 +45,15 @@
             "Loss Amount": 0
         }
     ],
+    "Mutual Fund Transactions": [
+        {
+            "Type": "equity",
+            "Purchase Date": "YYYY-MM-DD",
+            "Sale Date": "YYYY-MM-DD",
+            "Purchase Value": 0,
+            "Sale Value": 0
+        }
+    ],
     "Other Short Term Capital Gains": 0,
     "Other Long Term Capital Gains": 0,
 
@@ -108,5 +117,7 @@
             "Amount": 0,
             "Mode": "cash"
         }
-    ]
+    ],
+
+    "TDS": 0
 }

@@ -18,7 +18,7 @@ All MF types are in a single `"Mutual Fund Transactions"` list. The calculator d
 
 **Debt fund rule:** if `Purchase Date < 1 Apr 2023` and `months_held > 24` → LTCG @ 12.5% with CII indexation. Otherwise (post-2023 purchase, or held ≤ 24 months) → always slab regardless of holding period.
 
-**CII indexation (debt pre-2023 LTCG only):** `indexed_cost = Purchase Value × (CII[sale_year] / CII[purchase_year])`. Both values looked up from the embedded `CII_TABLE` constant in the calculator using the calendar year of the respective dates.
+**CII indexation (debt pre-2023 LTCG only):** `indexed_cost = Purchase Value × (CII[sale_year] / CII[purchase_year])`. Both values looked up from the embedded `CII_TABLE` constant in the calculator using the financial year (Apr–Mar) of the respective dates via `fy_start()` helper (Jan–Mar dates map to prior FY).
 
 ---
 
@@ -110,8 +110,8 @@ def classify_mf_transaction(txn):
     elif fund_type == "debt":
         is_pre_2023 = purchase_dt < DEBT_PRE_2023_CUTOFF
         if is_pre_2023 and months_held > 24:
-            cii_p = CII_TABLE.get(purchase_dt.year, 100)
-            cii_s = CII_TABLE.get(sale_dt.year, cii_p)
+            cii_p = CII_TABLE.get(fy_start(purchase_dt), 100)
+            cii_s = CII_TABLE.get(fy_start(sale_dt), cii_p)
             indexed_cost = pv * (cii_s / cii_p)
             return ("ltcg_other_12_mf", sv - indexed_cost)
         else:

@@ -1,0 +1,18 @@
+{
+    "_description": "Debt MF pre-2023 LTCG with CII indexation — purchased 2021-01-01 (FY 2020-21, CII=301), sold 2024-01-01 (FY 2023-24, CII=348). indexed_cost=100000*(348/301)=115614.62. gain=150000-115614.62=34385.38",
+    "Age": 35, "Employment Type": "private", "Tax Regime": "new", "City": "metro",
+    "Gross Salary": {"Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0, "Conveyance Allowance": 0, "Medical Allowance": 0, "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0, "Special Allowance": 0, "Entertainment Allowance": 0},
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [], "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Mutual Fund Transactions": [
+        {"Type": "debt", "Purchase Date": "2021-01-01", "Sale Date": "2024-01-01", "Purchase Value": 100000, "Sale Value": 150000}
+    ],
+    "Other Short Term Capital Gains": 0, "Other Long Term Capital Gains": 0,
+    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
+    "PPF": 0, "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
+    "Health Insurance": [], "Donations": [], "TDS": 0
+}

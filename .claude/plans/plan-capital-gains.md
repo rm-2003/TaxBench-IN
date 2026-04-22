@@ -53,12 +53,14 @@ With:
     "Bonds": 0,
     "Debentures": 0,
     "G-Secs": 0,
+    "Mutual Funds": 0,
     "Total": 0
 },
-"LTCG (Other @ 12.5%)": {
+"LTCG (Non-Equity @ 12.5%)": {
     "Bonds": 0,
     "Debentures": 0,
     "G-Secs": 0,
+    "Mutual Funds": 0,
     "Total": 0
 },
 "LTCG (Other @ 20%)": 0
@@ -72,7 +74,7 @@ Also replace in Tax Computation:
 With:
 ```json
 "Tax on STCG (Other)": 0,
-"Tax on LTCG (Other) at 12.5%": 0,
+"Tax on LTCG (Non-Equity) at 12.5%": 0,
 "Tax on LTCG (Other) at 20%": 0
 ```
 
@@ -86,7 +88,7 @@ With:
 OTHER_ASSETS = ["Bonds", "Debentures", "G-Secs"]
 
 stcg_other_breakdown = {}
-ltcg_other_12_breakdown = {}
+ltcg_noneq_12_breakdown = {}
 
 for asset in OTHER_ASSETS:
     asset_inp = inp.get(asset, {})
@@ -96,20 +98,53 @@ for asset in OTHER_ASSETS:
     gain   = sale - cost
     if gain <= 0:
         stcg_other_breakdown[asset] = 0.0
-        ltcg_other_12_breakdown[asset] = 0.0
+        ltcg_noneq_12_breakdown[asset] = 0.0
     elif years > 1:   # >12 months
         stcg_other_breakdown[asset] = 0.0
-        ltcg_other_12_breakdown[asset] = gain
+        ltcg_noneq_12_breakdown[asset] = gain
     else:
         stcg_other_breakdown[asset] = gain
-        ltcg_other_12_breakdown[asset] = 0.0
+        ltcg_noneq_12_breakdown[asset] = 0.0
 
 # Privately Owned Vehicle — always tax-exempt, not added to any gain bucket
 # (vehicle gain is computed but not included in stcg_other or ltcg totals)
 
 stcg_other = sum(stcg_other_breakdown.values())
-ltcg_other_12 = sum(ltcg_other_12_breakdown.values())
+ltcg_other_12 = sum(ltcg_noneq_12_breakdown.values())
 ltcg_other_20 = 0.0   # placeholder
+```
+
+### Capital loss set-off rules
+
+#### Full set-off matrix
+
+| Loss type | Offsets (in priority order) | Cannot offset |
+|---|---|---|
+| STCL (111A) | STCG 111A → STCG Other → LTCG 112A → LTCG Non-Equity | Salary, Other Sources, House Property |
+| STCL (Other) | STCG Other → STCG 111A → LTCG 112A → LTCG Non-Equity | Salary, Other Sources, House Property |
+| LTCL (112A) | LTCG 112A → LTCG Non-Equity | Any STCG; non-capital-gains heads |
+| LTCL (Other) | LTCG Non-Equity → LTCG 112A | Any STCG; non-capital-gains heads |
+
+Key rules:
+- STCL can offset any capital gain (short or long term) — STCG first, then LTCG
+- LTCL can only offset LTCG — never STCG
+- All losses are ring-fenced within the Capital Gains head
+- Carry-forward: up to 8 assessment years for both STCL and LTCL
+
+#### Implementation approach
+Currently `prior_st_losses` and `prior_lt_losses` only net against `stcg_raw`/`ltcg_raw` (111A/112A). Expand to:
+
+```python
+# 1. LTCL offsets all LTCG (112A + Non-Equity)
+total_ltcg = ltcg_raw + ltcg_other_12 + mf_ltcg_other_12
+ltcg_after_ltcl = max(0.0, total_ltcg - prior_lt_losses)
+# Distribute remaining LTCG back proportionally to 112A vs Non-Equity
+
+# 2. STCL offsets all STCG first, then residual offsets all LTCG
+total_stcg = stcg_raw + stcg_other + mf_stcg_other
+stcg_after_stcl = max(0.0, total_stcg - prior_st_losses)
+residual_stcl = max(0.0, prior_st_losses - total_stcg)
+# Apply residual STCL to remaining LTCG
 ```
 
 ### Tax computation updates:
@@ -145,8 +180,8 @@ total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_ltcg_other_
         "Total": round2(stcg_other),
     },
     "LTCG (Section 112A)": round2(ltcg_112A),
-    "LTCG (Other @ 12.5%)": {
-        **{k: round2(v) for k, v in ltcg_other_12_breakdown.items()},
+    "LTCG (Non-Equity @ 12.5%)": {
+        **{k: round2(v) for k, v in ltcg_noneq_12_breakdown.items()},
         "Total": round2(ltcg_other_12),
     },
     "LTCG (Other @ 20%)": round2(ltcg_other_20),
@@ -156,7 +191,7 @@ total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_ltcg_other_
 And in Tax Computation:
 ```python
 "Tax on STCG (Other)":          round2(tax_stcg_other),
-"Tax on LTCG (Other) at 12.5%": round2(tax_ltcg_other_12),
+"Tax on LTCG (Non-Equity) at 12.5%": round2(tax_ltcg_other_12),
 "Tax on LTCG (Other) at 20%":   round2(tax_ltcg_other_20),
 ```
 

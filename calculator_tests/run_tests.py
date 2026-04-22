@@ -145,6 +145,43 @@ TESTS = [
             ("Tax Computation.Tax After Rebate", 1110000),
         ],
     },
+    {
+        "name": "Test 16 — MF equity STCG (held 6 months)",
+        "input": "test16_mf_equity_stcg.json",
+        "checks": [
+            ("Capital Gains.STCG (Section 111A)", 20000),
+            ("Capital Gains.LTCG (Section 112A)", 0),
+        ],
+    },
+    {
+        "name": "Test 17 — ELSS lock-in (35 months < 36, no taxable event)",
+        "input": "test17_mf_elss_lockin.json",
+        "checks": [
+            ("Capital Gains.LTCG (Section 112A)", 0),
+        ],
+    },
+    {
+        "name": "Test 18 — Debt MF pre-2023 LTCG with CII indexation",
+        "input": "test18_mf_debt_pre2023.json",
+        "checks": [
+            ("Gross Total Income", 34385.38),
+        ],
+    },
+    {
+        "name": "Test 19 — STCL asymmetry (residual STCL offsets LTCG)",
+        "input": "test19_mf_stcl_asymmetry.json",
+        "checks": [
+            ("Capital Gains.STCG (Section 111A)", 0),
+            ("Capital Gains.LTCG (Section 112A)", 7000),
+        ],
+    },
+    {
+        "name": "Test 20 — LTCL 8-year expiry (2016-17 expired, 2017-18 eligible)",
+        "input": "test20_ltcl_8yr_expiry.json",
+        "checks": [
+            ("Capital Gains.LTCG (Section 112A)", 5000),
+        ],
+    },
 ]
 
 

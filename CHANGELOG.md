@@ -81,7 +81,6 @@ Detailed per-area plans stored in `.claude/plans/`:
 
 ### Placeholders (not yet computed)
 - Capital gains Other: per-asset classification, LTCG Other tax rate
-- Mutual Fund transactions and CII indexation
 
 ### v1.2.1
 
@@ -107,3 +106,18 @@ Detailed per-area plans stored in `.claude/plans/`:
 | Surcharge | Implemented for both regimes | Old regime: 0/10/15/25/37%; New regime: 0/10/15/25/25% (capped); regime-aware selection |
 | Surcharge marginal relief | Implemented | At each bracket boundary, excess tax+surcharge capped to excess income above that boundary; applied via `compute_surcharge_with_relief()` |
 | 87A marginal relief | Implemented | When `total_taxable > ₹12L`: slab tax capped at income above ₹12L from normal sources; special-rate taxes (STCG/LTCG) always charged in full |
+
+### v1.2.3
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `Mutual Fund Transactions` | New input field (list) | Fields: Type, Purchase Date, Sale Date, Purchase Value, Sale Value |
+| MF classification | Implemented via `classify_mf_transaction()` | equity/hybrid-equity ≤12m → STCG 111A; >12m → LTCG 112A; ELSS <36m → no taxable event; debt pre-Apr-2023 >24m → LTCG Other @12.5% with CII indexation; debt post-2023 → always slab; gold-ETF 12m threshold; gold-MF/international 24m threshold |
+| CII indexation | Embedded `CII_TABLE` (2001–2024); no user input required | Indexed cost = Purchase Value × (CII[sale year] / CII[purchase year]) |
+| Capital loss set-off | Corrected to asymmetric rules | STCL offsets STCG first; residual STCL offsets LTCG; LTCL offsets LTCG only |
+| MF LTCG Other @12.5% | No ₹1.25L exemption | Exemption applies to equity Section 112A gains only; debt/gold/international MF LTCG taxed in full at 12.5% |
+| CII FY key logic | Fixed to use financial year, not calendar year | Dates in Jan–Mar map to the prior FY (e.g. Jan 2024 → FY 2023-24 → key 2023); `fy_start()` helper added |
+| CII 2025 | Added CII = 376 for FY 2025-26 | — |
+| Capital loss carry-forward eligibility | 8-year limit enforced | Losses with `Financial Year` start > 8 AYs before AY 2025-26 are excluded; applies to both LTCL and STCL entries |
+
+### v1.2.4
