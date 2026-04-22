@@ -62,24 +62,41 @@ Slab tax uses **New Regime FY 2025-26** (configurable constants in `tax_calculat
 
 ---
 
-## v1.2 (planned)
+## v1.2 (in progress)
 
-### Changes from v1.1.1
-- Section 16(ii) entertainment allowance — government employees; MIN(₹5,000, 20% of Basic Salary, total entertainment allowance received in FY)
-- 80EE and 80P removed (out of scope)
-- Surcharge computation for income >₹50L (slabs pending clarification)
-- Section 87A marginal relief for STCG/LTCG pushing income just above ₹12L
-- Surcharge marginal relief at each slab boundary (pending clarification)
+### v1.2 implementation plans
+Detailed per-area plans stored in `.claude/plans/`:
+- `plan-misc.md` — Section 16(ii), 80C field removals, 80E, 80TTA/TTB, 80G modes, 80EE/80P removal
+- `plan-80d.md` — 80D medical insurance full implementation
+- `plan-capital-gains.md` — Capital gains Other per-asset input/output and auto-classification
+- `plan-surcharge.md` — Surcharge rate tables (old and new regimes)
+- `plan-marginal-relief.md` — 87A marginal relief + surcharge marginal relief (shared helper)
+- `plan-mutual-funds.md` — Mutual Fund transactions, CII indexation, type-based classification
 
 ### Synthetic data generator (planned)
 - Extensible factorial generator: one `PARAMETERS` dict entry per income/expense category, each with N labelled factors
 - Case generation via `itertools.product`; each output file includes `_description` and `_expected`
 - Runner `run_generated_tests.py` strips meta fields, runs calculator, verifies expected values
-- Combination strategy and factor value config placement pending final decision
+- Implementation plan: `.claude/plans/synthetic-data-generator.md`
 
 ### Placeholders (not yet computed)
-- 80D (health insurance limits)
-- 80E, 80TTA, 80TTB
-- LTCG Other tax rate
-- Age-based differentiation (<60 / 60-80 / >80)
-- Surcharge and marginal relief (pending clarification)
+- Capital gains Other: per-asset classification, LTCG Other tax rate
+- Surcharge and marginal relief
+- Mutual Fund transactions and CII indexation
+
+### v1.2.1
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `Age` field | Changed from string (`"<60"`) to numeric integer | All downstream checks use `>= 60` comparisons |
+| `Gross Salary → Entertainment Allowance` | New input field | Used only for Section 16(ii); ignored for non-govt |
+| Section 16(ii) | Implemented for government employees | MIN(₹5,000, 20% Basic Salary, entertainment allowance received) |
+| 80C eligible instruments | Removed: LIP, Tax Saving FD (5yr), Home Loan Principal, Stamp Duty | Only PPF, EPF, ELSS, NSC, SSY, SCSS remain |
+| `Education Loan Interest` | Changed from flat number to `{"Interest Paid": 0, "Year of Repayment": 0}` | Deduction = 0 if Year of Repayment outside [1, 8] |
+| 80E | Implemented with 8-year repayment limit | `Interest Paid` deducted only if `Year of Repayment` ∈ [1, 8] |
+| 80TTA | Implemented; age < 60 only | MIN(₹10,000, savings bank interest); mutually exclusive with 80TTB |
+| 80TTB | Implemented; age ≥ 60 only | MIN(₹50,000, savings bank interest + deposit interest) |
+| 80EE, 80P | Removed from schema and calculator | Out of scope |
+| 80G modes | Valid modes clarified | `cash`, `cheque`, `upi`, `credit card`, `net banking`; cash >₹2,000 excluded |
+| `Health Insurance` | Restructured from flat dict to list of payment entries | Per-entry beneficiary filtering (self/spouse/children/parents only), paid-by check (group insurance excluded), mode check (premium must be non-cash), multi-year premium split (Amount ÷ Years Paid) |
+| 80D | Fully implemented | Single ₹5,000 preventive checkup cap across all entries; age-based limits ₹25k/<60, ₹50k/≥60; two independent buckets: self/family and parents |

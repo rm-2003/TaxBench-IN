@@ -35,6 +35,52 @@ LTCG_112A_RATE       = 0.125
 STCG_111A_RATE       = 0.20
 CESS_RATE            = 0.04
 
+VALID_BENEFICIARIES = {"self", "spouse", "children", "parents"}
+
+def compute_80d(entries, age):
+    self_prem = 0.0
+    parents_prem = 0.0
+    total_checkup = 0.0
+    self_senior = age >= 60
+    parents_senior = False
+
+    for e in entries:
+        purpose     = e.get("Payment Purpose", "").lower()
+        beneficiary = e.get("Beneficiary", "").lower()
+        paid_by     = e.get("Paid By", "self").lower()
+        mode        = e.get("Payment Mode", "cheque").lower()
+        amount      = e.get("Amount", 0)
+        yrs         = max(1, e.get("Number of Years Paid", 1))
+        ben_age     = e.get("Beneficiary Age", 0)
+
+        if beneficiary not in VALID_BENEFICIARIES:
+            continue
+        if paid_by == "group medical insurance":
+            continue
+
+        if purpose == "insurance premium":
+            if mode == "cash":
+                continue
+            annual = amount / yrs
+            if beneficiary in {"self", "spouse", "children"}:
+                self_prem += annual
+                if ben_age >= 60:
+                    self_senior = True
+            elif beneficiary == "parents":
+                parents_prem += annual
+                if ben_age >= 60:
+                    parents_senior = True
+        elif purpose == "preventive health checkup":
+            total_checkup += amount
+
+    total_checkup = min(total_checkup, 5_000)
+    self_limit    = 50_000 if self_senior else 25_000
+    parents_limit = 50_000 if parents_senior else 25_000
+    self_80d      = min(self_prem + total_checkup, self_limit)
+    parents_80d   = min(parents_prem, parents_limit)
+    return self_80d + parents_80d
+
+
 FULL_EXEMPT_SCHEMES = {
     "National Defence Fund",
     "PM Cares Fund",
@@ -134,8 +180,12 @@ def calculate(inp: dict) -> dict:
     std_ded = STANDARD_DEDUCTION_NEW if regime == "new" else STANDARD_DEDUCTION_OLD
     s16_ia  = min(std_ded, gross_salary)
 
-    # Section 16(ii) — entertainment allowance (govt only; no input field)
-    s16_ii = 0
+    # Section 16(ii) — entertainment allowance (govt only)
+    entertainment = g(gs, "Entertainment Allowance")
+    if employment == "government":
+        s16_ii = min(5_000, 0.20 * g(gs, "Basic Salary"), entertainment)
+    else:
+        s16_ii = 0.0
 
     # Section 16(iii) — professional tax (max 2,500)
     s16_iii = min(2_500, g(inp, "Professional Tax"))
@@ -214,16 +264,12 @@ def calculate(inp: dict) -> dict:
         + g(inp, "EPF", "Employee Contribution", "Voluntary")
     )
     c80_items = sum([
-        g(inp, "Life Insurance Premium"),
         g(inp, "PPF"),
         epf_employee,
         g(inp, "ELSS"),
         g(inp, "NSC"),
         g(inp, "Sukanya Samriddhi Yojana"),
-        g(inp, "Tax Saving FD (5 Year)"),
         g(inp, "SCSS"),
-        g(inp, "Home Loan Principal"),
-        g(inp, "Stamp Duty and Registration"),
     ])
     c80 = min(c80_items, 150_000)
 
@@ -278,15 +324,34 @@ def calculate(inp: dict) -> dict:
         elif scheme in HALF_EXEMPT_SCHEMES:
             c80g += amount * 0.50
 
-    # 80D, 80E, 80EE, 80TTA, 80TTB, 80P — placeholders (0)
-    c80d = c80e = c80ee = c80tta = c80ttb = c80p = 0.0
+    age = inp.get("Age", 30)
+
+    # 80D
+    c80d = compute_80d(inp.get("Health Insurance", []), age)
+
+    # 80E — education loan interest, 8-year repayment limit
+    edu = inp.get("Education Loan Interest", {})
+    if isinstance(edu, dict):
+        edu_interest = g(edu, "Interest Paid")
+        edu_year     = g(edu, "Year of Repayment")
+        c80e = edu_interest if 1 <= edu_year <= 8 else 0.0
+    else:
+        c80e = 0.0
+
+    # 80TTA / 80TTB — age-gated; mutually exclusive
+    if age >= 60:
+        c80tta = 0.0
+        c80ttb = min(50_000, savings_bank_interest + deposit_interest)
+    else:
+        c80tta = min(10_000, savings_bank_interest)
+        c80ttb = 0.0
 
     total_deductions = sum([
         c80cce_total,
         c80ccd1b,
         c80ccd2,
         c80g,
-        c80d, c80e, c80ee, c80tta, c80ttb, c80p,
+        c80d, c80e, c80tta, c80ttb,
     ])
 
     # ------------------------------------------------------------------
@@ -361,11 +426,9 @@ def calculate(inp: dict) -> dict:
             "80CCD(2)":  round2(c80ccd2),
             "80D":   round2(c80d),
             "80E":   round2(c80e),
-            "80EE":  round2(c80ee),
             "80G":   round2(c80g),
             "80TTA": round2(c80tta),
             "80TTB": round2(c80ttb),
-            "80P":   round2(c80p),
             "Total Deductions": round2(total_deductions),
         },
         "Total Taxable Income": round2(total_taxable),
