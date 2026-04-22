@@ -2,7 +2,7 @@
     "_description": "80TTB — age=65 (>=60), savings=20000, deposit=40000. Deduction = min(50000, 60000) = 50000. 80TTA must be 0",
     "Age": 65,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,

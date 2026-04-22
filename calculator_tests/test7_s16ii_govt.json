@@ -2,7 +2,7 @@
     "_description": "Section 16(ii) — govt employee, Basic=600000, entertainment=8000. s16_ii = min(5000, 0.20*600000=120000, 8000) = 5000",
     "Age": 35,
     "Employment Type": "government",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 600000, "Dearness Allowance": 0, "HRA": 0,

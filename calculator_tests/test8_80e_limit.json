@@ -2,7 +2,7 @@
     "_description": "80E — interest=50000, year=5 (within 8yr limit) → deduction=50000. Second sub-test embedded in description: year=9 → 0 (tested separately as test8b)",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,

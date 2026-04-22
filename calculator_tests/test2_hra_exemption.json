@@ -2,7 +2,7 @@
     "_description": "HRA exemption — Basic=600000, HRA=200000, rent=180000, metro. Expected 10(13A) = min(200000, 300000, 120000) = 120000",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 600000, "Dearness Allowance": 0, "HRA": 200000,

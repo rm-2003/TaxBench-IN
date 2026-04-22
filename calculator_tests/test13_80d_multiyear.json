@@ -2,7 +2,7 @@
     "_description": "80D multi-year premium — 3-year policy paid upfront: Amount=90000, Number of Years Paid=3. Annual = 30000. self bucket: min(30000, 25000) = 25000",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,

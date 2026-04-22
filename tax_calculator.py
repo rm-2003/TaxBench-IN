@@ -26,10 +26,21 @@ NEW_REGIME_SLABS = [
     (float("inf"),  0.30),
 ]
 
-REBATE_87A_THRESHOLD = 1_200_000   # 12 L (new regime FY 2025-26)
-REBATE_87A_MAX       = 60_000
-STANDARD_DEDUCTION_OLD = 50_000    # Section 16(ia) old regime
-STANDARD_DEDUCTION_NEW = 75_000    # Section 16(ia) new regime
+OLD_REGIME_SLABS = [
+    (250_000,       0.00),
+    (500_000,       0.05),
+    (1_000_000,     0.20),
+    (float("inf"),  0.30),
+]
+
+OLD_REGIME_REBATE_87A_THRESHOLD = 500_000
+OLD_REGIME_REBATE_87A_MAX       = 12_500
+
+NEW_REGIME_REBATE_87A_THRESHOLD = 1_200_000
+NEW_REGIME_REBATE_87A_MAX       = 60_000
+
+STANDARD_DEDUCTION_OLD = 50_000
+STANDARD_DEDUCTION_NEW = 75_000
 LTCG_112A_EXEMPT     = 1_25_000    # 1.25 L exemption before 12.5% kicks in
 LTCG_112A_RATE       = 0.125
 STCG_111A_RATE       = 0.20
@@ -254,34 +265,40 @@ def calculate(inp: dict) -> dict:
     basic_da = g(gs, "Basic Salary") + g(gs, "Dearness Allowance")
     metro_pct = 0.50 if "metro" in city else 0.40
 
-    # Section 10(13A) — HRA exemption
-    hra_received  = g(gs, "HRA")
-    rent_paid     = g(inp, "Actual Rent Paid")
-    hra_candidate = rent_paid - 0.10 * basic_da
-    hra_10_13A = max(0.0, min(
-        hra_received,
-        metro_pct * basic_da,
-        hra_candidate,
-    ))
+    # Section 10(13A) — HRA exemption (old regime only)
+    if regime == "old":
+        hra_received  = g(gs, "HRA")
+        rent_paid     = g(inp, "Actual Rent Paid")
+        hra_candidate = rent_paid - 0.10 * basic_da
+        hra_10_13A = max(0.0, min(
+            hra_received,
+            metro_pct * basic_da,
+            hra_candidate,
+        ))
+    else:
+        hra_10_13A = 0.0
 
-    # Section 10(5) — LTA exemption
-    lta_in_salary    = g(gs, "LTA")
-    lta_claimed      = g(inp, "LTA Travel Expenses Claimed")
-    lta_10_5         = min(lta_in_salary, lta_claimed)
+    # Section 10(5) — LTA exemption (old regime only)
+    if regime == "old":
+        lta_in_salary = g(gs, "LTA")
+        lta_claimed   = g(inp, "LTA Travel Expenses Claimed")
+        lta_10_5      = min(lta_in_salary, lta_claimed)
+    else:
+        lta_10_5 = 0.0
 
     # Section 16(ia) — standard deduction
     std_ded = STANDARD_DEDUCTION_NEW if regime == "new" else STANDARD_DEDUCTION_OLD
     s16_ia  = min(std_ded, gross_salary)
 
-    # Section 16(ii) — entertainment allowance (govt only)
+    # Section 16(ii) — entertainment allowance (govt + old regime only)
     entertainment = g(gs, "Entertainment Allowance")
-    if employment == "government":
+    if employment == "government" and regime == "old":
         s16_ii = min(5_000, 0.20 * g(gs, "Basic Salary"), entertainment)
     else:
         s16_ii = 0.0
 
-    # Section 16(iii) — professional tax (max 2,500)
-    s16_iii = min(2_500, g(inp, "Professional Tax"))
+    # Section 16(iii) — professional tax (old regime only)
+    s16_iii = min(2_500, g(inp, "Professional Tax")) if regime == "old" else 0.0
 
     net_salary = gross_salary - hra_10_13A - lta_10_5 - s16_ia - s16_ii - s16_iii
 
@@ -486,10 +503,13 @@ def calculate(inp: dict) -> dict:
 
     # 80CCD(2) — employer NPS contribution
     # New regime: 14% for all; Old regime: 14% for govt, 10% for others
+    # Govt employees always have compulsory employer contribution of 14% of Basic+DA
     if regime == "new" or employment == "government":
         c80ccd2_pct = 0.14
     else:
         c80ccd2_pct = 0.10
+    if employment == "government":
+        nps_employer = max(nps_employer, c80ccd2_pct * basic_da)
     c80ccd2 = min(nps_employer, c80ccd2_pct * basic_da)
 
     # 80G — Donations
@@ -527,6 +547,15 @@ def calculate(inp: dict) -> dict:
         c80tta = min(10_000, savings_bank_interest)
         c80ttb = 0.0
 
+    if regime == "new":
+        c80cce_total = c80_reported = c80ccc_reported = c80ccd1_reported = 0.0
+        c80ccd1b = 0.0
+        c80g = 0.0
+        c80d = 0.0
+        c80e = 0.0
+        c80tta = 0.0
+        c80ttb = 0.0
+
     total_deductions = sum([
         c80cce_total,
         c80ccd1b,
@@ -548,7 +577,11 @@ def calculate(inp: dict) -> dict:
     special_income = stcg_111A + ltcg_112A + ltcg_noneq_12
     normal_income  = max(0.0, total_taxable - special_income)
 
-    tax_slab       = compute_slab_tax(normal_income, NEW_REGIME_SLABS)
+    slab_rates     = NEW_REGIME_SLABS if regime == "new" else OLD_REGIME_SLABS
+    rebate_threshold = NEW_REGIME_REBATE_87A_THRESHOLD if regime == "new" else OLD_REGIME_REBATE_87A_THRESHOLD
+    rebate_max       = NEW_REGIME_REBATE_87A_MAX if regime == "new" else OLD_REGIME_REBATE_87A_MAX
+
+    tax_slab       = compute_slab_tax(normal_income, slab_rates)
     tax_stcg_111A  = stcg_111A * STCG_111A_RATE
     tax_stcg_other = 0.0
     tax_ltcg_112A  = max(0.0, ltcg_112A - LTCG_112A_EXEMPT) * LTCG_112A_RATE
@@ -559,17 +592,21 @@ def calculate(inp: dict) -> dict:
     total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_ltcg_noneq_12
 
     # Section 87A rebate — applies only to slab tax, not special-rate taxes
-    if total_taxable <= REBATE_87A_THRESHOLD:
-        rebate_87A = min(tax_slab, REBATE_87A_MAX)
-    else:
-        income_above_threshold = max(0.0, normal_income - REBATE_87A_THRESHOLD)
+    # New regime: marginal relief when income > threshold
+    # Old regime: simple rebate, no marginal relief
+    if total_taxable <= rebate_threshold:
+        rebate_87A = min(tax_slab, rebate_max)
+    elif regime == "new":
+        income_above_threshold = max(0.0, normal_income - rebate_threshold)
         rebate_87A = max(0.0, tax_slab - income_above_threshold)
+    else:
+        rebate_87A = 0.0
 
     tax_after_rebate = total_before_rebate - rebate_87A
 
     # Surcharge
     surcharge_table = NEW_REGIME_SURCHARGE_RATES if regime == "new" else OLD_REGIME_SURCHARGE_RATES
-    slab_table      = NEW_REGIME_SLABS
+    slab_table      = slab_rates
     surcharge_rate  = 0.0
     for upper, rate in surcharge_table:
         if total_taxable <= upper:

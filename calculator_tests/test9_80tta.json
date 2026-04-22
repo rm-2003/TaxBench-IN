@@ -2,7 +2,7 @@
     "_description": "80TTA — age=35 (<60), savings interest=15000. Deduction = min(10000, 15000) = 10000. 80TTB must be 0",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,

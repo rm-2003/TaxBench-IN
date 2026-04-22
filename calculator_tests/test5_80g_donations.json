@@ -2,7 +2,7 @@
     "_description": "80G donations — PM Cares Fund 5000 cheque (100% exempt=5000) + National Defence Fund 3000 cash (excluded, cash>2000) + PM Drought Relief Fund 4000 cheque (50% exempt=2000). Expected 80G = 7000",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 600000, "Dearness Allowance": 0, "HRA": 0,

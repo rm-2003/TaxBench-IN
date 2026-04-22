@@ -2,7 +2,7 @@
     "_description": "80D basic — self premium 20000 (cheque) + parents premium 15000 (cheque, parent age 65=senior) + checkup 3000. self bucket: min(20000+3000, 25000)=23000. parents bucket: min(15000, 50000)=15000. Total = 38000",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,

@@ -133,3 +133,17 @@ Detailed per-area plans stored in `.claude/plans/`:
 
 ### Placeholders (not yet computed)
 - LTCG (Other @ 20%): no assets assigned
+
+---
+
+## v1.3 (in progress)
+
+### v1.3.1
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| Old regime slabs | Implemented | ₹0–2.5L 0%, ₹2.5–5L 5%, ₹5–10L 20%, >₹10L 30%; 87A rebate ₹12,500 for income ≤₹5L |
+| Regime-aware tax computation | Slab rates, rebate threshold/max, and surcharge slab table now all driven by `Tax Regime` | Previously always used new regime slabs |
+| Govt employer NPS (80CCD(2)) | Compulsory for government employees | If govt, employer contribution auto-set to at least 14% of Basic+DA |
+| New regime gating | Only Section 16(ia) and 80CCD(2) allowed under new regime | Section 10(13A), 10(5), 16(ii), 16(iii), 80C/CCC/CCD(1)/CCD(1B)/80D/80E/80G/80TTA/80TTB all zeroed out |
+| 87A marginal relief | New regime only | Old regime: simple rebate (no marginal relief); New regime: marginal relief when income > ₹12L |

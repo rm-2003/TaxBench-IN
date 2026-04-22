@@ -2,7 +2,7 @@
     "_description": "80C cap — PPF=100000 + ELSS=100000 = 200000 total, capped at 150000. Expected 80C = 150000",
     "Age": 35,
     "Employment Type": "private",
-    "Tax Regime": "new",
+    "Tax Regime": "old",
     "City": "metro",
     "Gross Salary": {
         "Basic Salary": 600000, "Dearness Allowance": 0, "HRA": 0,
