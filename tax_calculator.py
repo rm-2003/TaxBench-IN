@@ -35,6 +35,24 @@ LTCG_112A_RATE       = 0.125
 STCG_111A_RATE       = 0.20
 CESS_RATE            = 0.04
 
+OLD_REGIME_SURCHARGE_RATES = [
+    (5_000_000,    0.00),
+    (10_000_000,   0.10),
+    (20_000_000,   0.15),
+    (50_000_000,   0.25),
+    (float("inf"), 0.37),
+]
+
+NEW_REGIME_SURCHARGE_RATES = [
+    (5_000_000,    0.00),
+    (10_000_000,   0.10),
+    (20_000_000,   0.15),
+    (50_000_000,   0.25),
+    (float("inf"), 0.25),
+]
+
+SURCHARGE_BOUNDARIES = [5_000_000, 10_000_000, 20_000_000, 50_000_000]
+
 VALID_BENEFICIARIES = {"self", "spouse", "children", "parents"}
 
 def compute_80d(entries, age):
@@ -79,6 +97,24 @@ def compute_80d(entries, age):
     self_80d      = min(self_prem + total_checkup, self_limit)
     parents_80d   = min(parents_prem, parents_limit)
     return self_80d + parents_80d
+
+
+def compute_surcharge_with_relief(total_taxable, tax_after_rebate, surcharge_rate, slabs, surcharge_table):
+    if surcharge_rate == 0.0:
+        return 0.0
+    crossed_boundary = None
+    for b in SURCHARGE_BOUNDARIES:
+        if total_taxable > b:
+            crossed_boundary = b
+    if crossed_boundary is None:
+        return 0.0
+    surcharge_raw    = tax_after_rebate * surcharge_rate
+    tax_at_boundary  = compute_slab_tax(crossed_boundary, slabs)
+    tax_with_surcharge = tax_after_rebate + surcharge_raw
+    excess_income    = total_taxable - crossed_boundary
+    excess_tax       = tax_with_surcharge - tax_at_boundary
+    relief           = max(0.0, excess_tax - excess_income)
+    return max(0.0, surcharge_raw - relief)
 
 
 FULL_EXEMPT_SCHEMES = {
@@ -379,10 +415,22 @@ def calculate(inp: dict) -> dict:
     if total_taxable <= REBATE_87A_THRESHOLD:
         rebate_87A = min(tax_slab, REBATE_87A_MAX)
     else:
-        rebate_87A = 0.0
+        income_above_threshold = max(0.0, normal_income - REBATE_87A_THRESHOLD)
+        rebate_87A = max(0.0, tax_slab - income_above_threshold)
 
-    tax_after_rebate   = total_before_rebate - rebate_87A
-    surcharge          = 0.0   # placeholder
+    tax_after_rebate = total_before_rebate - rebate_87A
+
+    # Surcharge
+    surcharge_table = NEW_REGIME_SURCHARGE_RATES if regime == "new" else OLD_REGIME_SURCHARGE_RATES
+    slab_table      = NEW_REGIME_SLABS
+    surcharge_rate  = 0.0
+    for upper, rate in surcharge_table:
+        if total_taxable <= upper:
+            surcharge_rate = rate
+            break
+    surcharge = compute_surcharge_with_relief(
+        total_taxable, tax_after_rebate, surcharge_rate, slab_table, surcharge_table
+    )
     cess               = (tax_after_rebate + surcharge) * CESS_RATE
     total_tax_liability = tax_after_rebate + surcharge + cess
 

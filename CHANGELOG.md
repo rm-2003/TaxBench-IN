@@ -81,7 +81,6 @@ Detailed per-area plans stored in `.claude/plans/`:
 
 ### Placeholders (not yet computed)
 - Capital gains Other: per-asset classification, LTCG Other tax rate
-- Surcharge and marginal relief
 - Mutual Fund transactions and CII indexation
 
 ### v1.2.1
@@ -100,3 +99,11 @@ Detailed per-area plans stored in `.claude/plans/`:
 | 80G modes | Valid modes clarified | `cash`, `cheque`, `upi`, `credit card`, `net banking`; cash >₹2,000 excluded |
 | `Health Insurance` | Restructured from flat dict to list of payment entries | Per-entry beneficiary filtering (self/spouse/children/parents only), paid-by check (group insurance excluded), mode check (premium must be non-cash), multi-year premium split (Amount ÷ Years Paid) |
 | 80D | Fully implemented | Single ₹5,000 preventive checkup cap across all entries; age-based limits ₹25k/<60, ₹50k/≥60; two independent buckets: self/family and parents |
+
+### v1.2.2
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| Surcharge | Implemented for both regimes | Old regime: 0/10/15/25/37%; New regime: 0/10/15/25/25% (capped); regime-aware selection |
+| Surcharge marginal relief | Implemented | At each bracket boundary, excess tax+surcharge capped to excess income above that boundary; applied via `compute_surcharge_with_relief()` |
+| 87A marginal relief | Implemented | When `total_taxable > ₹12L`: slab tax capped at income above ₹12L from normal sources; special-rate taxes (STCG/LTCG) always charged in full |

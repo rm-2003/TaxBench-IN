@@ -129,6 +129,22 @@ TESTS = [
             ("Deductions.80D", 25000),
         ],
     },
+    {
+        "name": "Test 14 — 87A marginal relief (total_taxable > 12L with STCG)",
+        "input": "test14_87a_marginal_relief.json",
+        "checks": [
+            ("Tax Computation.Less: Rebate under Section 87A", 38750),
+            ("Tax Computation.Tax After Rebate", 29000),
+        ],
+    },
+    {
+        "name": "Test 15 — Surcharge marginal relief (51L income, new regime)",
+        "input": "test15_surcharge_marginal_relief.json",
+        "checks": [
+            ("Tax Computation.Surcharge", 70000),
+            ("Tax Computation.Tax After Rebate", 1110000),
+        ],
+    },
 ]
 
 

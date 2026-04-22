@@ -1,0 +1,33 @@
+{
+    "_description": "87A marginal relief — normal income 1225000, STCG 20000, total taxable 1245000 (>12L). Slab tax on 1225000 = 67750. Income above 12L from normal sources = 25000. rebate = max(0, 67750-25000) = 42750. Tax after rebate = 67750-42750+4000 = 29000",
+    "Age": 35,
+    "Employment Type": "private",
+    "Tax Regime": "new",
+    "City": "metro",
+    "Gross Salary": {
+        "Basic Salary": 1300000, "Dearness Allowance": 0, "HRA": 0,
+        "Conveyance Allowance": 0, "Medical Allowance": 0,
+        "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0,
+        "Special Allowance": 0, "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [
+        {
+            "Sale Price": 300, "Cost Price": 100, "Quantity": 100,
+            "Brokerage": 0, "STT": 0,
+            "Purchase Date": "2024-01-01", "Sale Date": "2024-06-01",
+            "FMV as of 31 Jan 2018": 0
+        }
+    ],
+    "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
+    "PPF": 0,
+    "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
+    "Health Insurance": [],
+    "Donations": [],
+    "TDS": 0
+}
