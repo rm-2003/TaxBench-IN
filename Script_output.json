@@ -13,9 +13,22 @@
 
     "Capital Gains": {
         "STCG (Section 111A)": 0,
-        "STCG (Other)": 0,
+        "STCG (Other)": {
+            "Bonds": 0,
+            "Debentures": 0,
+            "G-Secs": 0,
+            "Mutual Funds": 0,
+            "Total": 0
+        },
         "LTCG (Section 112A)": 0,
-        "LTCG (Other)": 0
+        "LTCG (Non-Equity @ 12.5%)": {
+            "Bonds": 0,
+            "Debentures": 0,
+            "G-Secs": 0,
+            "Mutual Funds": 0,
+            "Total": 0
+        },
+        "LTCG (Other @ 20%)": 0
     },
 
     "Income from Other Sources": {
@@ -49,7 +62,8 @@
         "Tax on STCG (Section 111A) at 20%": 0,
         "Tax on STCG (Other)": 0,
         "Tax on LTCG (Section 112A) at 12.5%": 0,
-        "Tax on LTCG (Other)": 0,
+        "Tax on LTCG (Non-Equity) at 12.5%": 0,
+        "Tax on LTCG (Other) at 20%": 0,
         "Total Tax Before Rebate": 0,
         "Less: Rebate under Section 87A": 0,
         "Tax After Rebate": 0,

@@ -7,7 +7,7 @@
     "Mutual Fund Transactions": [
         {"Type": "debt", "Purchase Date": "2021-01-01", "Sale Date": "2024-01-01", "Purchase Value": 100000, "Sale Value": 150000}
     ],
-    "Other Short Term Capital Gains": 0, "Other Long Term Capital Gains": 0,
+    "Bonds": {}, "Debentures": {}, "G-Secs": {},
     "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
     "PPF": 0, "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
     "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,

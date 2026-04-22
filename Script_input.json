@@ -54,8 +54,26 @@
             "Sale Value": 0
         }
     ],
-    "Other Short Term Capital Gains": 0,
-    "Other Long Term Capital Gains": 0,
+    "Privately Owned Vehicle": {
+        "Sale Amount": 0,
+        "Purchase Amount": 0,
+        "Held for duration in years": 0
+    },
+    "Bonds": {
+        "Sale Amount": 0,
+        "Purchase Amount": 0,
+        "Held for duration in years": 0
+    },
+    "Debentures": {
+        "Sale Amount": 0,
+        "Purchase Amount": 0,
+        "Held for duration in years": 0
+    },
+    "G-Secs": {
+        "Sale Amount": 0,
+        "Purchase Amount": 0,
+        "Held for duration in years": 0
+    },
 
     "Savings Bank Interest": 0,
     "Deposit Interest": 0,

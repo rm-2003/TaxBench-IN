@@ -9,7 +9,7 @@
     ],
     "Long Term Capital Loss": [], "Short Term Capital Loss": [{"Financial Year": "2023-24", "Loss Amount": 8000}],
     "Mutual Fund Transactions": [],
-    "Other Short Term Capital Gains": 0, "Other Long Term Capital Gains": 0,
+    "Bonds": {}, "Debentures": {}, "G-Secs": {},
     "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
     "PPF": 0, "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
     "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,

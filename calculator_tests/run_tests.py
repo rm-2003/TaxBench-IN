@@ -182,14 +182,62 @@ TESTS = [
             ("Capital Gains.LTCG (Section 112A)", 5000),
         ],
     },
+    {
+        "name": "Test 21 — Bonds STCG (held 1 year)",
+        "input": "test21_bonds_stcg.json",
+        "checks": [
+            ("Capital Gains.STCG (Other).Bonds", 50000),
+            ("Capital Gains.STCG (Other).Total", 50000),
+            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Total", 0),
+        ],
+    },
+    {
+        "name": "Test 22 — G-Secs LTCG + shared 1.25L exemption",
+        "input": "test22_gsecs_ltcg.json",
+        "checks": [
+            ("Capital Gains.LTCG (Section 112A)", 100000),
+            ("Capital Gains.LTCG (Non-Equity @ 12.5%).G-Secs", 200000),
+            ("Tax Computation.Tax on LTCG (Section 112A) at 12.5%", 0),
+            ("Tax Computation.Tax on LTCG (Non-Equity) at 12.5%", 21875),
+        ],
+    },
+    {
+        "name": "Test 23 — Privately Owned Vehicle (always exempt)",
+        "input": "test23_vehicle_exempt.json",
+        "checks": [
+            ("Gross Total Income", 0),
+            ("Capital Gains.STCG (Other).Total", 0),
+            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Total", 0),
+        ],
+    },
+    {
+        "name": "Test 24 — Cross-bucket loss set-off (STCL + LTCL across equity & non-equity)",
+        "input": "test24_cross_bucket_loss.json",
+        "checks": [
+            ("Capital Gains.STCG (Section 111A)", 0),
+            ("Capital Gains.STCG (Other).Total", 0),
+            ("Capital Gains.LTCG (Section 112A)", 4000),
+            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Debentures", 6000),
+            ("Gross Total Income", 10000),
+        ],
+    },
 ]
 
 
 def get_nested(d, path: str):
-    for k in path.split("."):
+    parts = path.split(".")
+    i = 0
+    while i < len(parts):
         if not isinstance(d, dict):
             return None
-        d = d.get(k)
+        for j in range(len(parts), i, -1):
+            candidate = ".".join(parts[i:j])
+            if candidate in d:
+                d = d[candidate]
+                i = j
+                break
+        else:
+            return None
     return d
 
 

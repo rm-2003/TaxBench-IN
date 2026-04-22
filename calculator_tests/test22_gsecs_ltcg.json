@@ -1,0 +1,20 @@
+{
+    "_description": "G-Secs LTCG — held 2 years, gain=200000. Stock LTCG=100000. 112A exemption uses 100000 of 1.25L, remaining 25k exempts non-equity. Tax on non-equity = (200000-25000)*0.125 = 21875",
+    "Age": 35, "Employment Type": "private", "Tax Regime": "new", "City": "metro",
+    "Gross Salary": {"Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0, "Conveyance Allowance": 0, "Medical Allowance": 0, "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0, "Special Allowance": 0, "Entertainment Allowance": 0},
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [
+        {"Sale Price": 200, "Cost Price": 100, "Quantity": 1000, "Brokerage": 0, "STT": 0, "Purchase Date": "2020-01-01", "Sale Date": "2024-06-01", "FMV as of 31 Jan 2018": 0}
+    ],
+    "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Mutual Fund Transactions": [],
+    "Bonds": {}, "Debentures": {},
+    "G-Secs": {"Sale Amount": 300000, "Purchase Amount": 100000, "Held for duration in years": 2},
+    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
+    "PPF": 0, "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
+    "Health Insurance": [], "Donations": [], "TDS": 0
+}

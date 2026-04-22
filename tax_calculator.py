@@ -335,11 +335,36 @@ def calculate(inp: dict) -> dict:
     stcg_raw += mf_stcg_111A
     ltcg_raw += mf_ltcg_112A
 
-    # Capital losses are eligible for set-off only up to 8 assessment years.
-    # "Financial Year" format is "YYYY-YY" (e.g. "2017-18"); parse start year.
-    # Current AY start year = fy_start(today) + 1; loss AY start = loss FY start + 1.
-    # Loss is expired if (current_ay_start - loss_ay_start) > 8, i.e. loss_fy_start < current_ay_start - 9.
-    current_ay_start = 2025  # AY 2025-26
+    # Other asset classification (Bonds, Debentures, G-Secs)
+    OTHER_ASSETS = ["Bonds", "Debentures", "G-Secs"]
+    stcg_other_breakdown = {}
+    ltcg_noneq_12_breakdown = {}
+
+    for asset in OTHER_ASSETS:
+        asset_inp = inp.get(asset, {})
+        sale  = g(asset_inp, "Sale Amount")
+        cost  = g(asset_inp, "Purchase Amount")
+        years = g(asset_inp, "Held for duration in years")
+        gain  = sale - cost
+        if gain <= 0:
+            stcg_other_breakdown[asset] = 0.0
+            ltcg_noneq_12_breakdown[asset] = 0.0
+        elif years > 1:
+            stcg_other_breakdown[asset] = 0.0
+            ltcg_noneq_12_breakdown[asset] = gain
+        else:
+            stcg_other_breakdown[asset] = gain
+            ltcg_noneq_12_breakdown[asset] = 0.0
+
+    stcg_other_breakdown["Mutual Funds"] = round2(mf_stcg_other)
+    ltcg_noneq_12_breakdown["Mutual Funds"] = round2(mf_ltcg_other_12)
+
+    stcg_other    = sum(stcg_other_breakdown.values())
+    ltcg_noneq_12 = sum(ltcg_noneq_12_breakdown.values())
+    ltcg_other_20 = 0.0
+
+    # Capital loss eligibility — 8 assessment year limit
+    current_ay_start = 2025
     def _loss_eligible(entry):
         fy = str(entry.get("Financial Year", ""))
         try:
@@ -355,15 +380,41 @@ def calculate(inp: dict) -> dict:
         g(t, "Loss Amount") for t in inp.get("Short Term Capital Loss", []) if _loss_eligible(t)
     )
 
-    # Asymmetric loss set-off: STCL offsets STCG first, residual offsets LTCG; LTCL offsets LTCG only
-    ltcg_after_ltcl  = max(0.0, ltcg_raw - prior_lt_losses)
-    stcg_after_stcl  = max(0.0, stcg_raw - prior_st_losses)
-    residual_stcl    = max(0.0, prior_st_losses - stcg_raw)
-    stcg_111A        = stcg_after_stcl
-    ltcg_112A        = max(0.0, ltcg_after_ltcl - residual_stcl)
+    # Sequential priority-based loss set-off
+    stcg_111A     = stcg_raw
+    stcg_other_net = stcg_other
+    ltcg_112A     = ltcg_raw
+    ltcg_noneq_net = ltcg_noneq_12
 
-    stcg_other = g(inp, "Other Short Term Capital Gains")
-    ltcg_other = g(inp, "Other Long Term Capital Gains")
+    # LTCL: offsets LTCG 112A first, then LTCG Non-Equity
+    lt_loss = prior_lt_losses
+    used = min(lt_loss, ltcg_112A)
+    ltcg_112A -= used
+    lt_loss -= used
+    used = min(lt_loss, ltcg_noneq_net)
+    ltcg_noneq_net -= used
+
+    # STCL: offsets STCG 111A → STCG Other → LTCG 112A → LTCG Non-Equity
+    st_loss = prior_st_losses
+    used = min(st_loss, stcg_111A)
+    stcg_111A -= used
+    st_loss -= used
+    used = min(st_loss, stcg_other_net)
+    stcg_other_net -= used
+    st_loss -= used
+    used = min(st_loss, ltcg_112A)
+    ltcg_112A -= used
+    st_loss -= used
+    used = min(st_loss, ltcg_noneq_net)
+    ltcg_noneq_net -= used
+
+    # Scale breakdowns to match post-loss totals
+    if stcg_other > 0:
+        stcg_other_breakdown = {k: v * (stcg_other_net / stcg_other) for k, v in stcg_other_breakdown.items()}
+    stcg_other = stcg_other_net
+    if ltcg_noneq_12 > 0:
+        ltcg_noneq_12_breakdown = {k: v * (ltcg_noneq_net / ltcg_noneq_12) for k, v in ltcg_noneq_12_breakdown.items()}
+    ltcg_noneq_12 = ltcg_noneq_net
 
     # ------------------------------------------------------------------
     # Income from Other Sources
@@ -378,8 +429,8 @@ def calculate(inp: dict) -> dict:
     # ------------------------------------------------------------------
     gross_total = sum([
         net_salary,
-        stcg_111A, stcg_other, mf_stcg_other,
-        ltcg_112A, ltcg_other, mf_ltcg_other_12,
+        stcg_111A, stcg_other,
+        ltcg_112A, ltcg_noneq_12,
         savings_bank_interest, deposit_interest,
         other_interest, epf_taxable_interest,
     ])
@@ -494,18 +545,18 @@ def calculate(inp: dict) -> dict:
     # ------------------------------------------------------------------
 
     # Special-rate incomes (outside normal slabs)
-    special_income = stcg_111A + ltcg_112A + ltcg_other + mf_ltcg_other_12
+    special_income = stcg_111A + ltcg_112A + ltcg_noneq_12
     normal_income  = max(0.0, total_taxable - special_income)
 
     tax_slab       = compute_slab_tax(normal_income, NEW_REGIME_SLABS)
     tax_stcg_111A  = stcg_111A * STCG_111A_RATE
-    tax_stcg_other = 0.0  # STCG Other taxed at slab rates — already in tax_slab
+    tax_stcg_other = 0.0
     tax_ltcg_112A  = max(0.0, ltcg_112A - LTCG_112A_EXEMPT) * LTCG_112A_RATE
-    tax_ltcg_other = 0.0  # pass-through placeholder
-    # MF LTCG Other @ 12.5% — no ₹1.25L exemption (that applies to equity 112A only)
-    tax_mf_ltcg_other_12 = mf_ltcg_other_12 * LTCG_112A_RATE
+    ltcg_exempt_remaining = max(0.0, LTCG_112A_EXEMPT - ltcg_112A)
+    tax_ltcg_noneq_12 = max(0.0, ltcg_noneq_12 - ltcg_exempt_remaining) * LTCG_112A_RATE
+    tax_ltcg_other_20  = 0.0
 
-    total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_mf_ltcg_other_12
+    total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_ltcg_noneq_12
 
     # Section 87A rebate — applies only to slab tax, not special-rate taxes
     if total_taxable <= REBATE_87A_THRESHOLD:
@@ -550,9 +601,16 @@ def calculate(inp: dict) -> dict:
         },
         "Capital Gains": {
             "STCG (Section 111A)": round2(stcg_111A),
-            "STCG (Other)":        round2(stcg_other),
+            "STCG (Other)": {
+                **{k: round2(v) for k, v in stcg_other_breakdown.items()},
+                "Total": round2(stcg_other),
+            },
             "LTCG (Section 112A)": round2(ltcg_112A),
-            "LTCG (Other)":        round2(ltcg_other),
+            "LTCG (Non-Equity @ 12.5%)": {
+                **{k: round2(v) for k, v in ltcg_noneq_12_breakdown.items()},
+                "Total": round2(ltcg_noneq_12),
+            },
+            "LTCG (Other @ 20%)": round2(ltcg_other_20),
         },
         "Income from Other Sources": {
             "Savings Bank Interest": round2(savings_bank_interest),
@@ -581,7 +639,8 @@ def calculate(inp: dict) -> dict:
             "Tax on STCG (Section 111A) at 20%":    round2(tax_stcg_111A),
             "Tax on STCG (Other)":                  round2(tax_stcg_other),
             "Tax on LTCG (Section 112A) at 12.5%":  round2(tax_ltcg_112A),
-            "Tax on LTCG (Other)":                  round2(tax_ltcg_other),
+            "Tax on LTCG (Non-Equity) at 12.5%":    round2(tax_ltcg_noneq_12),
+            "Tax on LTCG (Other) at 20%":            round2(tax_ltcg_other_20),
             "Total Tax Before Rebate":              round2(total_before_rebate),
             "Less: Rebate under Section 87A":       round2(rebate_87A),
             "Tax After Rebate":                     round2(tax_after_rebate),

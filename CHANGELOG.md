@@ -79,9 +79,6 @@ Detailed per-area plans stored in `.claude/plans/`:
 - Runner `run_generated_tests.py` strips meta fields, runs calculator, verifies expected values
 - Implementation plan: `.claude/plans/synthetic-data-generator.md`
 
-### Placeholders (not yet computed)
-- Capital gains Other: per-asset classification, LTCG Other tax rate
-
 ### v1.2.1
 
 | Area | Change | Rule / Notes |
@@ -121,3 +118,18 @@ Detailed per-area plans stored in `.claude/plans/`:
 | Capital loss carry-forward eligibility | 8-year limit enforced | Losses with `Financial Year` start > 8 AYs before AY 2025-26 are excluded; applies to both LTCL and STCL entries |
 
 ### v1.2.4
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `Other Short/Long Term Capital Gains` | Removed flat input fields | Replaced by per-asset structured inputs |
+| `Privately Owned Vehicle` | New input field (Sale Amount, Purchase Amount, Held for duration in years) | Always tax-exempt — gain not added to any capital gains bucket |
+| `Bonds`, `Debentures`, `G-Secs` | New input fields (same structure) | Auto-classified: held >1 year → LTCG Non-Equity @12.5%; ≤1 year → STCG Other (slab) |
+| `STCG (Other)` output | Changed from flat number to per-asset dict | Keys: Bonds, Debentures, G-Secs, Mutual Funds, Total |
+| `LTCG (Other)` output | Renamed to `LTCG (Non-Equity @ 12.5%)`, changed to per-asset dict | Keys: Bonds, Debentures, G-Secs, Mutual Funds, Total |
+| `LTCG (Other @ 20%)` output | Added as placeholder | Always 0; no assets assigned yet |
+| Tax on LTCG Non-Equity | ₹1.25L exemption shared with 112A | Remaining exemption after 112A applied to non-equity LTCG |
+| Capital loss set-off | Expanded to all capital gains buckets | LTCL offsets all LTCG (112A + non-equity) proportionally; STCL offsets all STCG first, residual offsets remaining LTCG proportionally |
+| Breakdown consistency | Per-asset breakdown dicts scaled after loss netting | Breakdown values match post-loss-netting totals |
+
+### Placeholders (not yet computed)
+- LTCG (Other @ 20%): no assets assigned
