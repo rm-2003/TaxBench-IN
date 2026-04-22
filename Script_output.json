@@ -10,7 +10,6 @@
         "Section 16(iii)": 0,
         "Net Salary": 0
     },
-
     "Capital Gains": {
         "STCG (Section 111A)": 0,
         "STCG (Other)": {
@@ -21,16 +20,15 @@
             "Total": 0
         },
         "LTCG (Section 112A)": 0,
-        "LTCG (Non-Equity @ 12.5%)": {
+        "LTCG (Non-Equity)": {
             "Bonds": 0,
             "Debentures": 0,
             "G-Secs": 0,
             "Mutual Funds": 0,
             "Total": 0
         },
-        "LTCG (Other @ 20%)": 0
+        "LTCG (Other)": 0
     },
-
     "Income from Other Sources": {
         "Savings Bank Interest": 0,
         "Deposit Interest": 0,
@@ -38,9 +36,7 @@
             "EPF Taxable Interest": 0
         }
     },
-
     "Gross Total Income": 0,
-
     "Deductions": {
         "80C": 0,
         "80CCC": 0,
@@ -54,21 +50,19 @@
         "80TTB": 0,
         "Total Deductions": 0
     },
-
     "Total Taxable Income": 0,
-
     "Tax Computation": {
         "Tax at Slab Rates": 0,
-        "Tax on STCG (Section 111A) at 20%": 0,
+        "Tax on STCG (Section 111A)": 0,
         "Tax on STCG (Other)": 0,
-        "Tax on LTCG (Section 112A) at 12.5%": 0,
-        "Tax on LTCG (Non-Equity) at 12.5%": 0,
-        "Tax on LTCG (Other) at 20%": 0,
+        "Tax on LTCG (Section 112A)": 0,
+        "Tax on LTCG (Non-Equity)": 0,
+        "Tax on LTCG (Other)": 0,
         "Total Tax Before Rebate": 0,
         "Less: Rebate under Section 87A": 0,
         "Tax After Rebate": 0,
         "Surcharge": 0,
-        "Health and Education Cess (4%)": 0,
+        "Health and Education Cess": 0,
         "Total Tax Liability": 0,
         "Less: TDS": 0,
         "Net Tax Payable / Refund": 0

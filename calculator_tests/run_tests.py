@@ -188,7 +188,7 @@ TESTS = [
         "checks": [
             ("Capital Gains.STCG (Other).Bonds", 50000),
             ("Capital Gains.STCG (Other).Total", 50000),
-            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Total", 0),
+            ("Capital Gains.LTCG (Non-Equity).Total", 0),
         ],
     },
     {
@@ -196,9 +196,9 @@ TESTS = [
         "input": "test22_gsecs_ltcg.json",
         "checks": [
             ("Capital Gains.LTCG (Section 112A)", 100000),
-            ("Capital Gains.LTCG (Non-Equity @ 12.5%).G-Secs", 200000),
-            ("Tax Computation.Tax on LTCG (Section 112A) at 12.5%", 0),
-            ("Tax Computation.Tax on LTCG (Non-Equity) at 12.5%", 21875),
+            ("Capital Gains.LTCG (Non-Equity).G-Secs", 200000),
+            ("Tax Computation.Tax on LTCG (Section 112A)", 0),
+            ("Tax Computation.Tax on LTCG (Non-Equity)", 21875),
         ],
     },
     {
@@ -207,7 +207,7 @@ TESTS = [
         "checks": [
             ("Gross Total Income", 0),
             ("Capital Gains.STCG (Other).Total", 0),
-            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Total", 0),
+            ("Capital Gains.LTCG (Non-Equity).Total", 0),
         ],
     },
     {
@@ -217,7 +217,7 @@ TESTS = [
             ("Capital Gains.STCG (Section 111A)", 0),
             ("Capital Gains.STCG (Other).Total", 0),
             ("Capital Gains.LTCG (Section 112A)", 4000),
-            ("Capital Gains.LTCG (Non-Equity @ 12.5%).Debentures", 6000),
+            ("Capital Gains.LTCG (Non-Equity).Debentures", 6000),
             ("Gross Total Income", 10000),
         ],
     },

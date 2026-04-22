@@ -260,10 +260,11 @@ def calculate(inp: dict) -> dict:
         g(gs, "Overtime Pay"),
         g(gs, "LTA"),
         g(gs, "Special Allowance"),
+        g(gs, "Entertainment Allowance"),
     ])
 
     basic_da = g(gs, "Basic Salary") + g(gs, "Dearness Allowance")
-    metro_pct = 0.50 if "metro" in city else 0.40
+    metro_pct = 0.50 if city == "metro" else 0.40
 
     # Section 10(13A) — HRA exemption (old regime only)
     if regime == "old":
@@ -643,11 +644,11 @@ def calculate(inp: dict) -> dict:
                 "Total": round2(stcg_other),
             },
             "LTCG (Section 112A)": round2(ltcg_112A),
-            "LTCG (Non-Equity @ 12.5%)": {
+            "LTCG (Non-Equity)": {
                 **{k: round2(v) for k, v in ltcg_noneq_12_breakdown.items()},
                 "Total": round2(ltcg_noneq_12),
             },
-            "LTCG (Other @ 20%)": round2(ltcg_other_20),
+            "LTCG (Other)": round2(ltcg_other_20),
         },
         "Income from Other Sources": {
             "Savings Bank Interest": round2(savings_bank_interest),
@@ -673,16 +674,16 @@ def calculate(inp: dict) -> dict:
         "Total Taxable Income": round2(total_taxable),
         "Tax Computation": {
             "Tax at Slab Rates":                    round2(tax_slab),
-            "Tax on STCG (Section 111A) at 20%":    round2(tax_stcg_111A),
+            "Tax on STCG (Section 111A)":    round2(tax_stcg_111A),
             "Tax on STCG (Other)":                  round2(tax_stcg_other),
-            "Tax on LTCG (Section 112A) at 12.5%":  round2(tax_ltcg_112A),
-            "Tax on LTCG (Non-Equity) at 12.5%":    round2(tax_ltcg_noneq_12),
-            "Tax on LTCG (Other) at 20%":            round2(tax_ltcg_other_20),
+            "Tax on LTCG (Section 112A)":  round2(tax_ltcg_112A),
+            "Tax on LTCG (Non-Equity)":    round2(tax_ltcg_noneq_12),
+            "Tax on LTCG (Other)":            round2(tax_ltcg_other_20),
             "Total Tax Before Rebate":              round2(total_before_rebate),
             "Less: Rebate under Section 87A":       round2(rebate_87A),
             "Tax After Rebate":                     round2(tax_after_rebate),
             "Surcharge":                            round2(surcharge),
-            "Health and Education Cess (4%)":       round2(cess),
+            "Health and Education Cess":       round2(cess),
             "Total Tax Liability":                  round2(total_tax_liability),
             "Less: TDS":                            round2(tds),
             "Net Tax Payable / Refund":             round2(net_tax),

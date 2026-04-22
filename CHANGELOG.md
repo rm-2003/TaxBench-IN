@@ -147,3 +147,34 @@ Detailed per-area plans stored in `.claude/plans/`:
 | Govt employer NPS (80CCD(2)) | Compulsory for government employees | If govt, employer contribution auto-set to at least 14% of Basic+DA |
 | New regime gating | Only Section 16(ia) and 80CCD(2) allowed under new regime | Section 10(13A), 10(5), 16(ii), 16(iii), 80C/CCC/CCD(1)/CCD(1B)/80D/80E/80G/80TTA/80TTB all zeroed out |
 | 87A marginal relief | New regime only | Old regime: simple rebate (no marginal relief); New regime: marginal relief when income > ₹12L |
+
+---
+
+### v1.3.2
+
+#### v1.3.2.1
+| Area | Change | Rule / Notes |
+|---|---|---|
+| Synthetic data generator | Implemented via `tests/generate_test_cases.py` | 19 parameters with full factor definitions; generates pairwise, OTA, or full-factorial test cases; imports calculator for ground-truth expected outputs |
+| Benchmark profiles | ~10 recognizable taxpayer archetypes (private new-regime, govt old-regime, senior investor, marginal relief, surcharge boundary, zero-salary, maxed-deductions, ultra-high income, govt new-regime, all-sections-active) | Each profile fixes 7–10 parameters to non-trivial values, varies 8–12 remaining parameters; ~50 cases per profile, 500 total; layers on top of generator strategy to test section interactions (caps, loss netting, relief calculations) |
+
+#### v1.3.2.2
+| Area | Change | Rule / Notes |
+|---|---|---|
+| Metro city check (bug fix) | `"metro" in city` → `city == "metro"` | Was matching `"non-metro"` as metro (50% instead of 40%) |
+| Entertainment Allowance in Gross Salary (bug fix) | Added to gross salary sum | Was missing — entertainment component not counted in total gross salary |
+| Generator implemented | `python3 tests/generate_test_cases.py [pairwise\|ota\|profiles]` | Default mode `profiles` generates 569 test cases across 10 profiles; each JSON contains `input`, `_description`, `_expected` |
+| Test cases generated | 569 cases in `tests/generated/` | `input_0001.json` – `input_0569.json`; profile-to-case mapping documented in `benchmark-profiles.md` |
+
+#### v1.3.2.3
+| Area | Change | Rule / Notes |
+|---|---|---|
+| **Output key renames — rates removed** | **7 JSON keys renamed across `Script_output.json`, `tax_calculator.py`, `calculator_tests/run_tests.py`, and all 569 generated test cases** | **LLM must infer tax rates from context, not from field names** |
+| `LTCG (Non-Equity @ 12.5%)` | → **`LTCG (Non-Equity)`** | Capital Gains section |
+| `LTCG (Other @ 20%)` | → **`LTCG (Other)`** | Capital Gains section |
+| `Tax on STCG (Section 111A) at 20%` | → **`Tax on STCG (Section 111A)`** | Tax Computation section |
+| `Tax on LTCG (Section 112A) at 12.5%` | → **`Tax on LTCG (Section 112A)`** | Tax Computation section |
+| `Tax on LTCG (Non-Equity) at 12.5%` | → **`Tax on LTCG (Non-Equity)`** | Tax Computation section |
+| `Tax on LTCG (Other) at 20%` | → **`Tax on LTCG (Other)`** | Tax Computation section |
+| `Health and Education Cess (4%)` | → **`Health and Education Cess`** | Tax Computation section |
+| **Reusable rename tool** | **`tools/rename_json_keys.py`** | **Edit `MAPPING` dict + `TARGETS` list, run script; handles JSON (recursive key rename) and Python/text (exact string replacement)** |
