@@ -187,17 +187,38 @@ Detailed per-area plans stored in `.claude/plans/`:
 
 | Area | Change | Rule / Notes |
 |---|---|---|
-| LLM benchmark evaluator | Plan finalised (`tests/evaluate_llm.py`) | Feeds each generated test case to an LLM via API, multi-turn tool-calling loop, scores output against `_expected` |
-| Calculator tool | Single `calculate` tool exposed to LLMs | Operations: add, subtract, multiply, divide (float); N operands (2+), left-associative; parallel calls encouraged |
-| Multi-turn flow | LLM calls `calculate` tool iteratively until it returns final JSON | Max 20 rounds (configurable `MAX_TOOL_ROUNDS`); cap hit → case scored 0 |
-| System prompt | Includes output JSON schema, 80CCE cap rules, capital loss set-off matrix | Does NOT include: new regime restrictions, HRA rules, 80D/80E/80G rules, vehicle exemption, CII indexation — LLM must know these |
-| Scoring | 37 fields, 1 point each, ±0.01 tolerance | Combined fields: 80C+80CCC+80CCD(1) as one; STCG sum as one; LTCG sum as one. Tax lines scored individually |
-| Models | Qwen 3.5 8B, Gemma 4, Llama 70B, DeepSeek v2, DeepSeek R1, Qwen 250B | All via OpenRouter (OpenAI-compatible API) |
-| Checkpointing | JSONL per model in `tests/evaluation_checkpoints/` | Each completed case appended immediately; re-run resumes from next unprocessed case |
-| Output reports | Per-case CSV, cross-model summary CSV, console summary | Per-section accuracy breakdown (salary, capital gains, deductions, tax computation) |
+| LLM benchmark evaluator | Plan finalised (`tests/evaluate_llm.py`) | Feeds each generated test case to an LLM via API, scores output against `_expected` |
+| Three evaluation methods | Zero-shot, Script, Tool-call | Run in priority order; each method run for all models before moving to next; CLI `--method` flag selects which to run |
+| Zero-shot method | Single turn: system prompt + input → LLM responds with JSON | No retries, no tools; parse failure = 0 score; purest test of model knowledge |
+| Script method | LLM writes Python script, executed in subprocess | Input via temp file; stdout = output JSON; up to `MAX_SCRIPT_RETRIES` (3) error-fix cycles; `SCRIPT_TIMEOUT` (20s); numpy/pandas available |
+| Tool-call method | Multi-turn with `calculate` tool | Single tool (add/subtract/multiply/divide, N operands, left-associative); parallel calls encouraged; `MAX_TOOL_ROUNDS` (20) cap |
+| System prompt | Output JSON schema only + method-specific instructions | No tax rules included — LLM must rely on training data for all tax logic (80CCE, loss set-off, new regime, HRA, 80D, etc.) |
+| Prompt tuning | 3-phase: tune on weakest model → validate on mid+strong → freeze | Format adherence only (not tax-logic hints); document before/after parse-failure rates for paper methodology section |
+| Scoring | 37 fields, 1 point each, ±0.01 tolerance | Combined: 80C+80CCC+80CCD(1) as one; STCG sum as one; LTCG sum as one; tax lines scored individually |
+| Models (8 total) | Tier 1: qwen3-coder, gpt-oss-120b, llama-3.3-70b; Tier 2: gemma-4-31b, minimax-m2.5; Tier 3: ling-2.6-flash, nemotron-nano-9b, gpt-oss-20b | All free-tier via OpenRouter; tiered selection designed to maximise performance variation |
+| Latency & token tracking | Per-case: wall-clock latency (sec), prompt/completion/total tokens | Summed across all turns for multi-turn methods; enables accuracy-vs-cost analysis across methods |
+| Checkpointing | JSONL per (model, method) pair | `<model_slug>__<method>.jsonl`; each case appended immediately; re-run resumes from next unprocessed case |
+| Rate limiting | Layered: baseline delay + 429 backoff + auto-slowdown + daily-limit detection | 3 retries with exponential backoff on transient errors; skipped cases retried on next run |
+| Output reports | Per-model-method CSV, per-method summary CSV, cross-method pivot CSV, console summary | Pivot shows accuracy / tokens / latency per model × method; per-method summary generated independently |
+| CLI interface | `--method`, `--model`, `--max-rounds`, `--max-script-retries`, `--script-timeout`, `--delay` | All optional with sensible defaults; `--method` defaults to `zero-shot` |
+
+### v1.4.2
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `tests/prompts/system_prompt.txt` | Implemented | Role statement (FY 2025-26), input field interpretation guide (FMV, multi-year premiums, repayment year, MF types, etc.), exact output JSON schema with all 37+ fields. No tax rules. Method-specific instructions appended programmatically. |
+| `tests/tune_prompt.py` | Implemented | Interactive prompt tuning: runs 5 sample cases on 3 models (weak/mid/strong) per iteration; reports parse rate, key mismatches, failure patterns, field-by-field scores; logs each run to `tuning_log.jsonl` with prompt hash and per-tier results |
+| `tests/evaluate_llm.py` | Implemented | Main benchmark script: 3 methods (zero-shot, script, tool-call), 6 models, JSONL checkpointing per (model, method), rate-limit handling, CSV reports, console summary |
+| `tests/run_generated_tests.py` | Implemented | Ground-truth verification: runs calculator on all 569 generated cases, compares to `_expected` field-by-field with ±0.01 tolerance. **569/569 passed.** |
+| Model list refined | 6 models (down from 8) | Tier 1: gpt-oss-120b, llama-3.3-70b; Tier 2: gemma-4-31b, nemotron-3-super-120b; Tier 3: nemotron-nano-9b, gpt-oss-20b. Deferred: qwen3-coder, minimax-m2.5, ling-2.6-flash |
+| Script method sandboxing | Isolated temp directory | `tempfile.mkdtemp()` with only `input.json`; no access to project files (`tax_calculator.py`, test cases); Python standard library only |
+| Cost guard | Balance-check approach | Captures initial usage at start; checks OpenRouter credits endpoint every 5 cases; halts if >$0.01 spent. Confirmed all `:free` models cost $0 per call. |
+| Reasoning model handling | `get_response_text()` fallback | Prefers `content` field; falls back to `reasoning` field if content is None (Nemotron, GPT-OSS reasoning models). `extract_json()` handles fences, preamble, brace-matching. |
+| Checkpoint storage | Per-case JSONL with full output | Stores: parsed JSON output, 37 field scores, 37 pct_error values, latency, tokens, conversation transcript (truncated, only for failed/low-score cases) |
+| Per-field pct_error | Added to scoring and CSV | `abs(expected - actual) / max(abs(expected), 1)` per field — distinguishes rounding errors from wrong-bracket errors in analysis |
+| Llama 3.3 70B | Upstream 429s from Venice provider | Retry/backoff logic handles it; model kept in list but may be unreliable during high-traffic periods |
 
 ### Placeholders (not yet implemented)
-- `tests/evaluate_llm.py` script
-- `tests/run_generated_tests.py` ground-truth verification script
-- Final decision on OpenRouter vs self-hosted for small models
-- Rate-limit delay and retry strategy
+- Prompt tuning execution (phases 1–3)
+- Full benchmark runs (zero-shot → script → tool-call)
+- Tool-call method runtime validation (MAX_TOOL_ROUNDS sufficiency)
