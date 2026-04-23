@@ -178,3 +178,26 @@ Detailed per-area plans stored in `.claude/plans/`:
 | `Tax on LTCG (Other) at 20%` | → **`Tax on LTCG (Other)`** | Tax Computation section |
 | `Health and Education Cess (4%)` | → **`Health and Education Cess`** | Tax Computation section |
 | **Reusable rename tool** | **`tools/rename_json_keys.py`** | **Edit `MAPPING` dict + `TARGETS` list, run script; handles JSON (recursive key rename) and Python/text (exact string replacement)** |
+
+---
+
+## v1.4
+
+### v1.4.1
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| LLM benchmark evaluator | Plan finalised (`tests/evaluate_llm.py`) | Feeds each generated test case to an LLM via API, multi-turn tool-calling loop, scores output against `_expected` |
+| Calculator tool | Single `calculate` tool exposed to LLMs | Operations: add, subtract, multiply, divide (float); N operands (2+), left-associative; parallel calls encouraged |
+| Multi-turn flow | LLM calls `calculate` tool iteratively until it returns final JSON | Max 20 rounds (configurable `MAX_TOOL_ROUNDS`); cap hit → case scored 0 |
+| System prompt | Includes output JSON schema, 80CCE cap rules, capital loss set-off matrix | Does NOT include: new regime restrictions, HRA rules, 80D/80E/80G rules, vehicle exemption, CII indexation — LLM must know these |
+| Scoring | 37 fields, 1 point each, ±0.01 tolerance | Combined fields: 80C+80CCC+80CCD(1) as one; STCG sum as one; LTCG sum as one. Tax lines scored individually |
+| Models | Qwen 3.5 8B, Gemma 4, Llama 70B, DeepSeek v2, DeepSeek R1, Qwen 250B | All via OpenRouter (OpenAI-compatible API) |
+| Checkpointing | JSONL per model in `tests/evaluation_checkpoints/` | Each completed case appended immediately; re-run resumes from next unprocessed case |
+| Output reports | Per-case CSV, cross-model summary CSV, console summary | Per-section accuracy breakdown (salary, capital gains, deductions, tax computation) |
+
+### Placeholders (not yet implemented)
+- `tests/evaluate_llm.py` script
+- `tests/run_generated_tests.py` ground-truth verification script
+- Final decision on OpenRouter vs self-hosted for small models
+- Rate-limit delay and retry strategy
