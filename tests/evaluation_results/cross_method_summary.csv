@@ -1,2 +1,2 @@
 model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_accuracy,script_mean_tokens,script_mean_latency,tool-call_accuracy,tool-call_mean_tokens,tool-call_mean_latency
-openai/gpt-oss-120b:free,0.1054,3406.0,52.1,,,,,,
+tencent/hy3-preview:free,0.5541,23187.0,335.99,,,,,,

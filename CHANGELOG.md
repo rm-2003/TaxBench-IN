@@ -222,3 +222,49 @@ Detailed per-area plans stored in `.claude/plans/`:
 - Prompt tuning execution (phases 1–3)
 - Full benchmark runs (zero-shot → script → tool-call)
 - Tool-call method runtime validation (MAX_TOOL_ROUNDS sufficiency)
+
+### v1.4.3
+
+| Concurrency & RPM | Thread-pool concurrency + rate limiter | **RPM** (requests per minute): enforces minimum gap between API calls (e.g., RPM=18 → one call every 3.3s). **Concurrency**: max threads in flight simultaneously (e.g., 9 threads). RPM is the bottleneck — despite 9 threads ready, calls dispatch one-at-a-time through the rate limiter. Concurrency helps because while one thread waits for a slow API response (20–100s), others can fire in the next RPM slot. Example: 6 models × 3 cases = 18 tasks, RPM=18, concurrency=9 → all 18 dispatched in ~60s, responses return over the next 20–100s. Same logic in both `tune_prompt.py` (default RPM=12, concurrency=6) and `evaluate_llm.py` (default RPM=15, concurrency=5). |
+
+### v1.4.4
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `max_tokens` unified to 16384 | All models now use `max_tokens=16384` | Previously 4096 default; Llama 70B was exhausting tokens on `<think>` chain-of-thought at 4K and never reaching JSON output. 16K headroom fixes parse failures across all reasoning models without meaningful cost increase for non-reasoning models (they stop when done). |
+| Llama 70B parse fix validated | 67–70% → 100% parse rate | `input_0341` (deterministic failure at 4K) now parses at 59.5%. Cost stayed flat (~$0.0007/call). Failure was purely token budget, not model capability. |
+| Qwen 3.5 9B evaluated and dropped | 33% parse at 4K, 33% at 16K, **0% at no-cap** | Model ignores `<think>` tag instruction, reasons in plaintext, never transitions to JSON. More tokens = worse results + higher cost ($0.0009 → $0.0018 → $0.0068/call). Fundamental instruction-following failure — not fixable via token limits or prompt changes. |
+| Gemma 4 31B evaluated | 100% parse, 57.7% mean score | Free endpoint 429s but paid fallback works. Correct key names, no structural issues. Added to model list as Mid tier. |
+| Key normalization (`_normalize_keys`) | Fixes tokenizer-mangled key names | `_KEY_LOOKUP` maps space-stripped lowercase keys to correct schema keys (e.g. `"Under HeadSalaries"` → `"Under Head Salaries"`). Fixes Nemotron 9B's 4/10 key-name errors. Applied to all `extract_json` return paths in both scripts. |
+| Model list updated to 8 | Strong: gpt-oss-120b, hy3-preview; Mid: deepseek-v3, llama-70b, gemma-4-31b; Weak: gpt-oss-20b, nemotron-nano-9b, qwen-3.5-9b | Qwen included for completeness but expected to fail. Per-model RPM/concurrency config added to `evaluate_llm.py`. |
+| Per-model config in `evaluate_llm.py` | `MODEL_CONFIG` dict with RPM + concurrency per model | Free models: RPM=12, concurrency=4 (conservative). Paid models: RPM=25, concurrency=8. Budget raised to $17. |
+| Parallel model execution | All models run simultaneously via top-level `ThreadPoolExecutor` | Each model gets its own `RateLimiter` instance and inner case-level thread pool. Wall-clock time bounded by slowest model. Global `_rate_limiter` removed; `rate_limiter` passed as parameter through `api_call_with_retry` → runners → `evaluate_case`. `_print_lock` added; all log lines prefixed with `[model-tag]`. |
+| Free→paid fallback (`evaluate_llm.py`) | `FREE_FALLBACKS` dict (gemma-4-31b-it:free → paid) | On 2nd consecutive 429, switches model in API call and creates new `RateLimiter` with paid config (25 RPM). Stored in `model_delay_state` so all subsequent cases for that model use the upgraded rate limiter. |
+| Free→paid fallback (`tune_prompt.py`) | `FREE_FALLBACKS` dict with same mapping | On 2nd 429, switches model in `_create_completion`. No rate limiter upgrade (unnecessary for small tuning runs). |
+| Seed-based case selection | `--seed` CLI arg (default 42), `random.Random(seed).shuffle()` | Deterministic shuffle before slicing to `--max-cases`. Run `--max-cases 10` then `--max-cases 100` with same seed: first 10 are a prefix of the 100, checkpoints carry over. |
+| Per-case cost tracking | `TokenTracker.cost` accumulates `usage.cost` from OpenRouter responses | Stored in `CaseResult.cost`, checkpointed in JSONL, included in per-model CSV (`cost` column), method summary CSV (`total_cost`, `mean_cost`), console summary, and per-case progress lines. |
+
+#### Logging additions (`evaluate_llm.py`)
+
+| Area | Detail |
+|---|---|
+| `LOGS_DIR` | New path constant: `tests/evaluation_logs/` |
+| `_Tee` class | Duplicates writes to both console and log file via `sys.stdout`/`sys.stderr` replacement |
+| Log file naming | `run_{method}_{UTC timestamp}.log` (e.g. `run_zero-shot_20260424_120000.log`) |
+| Tee setup | At start of `main()`: creates `LOGS_DIR`, opens log file, wraps both stdout and stderr with `_Tee` |
+| Tee teardown | At end of `main()`: prints log path, restores original stdout/stderr, closes file |
+| What's captured | All console output — per-case progress lines (`[model-tag] [n/N] ...`), 429/retry messages, per-model summaries, cost guard alerts, final method summary, total spend |
+
+#### Fixes from benchmark runs (`evaluate_llm.py`)
+
+| Fix | Trigger | Change |
+|---|---|---|
+| Free-tier fallback ordering | Run 1: Gemma 0/10 — `"limit exceeded"` in 429 message matched daily-cap check, bypassing `FREE_FALLBACKS` entirely | Moved `FREE_FALLBACKS` lookup before daily-cap raise; narrowed daily-cap check to `"daily"` only (not `"limit exceeded"`) |
+| Fallback `kwargs` rebuild bug | Run 1: Paid model was never actually called — `call_kwargs = dict(kwargs)` at top of retry loop reset model to free on every iteration | Introduced `active_model` variable outside retry loop; `call_kwargs["model"]` set from `active_model` so fallback persists across iterations |
+| Immediate fallback on first 429 | Run 1: Retrying the same rate-limited free endpoint is pointless | Removed `attempt >= 1` guard — fallback triggers on first 429 instead of waiting for a second failure |
+| `max_tokens` bump | Run 1: Llama 70B 2/10 parse failures at 16384 tokens | 16384 → 32768 for all models; non-reasoning models stop when done so no cost increase |
+| `RateLimitExhausted` exception | Run 2: Needed to distinguish rate-limit exhaustion from other failures for self-healing logic | New exception type raised when all retries exhausted due to 429s |
+| Sliding window case submission | Run 2: All cases submitted upfront → queued futures all fail independently on rate limits | Cases fed incrementally in a window of `concurrency` size; allows stopping the tap on rate limits without queued futures piling up |
+| Self-healing rate-limit pause | Run 2: Transient platform-wide free-tier rate limits caused cascading failures | On `RateLimitExhausted`: stop feeding new cases, drain in-flight. If any in-flight succeeds → reset and resume. If all drain with rate limits → cooldown sleep (120s), then retry remaining. After 2 cooldowns → halt model |
+| **`MAX_OUTPUT_TOKENS` removed** | Models were capped at 32768 even when they could benefit from unlimited output | `MAX_OUTPUT_TOKENS = None` — `max_tokens` param is no longer sent in API calls, letting each model use its provider default. Per-model overrides possible via `MODEL_CONFIG["max_tokens"]`. **Important:** removes the safety cap on token generation; runaway reasoning models may produce very large (and costly) responses. |
+| Free-model rate limits raised | hy3-preview and nemotron were under-utilised at rpm=12, concurrency=4 | hy3-preview: 12→20 RPM, 4→8 concurrency. nemotron-nano-9b: 12→20 RPM, 4→8 concurrency. Gemma unchanged (still 429-prone, relies on paid fallback). |

@@ -45,9 +45,11 @@ TUNING_LOG = SCRIPT_DIR / "prompts" / "tuning_log.jsonl"
 # Tuning models — one per tier
 # ---------------------------------------------------------------------------
 TUNING_MODELS = {
-    # 503 retry: 7 remaining cases for both paid OpenAI models
-    "strong_1": "openai/gpt-oss-120b",
-    "weak_2":   "openai/gpt-oss-20b",
+    "weak_1":   "qwen/qwen3.5-9b",
+}
+
+FREE_FALLBACKS = {
+    "google/gemma-4-31b-it:free": "google/gemma-4-31b-it",
 }
 
 # ---------------------------------------------------------------------------
@@ -390,7 +392,7 @@ def _create_completion(client, model, *, tools=None, **kwargs):
     if use_json and tools is None:
         call_kwargs["response_format"] = {"type": "json_object"}
 
-    for attempt in range(2):
+    for attempt in range(3):
         try:
             resp = client.chat.completions.create(**call_kwargs)
             _cost_guard.check(resp, model=model)
@@ -424,8 +426,14 @@ def _create_completion(client, model, *, tools=None, **kwargs):
                     del call_kwargs["response_format"]
                 continue
 
-            # 429 rate limit — wait and retry
+            # 429 rate limit — wait and retry, or fall back to paid variant
             if status == 429 or "429" in err_str or "rate" in err_str:
+                fallback = FREE_FALLBACKS.get(model)
+                if attempt >= 1 and fallback:
+                    print(f"      429 persists — switching {model} → {fallback}")
+                    model = fallback
+                    call_kwargs["model"] = fallback
+                    continue
                 wait = [15, 60][min(attempt, 1)]
                 print(f"      429 rate limit — waiting {wait}s (attempt {attempt+1}/2)")
                 time.sleep(wait)

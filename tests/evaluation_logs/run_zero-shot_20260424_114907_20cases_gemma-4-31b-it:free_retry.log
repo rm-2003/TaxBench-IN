@@ -1,0 +1,74 @@
+Method: zero-shot | Models: 1 | Cases: 20 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=20, budget=$17.00
+  gemma-4-31b-it:free                 rpm=12  concurrency=4
+  Cost guard: initial usage = $2366.3966, budget = $17.00
+
+[gemma-4-31b-it:free] Starting — rpm=12, concurrency=4
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [1/20] input_0255.json OK score=18/37 (49%) rounds=1 latency=25.6s tokens=3330 cost=$0.0007
+[gemma-4-31b-it:free] [2/20] input_0289.json OK score=18/37 (49%) rounds=1 latency=26.4s tokens=3192 cost=$0.0000
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [3/20] input_0199.json OK score=20/37 (54%) rounds=1 latency=33.0s tokens=3288 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [4/20] input_0132.json OK score=16/37 (43%) rounds=1 latency=25.2s tokens=3457 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [5/20] input_0097.json OK score=13/37 (35%) rounds=1 latency=28.0s tokens=3481 cost=$0.0007
+  [cost guard] $0.0062 spent of $17.00 budget
+[gemma-4-31b-it:free] [6/20] input_0529.json OK score=13/37 (35%) rounds=1 latency=37.4s tokens=3457 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [7/20] input_0287.json OK score=17/37 (46%) rounds=1 latency=77.2s tokens=3337 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [8/20] input_0156.json OK score=21/37 (57%) rounds=1 latency=21.5s tokens=3276 cost=$0.0006
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [9/20] input_0208.json OK score=22/37 (59%) rounds=1 latency=37.1s tokens=3212 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [10/20] input_0280.json OK score=17/37 (46%) rounds=1 latency=61.0s tokens=3312 cost=$0.0007
+  [cost guard] $0.0095 spent of $17.00 budget
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [11/20] input_0443.json OK score=18/37 (49%) rounds=1 latency=46.7s tokens=3349 cost=$0.0006
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [12/20] input_0016.json OK score=23/37 (62%) rounds=1 latency=47.4s tokens=3265 cost=$0.0007
+[gemma-4-31b-it:free] [13/20] input_0212.json OK score=21/37 (57%) rounds=1 latency=35.8s tokens=3312 cost=$0.0007
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [14/20] input_0549.json OK score=14/37 (38%) rounds=1 latency=24.7s tokens=3323 cost=$0.0006
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [15/20] input_0060.json OK score=24/37 (65%) rounds=1 latency=28.5s tokens=3227 cost=$0.0006
+  [cost guard] $0.0102 spent of $17.00 budget
+      429 on free tier — switching google/gemma-4-31b-it:free → google/gemma-4-31b-it
+[gemma-4-31b-it:free] [16/20] input_0179.json OK score=23/37 (62%) rounds=1 latency=36.1s tokens=3115 cost=$0.0006
+[gemma-4-31b-it:free] [17/20] input_0089.json OK score=17/37 (46%) rounds=1 latency=46.6s tokens=3293 cost=$0.0007
+[gemma-4-31b-it:free] [18/20] input_0355.json OK score=23/37 (62%) rounds=1 latency=35.5s tokens=2938 cost=$0.0005
+[gemma-4-31b-it:free] [19/20] input_0141.json OK score=16/37 (43%) rounds=1 latency=26.6s tokens=3200 cost=$0.0000
+[gemma-4-31b-it:free] [20/20] input_0248.json OK score=14/37 (38%) rounds=1 latency=53.1s tokens=3370 cost=$0.0007
+  [cost guard] $0.0135 spent of $17.00 budget
+
+=== Evaluation Report: google/gemma-4-31b-it:free [zero-shot] ===
+Overall accuracy:    49.7% (20 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields):            49.3%
+  Capital Gains (2 fields):     15.0%
+  Other Sources (3 fields):     93.3%
+  Aggregates (2 fields):        0.0%
+  Deductions (9 fields):        78.3%
+  Tax Computation (14 fields):  34.3%
+
+Cost / efficiency:
+  Mean latency:          37.7 sec/case
+  Mean tokens:           3,287 total (2,459 prompt + 827 completion)
+  Total tokens (all):    65,734
+  Total cost:            $0.0118 ($0.0006/case)
+[gemma-4-31b-it:free] CSV: /Users/rishabh/Desktop/personal/Thesis_code/tests/evaluation_results/google_gemma-4-31b-it_free__zero-shot_results.csv
+
+Method summary: /Users/rishabh/Desktop/personal/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/rishabh/Desktop/personal/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0153
+
+Log saved: /Users/rishabh/Desktop/personal/Thesis_code/tests/evaluation_logs/run_zero-shot_20260424_114907.log

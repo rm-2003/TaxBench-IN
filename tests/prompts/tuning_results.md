@@ -173,3 +173,90 @@ The prompt is frozen. Parse failures fall into three categories:
 1. **Provider outages** (gpt-oss-120b, gpt-oss-20b): Infrastructure issue, not model or prompt problem — resolved via paid endpoints
 2. **Token budget exhaustion** (Llama 70B, 10% of cases): Model starts reasoning but can't finish — systemic limitation
 3. **Instruction reflection** (hy3-preview, 10% of cases): Model discusses prompt instructions instead of following them — rare
+
+---
+
+## New model evaluation — Gemma 4 31B & Qwen 3.5 9B (3 cases)
+
+Date: 2026-04-24
+Method: zero-shot
+Cases: seed 77, 3 cases: `input_0259`, `input_0334`, `input_0203`
+Settings: RPM=18, concurrency=9
+Prompt hash: `56a6dbd9`
+
+### google/gemma-4-31b-it (max_tokens=4096)
+
+| Case | Score | Notes |
+|------|-------|-------|
+| input_0334 | 26/37 (70.3%) | |
+| input_0203 | 25/37 (67.6%) | |
+| input_0259 | 13/37 (35.1%) | Hardest case (above-2Cr, surcharge, multiple exemptions) |
+
+- **Parse rate**: 3/3 (100%)
+- **Mean score**: 57.7%
+- **Cost**: $0.00 (free endpoint 429'd → fell back to paid, negligible cost)
+- **Notes**: Free endpoint (`google/gemma-4-31b-it:free`) returned 429 on all 3 cases. All recovered via paid fallback (`google/gemma-4-31b-it`). 100% JSON adherence, correct key names, no structural issues.
+
+### qwen/qwen3.5-9b — initial run (max_tokens=4096)
+
+| Case | Score | Notes |
+|------|-------|-------|
+| input_0334 | **FAIL** | Plaintext reasoning, no JSON produced |
+| input_0203 | **FAIL** | Plaintext reasoning, no JSON produced |
+| input_0259 | 1/37 (2.7%) | Flat/wrong key nesting — keys at root instead of nested |
+
+- **Parse rate**: 1/3 (33%)
+- **Mean score**: 2.7%
+- **Cost**: $0.0026
+- **Failure pattern**: Qwen ignores `<think>` tag instruction, reasons in plaintext, exhausts token budget before producing JSON. The one case that parsed had structurally wrong nesting (e.g. `Section 10(13A)` at root instead of under `Under Head Salaries.Exemptions`).
+
+### qwen/qwen3.5-9b — re-run with max_tokens=16384
+
+| Case | Score | Notes |
+|------|-------|-------|
+| input_0334 | 3/37 (8.1%) | Parsed but wrong nesting — missing Capital Gains, flat structure |
+| input_0259 | **FAIL** | Plaintext reasoning, no JSON produced |
+| input_0203 | **FAIL** | Plaintext reasoning, no JSON produced |
+
+- **Parse rate**: 1/3 (33%) — unchanged from 4096 run
+- **Mean score**: 8.1%
+- **Cost**: $0.0054 (doubled from 4096 run due to longer generation)
+- **Conclusion**: Higher token limit did not fix parse failures — Qwen generates extended plaintext reasoning even with 16K tokens available and still never produces JSON. The one parsed case improved from 1/37 to 3/37 but structure remains fundamentally wrong (flat keys, missing entire sections like Capital Gains). This model cannot follow the prompt format.
+
+### meta-llama/llama-3.3-70b-instruct — re-run with max_tokens=16384
+
+Seed 77 cases (same 3 as above) + `input_0341` (previously deterministic failure):
+
+| Case | Score | Notes |
+|------|-------|-------|
+| input_0334 | 23/37 (62.2%) | Previously failed at 4K tokens |
+| input_0203 | 20/37 (54.1%) | |
+| input_0259 | 16/37 (43.2%) | |
+| input_0341 | 22/37 (59.5%) | **Previously deterministic failure** — now parses and scores |
+
+- **Parse rate**: 4/4 (100%) — up from 67% (seed 77) and 70% (extended 10-case run)
+- **Mean score**: 53.2% (seed 77 cases), 59.5% (input_0341)
+- **Cost**: $0.0022 (3 cases) + $0.0005 (input_0341) = $0.0027
+- **Conclusion**: The 16384 token limit fully resolves Llama 70B's parse failures. The model was exhausting tokens on `<think>` chain-of-thought at 4K and never reaching JSON output. With 16K headroom, all 4 cases parse — including `input_0341` which failed deterministically in all prior runs. This confirms the failure was purely a token budget issue, not a model capability gap.
+
+### Qwen 3.5 9B — degraded performance with increased token limits
+
+Three runs on the same seed 77 cases (`input_0259`, `input_0334`, `input_0203`) with progressively higher token limits:
+
+| Run | max_tokens | Parse Rate | Total Cost | Cost/Call | Est. Output Tokens/Call |
+|-----|-----------|-----------|-----------|----------|------------------------|
+| Run 12 | 4,096 | 1/3 (33%) | $0.0026 | ~$0.0009 | ~3,000 |
+| Run 13 | 16,384 | 1/3 (33%) | $0.0054 | ~$0.0018 | ~3,000 |
+| Run 16 | no cap | **0/3 (0%)** | **$0.0204** | **~$0.0068** | **~10,300** |
+
+**Key findings:**
+
+1. **More tokens = worse results.** At 4K and 16K, `input_0334` parsed (scoring 2.7% and 8.1% respectively). With no cap, even that case failed — the model generated so much reasoning text that it drifted further from ever producing structured output.
+
+2. **Cost scales inversely with quality.** The no-cap run cost 7.5x more than the 4K run ($0.0068 vs $0.0009 per call) while delivering 0% parse rate instead of 33%.
+
+3. **Output token estimation** (from Qwen 3.5 9B pricing ~$0.20/M input + $0.60/M output): the no-cap run generated ~10,300 output tokens per call — all plaintext reasoning, no JSON. The model fills whatever budget it's given with chain-of-thought text.
+
+4. **Contrast with Llama 70B:** Llama's parse failures were a token budget issue — more tokens fixed them (67% → 100% parse, cost stayed flat at ~$0.0007/call). Qwen's failures are an instruction-following issue — more tokens make it worse because the model doesn't know when to stop reasoning and start outputting.
+
+**Conclusion:** Qwen 3.5 9B is not viable for this benchmark at any token limit. The model fundamentally cannot follow the prompt's output format instructions. It generates plaintext reasoning regardless of `<think>` tag guidance, never transitions to JSON output, and consumes more tokens (and cost) the more room it's given. Recommended to drop from the model list.
