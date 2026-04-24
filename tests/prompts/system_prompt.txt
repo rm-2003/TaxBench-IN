@@ -90,3 +90,17 @@ Your response must be a single JSON object with exactly this structure and these
         "Net Tax Payable / Refund": 0
     }
 }
+
+## Response format rules
+
+If you need to reason, do so inside <think></think> tags before the JSON. Your response after the closing </think> tag must be only the JSON object.
+
+Do not include any explanation after the closing }.
+Do not say "Here is the JSON" or anything similar before the {.
+
+WRONG: ```json
+{ ... }
+```
+CORRECT: { ... }
+
+Your entire response must be a single JSON object. Begin your response with { and end with }. Nothing else.

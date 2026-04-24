@@ -21,8 +21,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -48,21 +50,25 @@ TOLERANCE = 0.01
 DELAY_BETWEEN_CASES = 1.0
 MAX_TRANSIENT_RETRIES = 3
 CONSECUTIVE_SKIP_LIMIT = 5
+MAX_CONCURRENT = 5
+REQUESTS_PER_MINUTE = 15
+MAX_CASES = 500
 
 # ---------------------------------------------------------------------------
 # Models
 # ---------------------------------------------------------------------------
 MODELS = [
-    # Tier 1: High accuracy candidates (>90% expected)
+    # Tier 1: High accuracy candidates
     "openai/gpt-oss-120b:free",
-    "meta-llama/llama-3.3-70b-instruct:free",
-    # Tier 2: Variable / mid-tier
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    # Tier 3: Likely low accuracy (<70% expected)
+    "tencent/hy3-preview:free",
+    # Tier 2: Mid-tier (paid)
+    "deepseek/deepseek-chat-v3-0324",
+    "meta-llama/llama-3.3-70b-instruct",
+    # Tier 3: Low accuracy expected
     "nvidia/nemotron-nano-9b-v2:free",
     "openai/gpt-oss-20b:free",
 ]
+DEFAULT_BUDGET = 5.00  # USD — max spend before halting
 
 # ---------------------------------------------------------------------------
 # Scored field definitions (37 fields)
@@ -211,52 +217,49 @@ COST_CHECK_INTERVAL = 5
 
 
 class CostGuard:
-    def __init__(self):
+    def __init__(self, budget=DEFAULT_BUDGET):
+        self.budget = budget
         self.cases_since_check = 0
         self.initial_usage = None
+        self._lock = threading.Lock()
 
     def initialize(self):
         """Capture the starting usage from OpenRouter credits endpoint."""
         self.initial_usage = self._fetch_usage()
         if self.initial_usage is not None:
-            print(f"  Cost guard: initial usage = ${self.initial_usage:.4f}")
+            print(f"  Cost guard: initial usage = ${self.initial_usage:.4f}, budget = ${self.budget:.2f}")
 
     def case_completed(self):
         """Call after each case completes. Checks balance every N cases."""
-        self.cases_since_check += 1
-        if self.cases_since_check >= COST_CHECK_INTERVAL:
-            self.cases_since_check = 0
-            self._check_balance()
+        with self._lock:
+            self.cases_since_check += 1
+            if self.cases_since_check >= COST_CHECK_INTERVAL:
+                self.cases_since_check = 0
+                self._check_balance()
+
+    def spent(self):
+        """Return total spent since start, or None if unknown."""
+        if self.initial_usage is None:
+            return None
+        current = self._fetch_usage()
+        if current is None:
+            return None
+        return current - self.initial_usage
 
     def _fetch_usage(self):
         api_key = os.environ.get("OPENROUTER_API_KEY")
         if not api_key:
             return None
         try:
-            import urllib.request
-            import ssl
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
-            req = urllib.request.Request(
-                "https://openrouter.ai/api/v1/credits",
-                headers={"Authorization": f"Bearer {api_key}"},
+            result = subprocess.run(
+                ["curl", "-s", "https://openrouter.ai/api/v1/credits",
+                 "-H", f"Authorization: Bearer {api_key}"],
+                capture_output=True, text=True, timeout=10,
             )
-            with urllib.request.urlopen(req, context=ctx, timeout=10) as resp:
-                data = json.loads(resp.read())
-                return float(data["data"]["total_usage"])
+            data = json.loads(result.stdout)
+            return float(data["data"]["total_usage"])
         except Exception:
-            # Fallback: use curl
-            try:
-                result = subprocess.run(
-                    ["curl", "-s", "https://openrouter.ai/api/v1/credits",
-                     "-H", f"Authorization: Bearer {api_key}"],
-                    capture_output=True, text=True, timeout=10,
-                )
-                data = json.loads(result.stdout)
-                return float(data["data"]["total_usage"])
-            except Exception:
-                return None
+            return None
 
     def _check_balance(self):
         if self.initial_usage is None:
@@ -265,14 +268,37 @@ class CostGuard:
         if current is None:
             return
         cost = current - self.initial_usage
-        if cost > 0.01:  # more than 1 cent spent
+        if cost > self.budget:
             raise RuntimeError(
-                f"NON-ZERO COST detected: ${cost:.4f} spent since start. "
-                f"Halting to prevent charges. Check model endpoints."
+                f"BUDGET EXCEEDED: ${cost:.4f} spent (budget: ${self.budget:.2f}). "
+                f"Halting. Use --budget to increase."
             )
+        if cost > 0:
+            print(f"  [cost guard] ${cost:.4f} spent of ${self.budget:.2f} budget")
 
 
-_cost_guard = CostGuard()
+_cost_guard = CostGuard()  # re-initialized in main() with --budget value
+
+# ---------------------------------------------------------------------------
+# Rate limiter — thread-safe, enforces N requests per minute
+# ---------------------------------------------------------------------------
+class RateLimiter:
+    def __init__(self, requests_per_minute):
+        self._interval = 60.0 / requests_per_minute
+        self._lock = threading.Lock()
+        self._last_call = 0.0
+
+    def wait(self):
+        with self._lock:
+            now = time.monotonic()
+            elapsed = now - self._last_call
+            if elapsed < self._interval:
+                time.sleep(self._interval - elapsed)
+            self._last_call = time.monotonic()
+
+
+_rate_limiter = RateLimiter(REQUESTS_PER_MINUTE)
+_checkpoint_lock = threading.Lock()
 
 
 # ---------------------------------------------------------------------------
@@ -344,33 +370,103 @@ def get_response_text(message):
     return text
 
 
+def _clean_json_text(text):
+    """Strip control characters that some models embed in JSON output."""
+    return re.sub(r"[\x00-\x09\x0b\x0c\x0e-\x1f]", "", text)
+
+
+def _valid_output(obj):
+    """Return obj if it's a non-empty dict, else None."""
+    return obj if isinstance(obj, dict) and len(obj) > 0 else None
+
+
+_SCHEMA_KEYS = [
+    "Under Head Salaries", "Gross Salary", "Exemptions",
+    "Section 10(13A)", "Section 10(5)",
+    "Section 16(ia)", "Section 16(ii)", "Section 16(iii)",
+    "Net Salary", "Capital Gains", "STCG (Section 111A)",
+    "STCG (Other)", "LTCG (Section 112A)", "LTCG (Non-Equity)",
+    "LTCG (Other)", "Income from Other Sources",
+    "Savings Bank Interest", "Deposit Interest", "Other Interest",
+    "EPF Taxable Interest", "Gross Total Income", "Deductions",
+    "Total Deductions", "Total Taxable Income", "Tax Computation",
+    "Bonds", "Debentures", "G-Secs", "Mutual Funds", "Total",
+    "80C", "80CCC", "80CCD(1)", "80CCD(1B)", "80CCD(2)",
+    "80D", "80E", "80G", "80TTA", "80TTB",
+    "Tax at Slab Rates", "Tax on STCG (Section 111A)",
+    "Tax on STCG (Other)", "Tax on LTCG (Section 112A)",
+    "Tax on LTCG (Non-Equity)", "Tax on LTCG (Other)",
+    "Total Tax Before Rebate", "Less: Rebate under Section 87A",
+    "Tax After Rebate", "Surcharge", "Health and Education Cess",
+    "Total Tax Liability", "Less: TDS", "Net Tax Payable / Refund",
+]
+_KEY_LOOKUP = {k.replace(" ", "").lower(): k for k in _SCHEMA_KEYS}
+
+
+def _normalize_keys(obj):
+    """Recursively fix tokenizer-mangled key names."""
+    if not isinstance(obj, dict):
+        return obj
+    normalized = {}
+    for k, v in obj.items():
+        stripped = k.replace(" ", "").lower()
+        correct_key = _KEY_LOOKUP.get(stripped, k)
+        normalized[correct_key] = _normalize_keys(v)
+    return normalized
+
+
 def extract_json(text):
     try:
-        return json.loads(text)
+        result = _valid_output(json.loads(text))
+        if result is not None:
+            return _normalize_keys(result)
     except (json.JSONDecodeError, TypeError):
         pass
     if not text:
         return None
-    fenced = re.search(r"```(?:json)?\s*\n?(.*?)\n?\s*```", text, re.DOTALL)
+    cleaned = _clean_json_text(text)
+    try:
+        result = _valid_output(json.loads(cleaned))
+        if result is not None:
+            return _normalize_keys(result)
+    except (json.JSONDecodeError, TypeError):
+        pass
+    fenced = re.search(r"```(?:json)?\s*\n?(.*?)\n?\s*```", cleaned, re.DOTALL)
     if fenced:
         try:
-            return json.loads(fenced.group(1))
+            result = _valid_output(json.loads(fenced.group(1)))
+            if result is not None:
+                return _normalize_keys(result)
         except json.JSONDecodeError:
             pass
-    start = text.find("{")
-    if start == -1:
-        return None
-    depth = 0
-    for i in range(start, len(text)):
-        if text[i] == "{":
-            depth += 1
-        elif text[i] == "}":
-            depth -= 1
-            if depth == 0:
-                try:
-                    return json.loads(text[start : i + 1])
-                except json.JSONDecodeError:
-                    return None
+    # Find the largest valid JSON object (skip trivially small ones like {})
+    search_from = 0
+    best = None
+    while True:
+        start = cleaned.find("{", search_from)
+        if start == -1:
+            break
+        depth = 0
+        for i in range(start, len(cleaned)):
+            if cleaned[i] == "{":
+                depth += 1
+            elif cleaned[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    candidate = cleaned[start : i + 1]
+                    try:
+                        parsed = json.loads(candidate)
+                        if isinstance(parsed, dict) and len(parsed) > 0:
+                            if best is None or len(candidate) > len(json.dumps(best)):
+                                best = parsed
+                    except json.JSONDecodeError:
+                        pass
+                    search_from = i + 1
+                    break
+        else:
+            break
+    if best is not None:
+        return _normalize_keys(best)
     return None
 
 
@@ -404,17 +500,42 @@ def execute_calculate(operation, operands):
 def api_call_with_retry(client, model_delay_state, **kwargs):
     """Wraps client.chat.completions.create with retry + 429 handling.
 
+    Automatically attempts response_format=json_object first, falls back
+    without it if the model/provider doesn't support it.
+
     Returns the API response.  Raises on non-recoverable errors.
-    model_delay_state is a mutable dict: {"consecutive_429": int, "delay": float}
+    model_delay_state is a mutable dict: {"consecutive_429": int, "delay": float,
+                                          "json_format_supported": bool}
     """
+    MAX_OUTPUT_TOKENS = 16384
+    use_json_format = model_delay_state.get("json_format_supported", False)
+
     for attempt in range(MAX_TRANSIENT_RETRIES):
+        _rate_limiter.wait()
+        call_kwargs = dict(kwargs)
+        call_kwargs.setdefault("max_tokens", MAX_OUTPUT_TOKENS)
+        if use_json_format and "tools" not in call_kwargs:
+            call_kwargs["response_format"] = {"type": "json_object"}
+
         try:
-            resp = client.chat.completions.create(**kwargs)
+            resp = client.chat.completions.create(**call_kwargs)
             model_delay_state["consecutive_429"] = 0
             return resp
         except Exception as e:
             err_str = str(e).lower()
             status = getattr(e, "status_code", None) or getattr(e, "code", None)
+
+            # response_format not supported — retry without it
+            if use_json_format and (status == 400
+                                    or "response_format" in err_str
+                                    or "json_object" in err_str
+                                    or "json mode" in err_str
+                                    or "not supported" in err_str
+                                    or "unsupported" in err_str
+                                    or "none" in err_str):
+                model_delay_state["json_format_supported"] = False
+                use_json_format = False
+                continue
 
             # Rate limit (429)
             if status == 429 or "429" in err_str or "rate" in err_str:
@@ -447,9 +568,12 @@ def run_zero_shot(client, model, system_prompt, input_json, mds):
     messages = build_messages("zero-shot", system_prompt, input_json)
     resp = api_call_with_retry(client, mds, model=model, messages=messages, temperature=0)
     tracker.add(resp)
+    if not resp.choices or not resp.choices[0].message:
+        return None, 1, tracker, messages
     raw = get_response_text(resp.choices[0].message)
+    messages.append({"role": "assistant", "content": raw[:500]})
     output = extract_json(raw)
-    return output, 1, tracker, messages if output is None else None
+    return output, 1, tracker, (messages if output is None else None)
 
 
 def run_script(client, model, system_prompt, input_json, mds, max_retries, script_timeout):
@@ -461,10 +585,12 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
         resp = api_call_with_retry(client, mds, model=model, messages=messages, temperature=0)
         tracker.add(resp)
         rounds += 1
+        if not resp.choices or not resp.choices[0].message:
+            return None, rounds, tracker, messages
         raw = get_response_text(resp.choices[0].message)
+        messages.append({"role": "assistant", "content": raw[:500]})
         code = extract_code(raw)
         if not code:
-            messages.append({"role": "assistant", "content": raw})
             messages.append({"role": "user", "content": "Error: Could not find Python code in your response. Please provide the complete script."})
             continue
 
@@ -483,7 +609,7 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
             )
             if result.returncode == 0:
                 output = extract_json(result.stdout)
-                return output, rounds, tracker, messages if output is None else None
+                return output, rounds, tracker, (messages if output is None else None)
             else:
                 err = result.stderr[:2000] if result.stderr else "Unknown error"
                 messages.append({"role": "assistant", "content": raw})
@@ -509,14 +635,17 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds):
             tools=[CALCULATE_TOOL], temperature=0,
         )
         tracker.add(resp)
+        if not resp.choices or not resp.choices[0].message:
+            return None, rounds + 1, tracker, messages
         choice = resp.choices[0]
         msg = choice.message
 
         if not msg.tool_calls:
             rounds += 1
             text = get_response_text(msg)
+            messages.append({"role": "assistant", "content": text[:500]})
             output = extract_json(text)
-            return output, rounds, tracker, messages if output is None else None
+            return output, rounds, tracker, (messages if output is None else None)
 
         messages.append(msg)
         for tc in msg.tool_calls:
@@ -677,7 +806,7 @@ def load_checkpoint(model, method):
 
 def save_checkpoint(model, method, result: CaseResult):
     path = checkpoint_path(model, method)
-    entry = {
+    entry = {  # noqa: thread-safe via _checkpoint_lock
         "case_file": result.case_file,
         "rounds_used": result.rounds_used,
         "parsed": result.parsed,
@@ -691,8 +820,9 @@ def save_checkpoint(model, method, result: CaseResult):
         "total_tokens": result.total_tokens,
         "messages": _serialize_messages(result.messages),
     }
-    with open(path, "a") as f:
-        f.write(json.dumps(entry) + "\n")
+    with _checkpoint_lock:
+        with open(path, "a") as f:
+            f.write(json.dumps(entry) + "\n")
 
 
 def _serialize_messages(messages):
@@ -980,16 +1110,27 @@ def main():
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
     parser.add_argument("--script-timeout", type=int, default=SCRIPT_TIMEOUT)
     parser.add_argument("--delay", type=float, default=DELAY_BETWEEN_CASES)
+    parser.add_argument("--max-cases", type=int, default=MAX_CASES, help="Max number of cases to evaluate (default 500)")
+    parser.add_argument("--concurrency", type=int, default=MAX_CONCURRENT, help="Max concurrent API requests")
+    parser.add_argument("--rpm", type=int, default=REQUESTS_PER_MINUTE, help="Max requests per minute")
+    parser.add_argument("--budget", type=float, default=DEFAULT_BUDGET, help="Max USD to spend before halting (default $5)")
     args = parser.parse_args()
 
+    global _rate_limiter
     args.system_prompt = load_system_prompt()
     client = get_client()
-    cases = load_cases()
+    cases = load_cases()[:args.max_cases]
     models = [args.model] if args.model else MODELS
+
+    global _cost_guard
+    _rate_limiter = RateLimiter(args.rpm)
+    _cost_guard = CostGuard(budget=args.budget)
+    concurrency = args.concurrency
 
     print(f"Method: {args.method} | Models: {len(models)} | Cases: {len(cases)}")
     print(f"Constants: max_rounds={args.max_rounds}, max_script_retries={args.max_script_retries}, "
-          f"script_timeout={args.script_timeout}s, delay={args.delay}s")
+          f"script_timeout={args.script_timeout}s, concurrency={concurrency}, rpm={args.rpm}, "
+          f"max_cases={args.max_cases}, budget=${args.budget:.2f}")
 
     _cost_guard.initialize()
     all_model_results = {}
@@ -1000,63 +1141,88 @@ def main():
         print(f"{'='*70}")
 
         completed, checkpoint_entries = load_checkpoint(model, args.method)
-        results = [result_from_checkpoint_entry(e, model, args.method) for e in checkpoint_entries]
+        prior_results = [result_from_checkpoint_entry(e, model, args.method) for e in checkpoint_entries]
 
+        pending_cases = [c for c in cases if c["file"] not in completed]
         if completed:
-            print(f"  Resuming: {len(completed)} cases already done, {len(cases) - len(completed)} remaining")
+            print(f"  Resuming: {len(completed)} done, {len(pending_cases)} remaining")
 
-        model_delay_state = {"consecutive_429": 0, "delay": args.delay}
+        if not pending_cases:
+            all_model_results[model] = prior_results
+            csv_path = write_per_model_method_csv(model, args.method, prior_results)
+            print_console_summary(model, args.method, prior_results)
+            print(f"  CSV: {csv_path}")
+            continue
+
+        model_delay_state = {"consecutive_429": 0, "delay": args.delay, "json_format_supported": False}
+        new_results = []
         consecutive_skips = 0
+        stop_model = False
+        print_lock = threading.Lock()
+        completed_count = len(completed)
+        total_count = len(cases)
 
-        for i, case in enumerate(cases):
-            if case["file"] in completed:
-                continue
+        def process_case(case):
+            return evaluate_case(client, model, args.method, case, model_delay_state, args)
 
-            print(f"  [{i+1}/{len(cases)}] {case['file']}...", end=" ", flush=True)
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            future_to_case = {}
+            for case in pending_cases:
+                if stop_model:
+                    break
+                future = executor.submit(process_case, case)
+                future_to_case[future] = case
 
-            try:
-                result = evaluate_case(client, model, args.method, case, model_delay_state, args)
-                save_checkpoint(model, args.method, result)
-                results.append(result)
-                consecutive_skips = 0
-
-                status = "OK" if result.parsed else "PARSE_FAIL"
-                print(f"{status} score={result.total_score}/37 "
-                      f"({result.total_pct*100:.0f}%) "
-                      f"rounds={result.rounds_used} "
-                      f"latency={result.latency_sec:.1f}s "
-                      f"tokens={result.total_tokens}")
-
-                _cost_guard.case_completed()
-
-            except RuntimeError as e:
-                if "COST" in str(e):
-                    print(f"\n  COST GUARD: {e}")
-                    print("  ABORTING to prevent charges.")
-                    sys.exit(1)
-                raise
-
-            except KeyboardInterrupt:
-                print(f"\n  Interrupted at {case['file']}. Checkpoint saved. Re-run to resume.")
-                break
-
-            except Exception as e:
-                err_str = str(e).lower()
-                if "daily" in err_str or "limit exceeded" in err_str:
-                    print(f"DAILY LIMIT — skipping to next model")
+            for future in as_completed(future_to_case):
+                if stop_model:
                     break
 
-                consecutive_skips += 1
-                print(f"SKIP ({type(e).__name__}: {str(e)[:80]})")
+                case = future_to_case[future]
+                completed_count += 1
 
-                if consecutive_skips >= CONSECUTIVE_SKIP_LIMIT:
-                    print(f"  {CONSECUTIVE_SKIP_LIMIT} consecutive failures — moving to next model")
-                    break
-                continue
+                try:
+                    result = future.result()
+                    save_checkpoint(model, args.method, result)
+                    new_results.append(result)
+                    consecutive_skips = 0
 
-            time.sleep(model_delay_state["delay"])
+                    status = "OK" if result.parsed else "PARSE_FAIL"
+                    with print_lock:
+                        print(f"  [{completed_count}/{total_count}] {case['file']}... "
+                              f"{status} score={result.total_score}/37 "
+                              f"({result.total_pct*100:.0f}%) "
+                              f"rounds={result.rounds_used} "
+                              f"latency={result.latency_sec:.1f}s "
+                              f"tokens={result.total_tokens}")
 
-        # Write per-model CSV and console summary
+                    _cost_guard.case_completed()
+
+                except RuntimeError as e:
+                    if "BUDGET" in str(e):
+                        with print_lock:
+                            print(f"\n  COST GUARD: {e}")
+                            print("  ABORTING — budget exceeded.")
+                        executor.shutdown(wait=False, cancel_futures=True)
+                        sys.exit(1)
+                    raise
+
+                except Exception as e:
+                    err_str = str(e).lower()
+                    with print_lock:
+                        print(f"  [{completed_count}/{total_count}] {case['file']}... "
+                              f"SKIP ({type(e).__name__}: {str(e)[:80]})")
+
+                    if "daily" in err_str or "limit exceeded" in err_str:
+                        stop_model = True
+                        continue
+
+                    consecutive_skips += 1
+                    if consecutive_skips >= CONSECUTIVE_SKIP_LIMIT:
+                        with print_lock:
+                            print(f"  {CONSECUTIVE_SKIP_LIMIT} consecutive failures — moving to next model")
+                        stop_model = True
+
+        results = prior_results + new_results
         csv_path = write_per_model_method_csv(model, args.method, results)
         print_console_summary(model, args.method, results)
         print(f"  CSV: {csv_path}")

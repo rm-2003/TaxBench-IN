@@ -66,6 +66,12 @@ MAX_SCRIPT_RETRIES = 3        # script method: max error-fix cycles per case
 SCRIPT_TIMEOUT = 20           # script method: seconds before killing subprocess
 TOLERANCE = 0.01              # numeric comparison tolerance
 DELAY_BETWEEN_CASES = 1.0     # seconds between API calls (rate-limit courtesy)
+MAX_TRANSIENT_RETRIES = 3     # retries on 429/5xx before skipping a case
+CONSECUTIVE_SKIP_LIMIT = 5    # consecutive skipped cases before moving to next model
+MAX_CONCURRENT = 5            # max concurrent API requests per model
+REQUESTS_PER_MINUTE = 15      # thread-safe rate limiter cap
+MAX_CASES = 500               # max cases to evaluate (for partial runs)
+DEFAULT_BUDGET = 5.00         # USD — max spend before halting (paid models)
 CHECKPOINT_DIR = "tests/evaluation_checkpoints"
 RESULTS_DIR = "tests/evaluation_results"
 ```
@@ -199,9 +205,10 @@ def execute_calculate(operation, operands):
    - `Mutual Fund Transactions → Type` — One of: equity, debt, elss, gold-etf, gold-mf, international, hybrid-equity
 
 #### Method-specific additions
+Appended to the **user message** (not system prompt) so the system prompt stays identical across methods:
 - **Zero-shot**: No additional instructions. The LLM must compute everything from its training knowledge.
-- **Script**: "Write a Python script that reads the input JSON from the file path provided, computes the tax output, and prints ONLY the output JSON to stdout. You have access to the Python standard library only."
-- **Tool-call**: "Use the `calculate` tool for ALL arithmetic — never perform mental math. You may request multiple calculate calls in parallel when calculations are independent."
+- **Script**: "Write a Python script that reads the input JSON from the file 'input.json' in the current working directory, computes the tax output, and prints ONLY the output JSON to stdout. You have access to the Python standard library only."
+- **Tool-call**: "Use the calculate tool for ALL arithmetic — never perform mental math. You may request multiple calculate calls in parallel when calculations are independent."
 
 #### NOT included in the system prompt (LLM must figure these out)
 All tax rules — the system prompt contains ONLY the role, output schema, and method-specific instructions. The LLM must rely on its training data for:
@@ -390,6 +397,9 @@ python3 tests/evaluate_llm.py --method tool-call --model "openai/gpt-oss-120b:fr
 # Override constants for parameter sweeps
 python3 tests/evaluate_llm.py --method tool-call --max-rounds 30
 python3 tests/evaluate_llm.py --method script --max-script-retries 5 --script-timeout 30
+
+# Partial run (first 50 cases) with higher concurrency
+python3 tests/evaluate_llm.py --max-cases 50 --concurrency 3 --rpm 20
 ```
 
 | Flag | Default | Description |
@@ -400,6 +410,10 @@ python3 tests/evaluate_llm.py --method script --max-script-retries 5 --script-ti
 | `--max-script-retries` | 3 | Script method: max error-fix cycles per case |
 | `--script-timeout` | 20 | Script method: seconds before killing subprocess |
 | `--delay` | 1.0 | Seconds between API calls |
+| `--max-cases` | 500 | Max cases to evaluate (for partial/test runs) |
+| `--concurrency` | 5 | Max concurrent API requests per model |
+| `--rpm` | 15 | Max requests per minute (thread-safe rate limiter) |
+| `--budget` | 5.00 | Max USD to spend before halting (for paid models) |
 
 ---
 
@@ -407,76 +421,85 @@ python3 tests/evaluate_llm.py --method script --max-script-retries 5 --script-ti
 
 ```python
 MODELS = [
-    # Tier 1: High accuracy candidates (>90% expected)
+    # Tier 1: High accuracy candidates
     "openai/gpt-oss-120b:free",
-    "meta-llama/llama-3.3-70b-instruct:free",
-    # Tier 2: Variable / mid-tier
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    # Tier 3: Likely low accuracy (<70% expected)
+    "tencent/hy3-preview:free",
+    # Tier 2: Mid-tier (paid)
+    "deepseek/deepseek-chat-v3-0324",
+    "meta-llama/llama-3.3-70b-instruct",
+    # Tier 3: Low accuracy expected
     "nvidia/nemotron-nano-9b-v2:free",
     "openai/gpt-oss-20b:free",
 ]
 
-# Method dispatch
-def run_zero_shot(model, input_json) -> dict | None
-def run_script(model, input_json) -> tuple[dict | None, int]
-def run_tool_call(model, input_json) -> tuple[dict | None, int]
+# Method dispatch — each returns (output_dict|None, rounds_used, TokenTracker, fail_messages|None)
+def run_zero_shot(client, model, system_prompt, input_json, mds) -> tuple
+def run_script(client, model, system_prompt, input_json, mds, max_retries, timeout) -> tuple
+def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds) -> tuple
 
-# System prompts
-def build_system_prompt(method: str) -> str
-    """Common base (role + schema) + method-specific instructions."""
+# Prompt — loaded from tests/prompts/system_prompt.txt (frozen after tuning)
+def load_system_prompt() -> str
+def build_messages(method, system_prompt, input_json) -> list[dict]
+    """System prompt + user message. Method-specific instructions appended to user message."""
 
-# Tool execution (tool-call method only)
+# API wrapper with retry + response_format fallback
+def api_call_with_retry(client, model_delay_state, **kwargs) -> Response
+    """Tries response_format=json_object first, disables per-model if unsupported.
+    Handles 429 (rate limit) and 5xx (transient) with exponential backoff."""
+
+# Response helpers
+def get_response_text(message) -> str
+    """Prefers content, falls back to reasoning field for reasoning models."""
+def extract_json(text) -> dict | None
+    """Tries raw → control-char cleaned → fenced → brace-matched."""
+def extract_code(text) -> str | None
+
+# Tool/script execution
 def execute_calculate(operation: str, operands: list[float]) -> float
+# Script sandboxing: tempfile.mkdtemp() with cwd=sandbox, only input.json inside
 
-# Script execution (script method only)
-def extract_code(response_text: str) -> str
-def execute_script(code: str, input_path: str) -> tuple[str, str, int]
-    """Returns (stdout, stderr, exit_code). Kills after SCRIPT_TIMEOUT."""
+# Concurrency and rate limiting
+class RateLimiter       # thread-safe, enforces N requests/minute
+class CostGuard         # checks OpenRouter /credits endpoint every 5 cases
+class TokenTracker      # sums prompt/completion tokens across multi-turn
 
-# LLM interaction
-def send_to_llm(model: str, messages: list[dict], tools: list[dict] | None) -> Response
-
-# Checkpointing — per (model, method) pair
-def checkpoint_key(model: str, method: str) -> str
-    """e.g. 'openai_gpt-oss-120b_free__zero-shot.jsonl'"""
-def load_checkpoint(model: str, method: str) -> set[str]
-def save_checkpoint(model: str, method: str, case_file: str, result: CaseResult)
+# Checkpointing — per (model, method) pair, thread-safe
+def load_checkpoint(model, method) -> tuple[set[str], list[dict]]
+def save_checkpoint(model, method, result: CaseResult)  # append to JSONL under _checkpoint_lock
 
 # Scoring
-def extract_scored_fields(output: dict) -> dict[str, float]
-def score_case(expected: dict, actual: dict | None) -> dict[str, int]
+def score_case(expected, actual) -> tuple[dict, dict]  # (scores, pct_errors)
 
 # Reporting
-def report_per_model_method_csv(model, method, results)
-def report_method_summary_csv(method, all_model_results)
-def report_cross_method_pivot(all_results)
+def write_per_model_method_csv(model, method, results)
+def write_method_summary_csv(method, all_model_results)
+def write_cross_method_pivot()
+def print_console_summary(model, method, results)
 
 if __name__ == "__main__":
     args = parse_cli()
-    method = args.method                           # "zero-shot" | "script" | "tool-call"
+    method = args.method
     models = [args.model] if args.model else MODELS
-    cases = load_cases("tests/generated/")
+    cases = load_cases()[:args.max_cases]
 
     for model in models:
-        completed = load_checkpoint(model, method)
-        results = [load from checkpoint for already-completed cases]
-        for case in cases:
-            if case["file"] in completed:
-                continue
-            try:
-                result = evaluate_case(model, method, case)
-                save_checkpoint(model, method, case["file"], result)
-                results.append(result)
-            except (RateLimitError, APIError, KeyboardInterrupt):
-                print(f"Stopped at {case['file']} for {model} [{method}]. "
-                      f"Checkpoint saved. Re-run to resume.")
-                break
-        report_per_model_method_csv(model, method, results)
+        completed, checkpoint_entries = load_checkpoint(model, method)
+        pending = [c for c in cases if c["file"] not in completed]
+        model_delay_state = {"consecutive_429": 0, "delay": args.delay, "json_format_supported": True}
 
-    # Generate method-level summary if all models complete
-    report_method_summary_csv(method, all_model_results)
+        # Concurrent evaluation with ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
+            for case in pending:
+                future = executor.submit(evaluate_case, client, model, method, case, mds, args)
+                # on completion: save_checkpoint, track consecutive_skips
+                # on daily limit or CONSECUTIVE_SKIP_LIMIT: stop model, move to next
+                # on BUDGET exceeded: sys.exit(1)
+
+        write_per_model_method_csv(model, method, results)
+        print_console_summary(model, method, results)
+
+    write_method_summary_csv(method, all_model_results)
+    write_cross_method_pivot()
 ```
 
 ---
@@ -485,18 +508,20 @@ if __name__ == "__main__":
 
 ### Models
 
-All models accessed via **OpenRouter** (OpenAI-compatible API) using free-tier endpoints.
+All models accessed via **OpenRouter** (OpenAI-compatible API). Mix of free and paid endpoints.
 
-| Tier | Model (OpenRouter ID) | Size | Expected accuracy | Rationale |
-|------|----------------------|------|-------------------|-----------|
-| 1 — High | `openai/gpt-oss-120b:free` | 117B | >90% | Large model optimised for high-reasoning tasks |
-| 1 — High | `meta-llama/llama-3.3-70b-instruct:free` | 70B | >90% | Gold standard for open-weight instruction following |
-| 2 — Mid | `google/gemma-4-31b-it:free` | 31B dense | 70–90% | Newer dense model; may struggle with Indian tax edge cases |
-| 2 — Mid | `nvidia/nemotron-3-super-120b-a12b:free` | 120B MoE (12B active) | 70–90% | 120B total but only 12B active parameters; effective capacity between Tier 1 and Tier 3 |
-| 3 — Low | `nvidia/nemotron-nano-9b-v2:free` | 9B | <70% | Too small for multi-step tax reasoning |
-| 3 — Low | `openai/gpt-oss-20b:free` | 20B | <70% | Much smaller/weaker than 120B sibling |
+| Tier | Model (OpenRouter ID) | Size | Free? | Expected accuracy | Rationale |
+|------|----------------------|------|-------|-------------------|-----------|
+| 1 — High | `openai/gpt-oss-120b:free` | 117B | Yes | >90% | Large model optimised for high-reasoning tasks |
+| 1 — High | `tencent/hy3-preview:free` | — | Yes | >90% | Strong general reasoning; 47% in prompt tuning already |
+| 2 — Mid | `deepseek/deepseek-chat-v3-0324` | ~236B MoE | Paid | 70–90% | Strong coding/reasoning; 40.5% in prompt tuning |
+| 2 — Mid | `meta-llama/llama-3.3-70b-instruct` | 70B | Paid | 70–90% | Gold standard open-weight; 44.6% in prompt tuning |
+| 3 — Low | `nvidia/nemotron-nano-9b-v2:free` | 9B | Yes | <70% | Too small for multi-step tax reasoning; 38.9% in prompt tuning |
+| 3 — Low | `openai/gpt-oss-20b:free` | 20B | Yes | <70% | Much smaller/weaker than 120B sibling; 39.2% in prompt tuning |
 
 **API settings**: `temperature=0` for all models (deterministic output for reproducibility).
+
+**Model changes from original plan**: `nvidia/nemotron-3-super-120b-a12b:free` returned empty responses during prompt tuning — discarded. `google/gemma-4-31b-it:free` returned persistent 429 rate limit errors — discarded. Replaced with `tencent/hy3-preview:free` (Tier 1) and `deepseek/deepseek-chat-v3-0324` (Tier 2, paid). `meta-llama/llama-3.3-70b-instruct` also moved to paid (free tier had intermittent upstream 429s from Venice provider).
 
 ### API provider
 
@@ -514,9 +539,9 @@ client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_
 | Model | Native tool-call support | Risk |
 |-------|-------------------------|------|
 | openai/gpt-oss-120b:free | Good | Low |
-| meta-llama/llama-3.3-70b-instruct:free | Good | Low |
-| google/gemma-4-31b-it:free | Supported | Medium — newer model |
-| nvidia/nemotron-3-super-120b-a12b:free | Supported | Medium — MoE with 12B active |
+| tencent/hy3-preview:free | Good | Low |
+| deepseek/deepseek-chat-v3-0324 | Good | Low |
+| meta-llama/llama-3.3-70b-instruct | Good | Low |
 | nvidia/nemotron-nano-9b-v2:free | Supported but small | High — may produce malformed calls |
 | openai/gpt-oss-20b:free | Supported | Medium — smaller model |
 
@@ -558,12 +583,13 @@ python3 tests/tune_prompt.py --method script --cases 5
 python3 tests/tune_prompt.py --method tool-call --cases 5
 ```
 
-The script always runs 3 models in a single invocation — one from each tier:
-- Weak: `nvidia/nemotron-nano-9b-v2:free`
-- Mid: `google/gemma-4-31b-it:free`
-- Strong: `meta-llama/llama-3.3-70b-instruct:free`
+The script runs a configurable set of models defined in `TUNING_MODELS` dict. During prompt tuning, models were tested iteratively:
+- Weak: `nvidia/nemotron-nano-9b-v2:free` (5/5 parse, 38.9%), `openai/gpt-oss-20b:free` (2/2 parse, 39.2%)
+- Mid: `deepseek/deepseek-chat-v3-0324` (2/2 parse, 40.5%), `meta-llama/llama-3.3-70b-instruct` (2/2 parse, 44.6%)
+- Strong: `openai/gpt-oss-120b:free` (2/2 parse, 55.4%), `tencent/hy3-preview:free` (2/2 parse, 47.3%)
+- Discarded: `nvidia/nemotron-3-super-120b-a12b:free` (empty responses), `google/gemma-4-31b-it:free` (429 rate limit)
 
-This costs only 5 cases × 3 models = 15 API calls per iteration and catches tier-specific issues in one go (e.g., fixing something for weak that breaks strong).
+Default is 2 cases per run. Models are commented in/out between runs as needed.
 
 **Flow per run:**
 1. Load the current system prompt from `tests/prompts/system_prompt.txt`
@@ -600,14 +626,14 @@ One prompt file for all methods. Method-specific instructions (tool-call usage, 
 `tuning_log.jsonl` — one line per tuning run, capturing prompt progression:
 ```json
 {
-  "timestamp": "2026-04-23T14:30:00",
+  "timestamp": "2026-04-24T10:30:00",
   "method": "zero-shot",
   "prompt_hash": "a1b2c3d4",
-  "cases_tested": 5,
+  "cases_tested": 2,
+  "case_files": ["input_0001.json", "input_0002.json"],
   "results": {
-    "nvidia/nemotron-nano-9b-v2:free": {"parse_rate": 0.6, "mean_score": 0.32, "failures": ["markdown_fences: 2"]},
-    "google/gemma-4-31b-it:free": {"parse_rate": 0.8, "mean_score": 0.51, "failures": ["preamble_text: 1"]},
-    "meta-llama/llama-3.3-70b-instruct:free": {"parse_rate": 1.0, "mean_score": 0.74, "failures": []}
+    "nvidia/nemotron-nano-9b-v2:free": {"tier": "weak_1", "parse_rate": 1.0, "mean_score_parsed": 0.389, "failures": []},
+    "openai/gpt-oss-120b:free": {"tier": "strong_1", "parse_rate": 1.0, "mean_score_parsed": 0.554, "failures": []}
   },
   "change_description": "Added explicit 'No markdown code fences' instruction"
 }
@@ -704,7 +730,22 @@ Models return JSON in different fields:
 - `pct_errors`: Per-field `abs(expected - actual) / max(abs(expected), 1)` for richer analysis.
 
 ### 4. Llama 3.3 70B availability
-`meta-llama/llama-3.3-70b-instruct:free` returned persistent 429 upstream rate-limit errors from the Venice provider during testing. This is a free-tier upstream throttle, not our rate limit. The retry/backoff logic handles this, but the model may be unreliable during high-traffic periods. Will proceed with it in the model list since the retry logic accommodates intermittent 429s.
+`meta-llama/llama-3.3-70b-instruct:free` returned persistent 429 upstream rate-limit errors from the Venice provider during testing. **Decision**: Switched to paid endpoint `meta-llama/llama-3.3-70b-instruct` (no `:free` suffix). Cost guard protects against runaway spend.
+
+### 5. response_format=json_object auto-detection
+Some models support `response_format={"type": "json_object"}` which forces structured JSON output; others reject it or return empty responses. **Decision**: `api_call_with_retry()` tries `json_object` on first call per model. If the model errors or returns empty, disables it for that model for the rest of the run via `model_delay_state["json_format_supported"]`. No manual per-model config needed.
+
+### 6. Concurrent execution
+Sequential per-case evaluation was too slow for 500 cases. **Decision**: `ThreadPoolExecutor` with configurable `--concurrency` (default 5). A thread-safe `RateLimiter` enforces `--rpm` (default 15 req/min) across all threads. Checkpoint writes are serialized via `_checkpoint_lock`. The `CostGuard` is also thread-safe. Each model still runs sequentially (all cases for model A, then model B), but cases within a model run concurrently.
+
+### 7. Script sandbox input path
+Plan originally said `/tmp/tax_input.json`. **Decision**: Changed to `input.json` in the sandbox's working directory. The script method's user message tells the LLM: "reads the input JSON from the file 'input.json' in the current working directory." This is simpler and avoids hardcoded absolute paths.
+
+### 8. JSON extraction pipeline
+Models produce JSON in various formats (raw, fenced, with preamble, with control characters). **Decision**: `extract_json()` tries 4 strategies in order: raw parse → control-char stripped parse → markdown fence extraction → first `{...}` brace-matching. Also `_clean_json_text()` strips control chars (0x00-0x1f except newlines) that nemotron-3-super was embedding.
+
+### 9. Prompt file location
+**Decision**: System prompt stored at `tests/prompts/system_prompt.txt`. Both `tune_prompt.py` and `evaluate_llm.py` load from the same file. Method-specific instructions are appended to the user message programmatically, not stored in the prompt file. This means the tunable prompt is method-agnostic.
 
 ---
 
@@ -715,13 +756,16 @@ Models return JSON in different fields:
 These items are deferred until zero-shot and script methods are implemented and running:
 
 - **MAX_TOOL_ROUNDS sufficiency**: Log cases where the round cap is hit so we can determine if 20 rounds is enough or if it's truncating complex cases (surcharge marginal relief, multi-bucket loss netting). Adjust cap based on data.
-- **Rate limiting for tool-call**: Tool-call generates 10+ API calls per case. The current rate-limit handling (429 backoff, auto-slowdown) works for zero-shot/script but may need per-model delay overrides for tool-call to avoid constant throttling on free-tier limits.
-- **Runtime estimate for tool-call**: 500 cases × 6 models × ~8–10 rounds avg = ~27,000 API calls. At free-tier limits (~10–20 req/min), ~1.4 hours per model, ~8.5 hours total. Consider running models in parallel (separate terminal sessions with `--model X --method tool-call`).
+- **Rate limiting for tool-call**: Tool-call generates 10+ API calls per case. The per-model `RateLimiter` + `api_call_with_retry()` handle 429s, but tool-call's high call volume may need lower `--rpm` or higher `--delay` per model.
+- **Runtime estimate for tool-call**: 500 cases × 6 models × ~8–10 rounds avg = ~27,000 API calls. With concurrency=5 and rpm=15, ~1 hour per model, ~6 hours total. Can also run models in parallel via separate terminal sessions with `--model X --method tool-call`.
 
 ### To be considered
 
-- **Runtime estimate for zero-shot + script**: Zero-shot = 500 × 6 = 3,000 API calls (~1 call/case). Script = 500 × 6 × ~2 avg = ~6,000 calls. At 1s delay + rate limits, estimate ~1.5–3 hours for zero-shot, ~3–6 hours for script. Plan for ~5–9 hours total for both methods across all models.
+- **Runtime estimate for zero-shot + script**: With concurrency=5, zero-shot ≈ 30–60 min for all models. Script ≈ 1–2 hours. Much faster than original sequential estimates.
 - **Additional models**: The following free models were deferred from the initial 6-model comparison and can be added later to expand coverage:
   - `qwen/qwen3-coder:free` — coding-specialist model; likely strong on script method, variable on zero-shot
   - `minimax/minimax-m2.5:free` — strong in planning; financial math performance unknown
   - `inclusionai/ling-2.6-flash:free` — lower intelligence index (26.2/100); expected Tier 3
+- **Discarded models** (tested during prompt tuning, not viable):
+  - `nvidia/nemotron-3-super-120b-a12b:free` — returned empty responses
+  - `google/gemma-4-31b-it:free` — persistent 429 rate limit errors on free tier

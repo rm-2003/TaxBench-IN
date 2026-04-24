@@ -1,0 +1,2 @@
+model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens
+openai/gpt-oss-120b:free,0.1054,0.1429,0.05,0.2,0.0,0.1111,0.0857,1.0,8,10,52.1,2106.0,1300.0,3406.0,21064,12998
