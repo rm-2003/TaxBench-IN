@@ -1,0 +1,186 @@
+{
+  "input": {
+    "Age": 45,
+    "Employment Type": "private",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+      "Basic Salary": 0,
+      "Dearness Allowance": 0,
+      "HRA": 0,
+      "Conveyance Allowance": 0,
+      "Medical Allowance": 0,
+      "Bonuses and Incentives": 0,
+      "Overtime Pay": 0,
+      "LTA": 0,
+      "Special Allowance": 0,
+      "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0,
+    "LTA Travel Expenses Claimed": 0,
+    "Professional Tax": 0,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [],
+    "Short Term Capital Loss": [
+      {
+        "Financial Year": "2023-24",
+        "Loss Amount": 200000
+      }
+    ],
+    "Mutual Fund Transactions": [
+      {
+        "Type": "elss",
+        "Purchase Date": "2022-01-01",
+        "Sale Date": "2025-06-01",
+        "Purchase Value": 150000,
+        "Sale Value": 250000
+      },
+      {
+        "Type": "debt",
+        "Purchase Date": "2023-06-01",
+        "Sale Date": "2025-12-01",
+        "Purchase Value": 200000,
+        "Sale Value": 260000
+      }
+    ],
+    "Privately Owned Vehicle": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Bonds": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Debentures": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "G-Secs": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Savings Bank Interest": 25000,
+    "Deposit Interest": 30000,
+    "Other Interest": 5000,
+    "EPF Taxable Interest": 8000,
+    "PPF": 0,
+    "EPF": {
+      "Employee Contribution": {
+        "Deducted from Salary": 0,
+        "Voluntary": 0
+      },
+      "Employer Contribution": 0
+    },
+    "ELSS": 0,
+    "NSC": 0,
+    "Sukanya Samriddhi Yojana": 0,
+    "SCSS": 0,
+    "Pension Scheme Premium": {
+      "Amount": 0,
+      "Number of Years Paid": 1
+    },
+    "NPS": {
+      "Tier-1 Self Contribution": 0,
+      "Tier-1 Employer Contribution": 0,
+      "Tier-2": 0
+    },
+    "Education Loan Interest": {
+      "Interest Paid": 80000,
+      "Year of Repayment": 9
+    },
+    "Health Insurance": [
+      {
+        "Payment Purpose": "insurance premium",
+        "Number of Years Paid": 1,
+        "Beneficiary": "self",
+        "Beneficiary Age": 45,
+        "Paid By": "self",
+        "Payment Mode": "cash",
+        "Amount": 25000
+      }
+    ],
+    "Donations": [
+      {
+        "Scheme Name": "Prime Minister's Drought Relief Fund",
+        "Amount": 10000,
+        "Mode": "cheque"
+      }
+    ],
+    "TDS": 10000
+  },
+  "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=stcl_spills_to_ltcg|other_assets=none|equity_mf=elss_matured|non_equity_mf=debt_post2023_slab|deductions_80c_cce=none|nps=none|health_insurance_80d=cash_premium_excluded|education_loan_80e=beyond_8yr_trap|donations_80g=half_exempt_50pct|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
+  "_expected": {
+    "Under Head Salaries": {
+      "Gross Salary": 0,
+      "Exemptions": {
+        "Section 10(13A)": 0.0,
+        "Section 10(5)": 0
+      },
+      "Section 16(ia)": 0,
+      "Section 16(ii)": 0.0,
+      "Section 16(iii)": 0,
+      "Net Salary": 0.0
+    },
+    "Capital Gains": {
+      "STCG (Section 111A)": 0.0,
+      "STCG (Other)": {
+        "Bonds": 0.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 0.0
+      },
+      "LTCG (Section 112A)": 0.0,
+      "LTCG (Non-Equity)": {
+        "Bonds": 0.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 0.0
+      },
+      "LTCG (Other)": 0.0
+    },
+    "Income from Other Sources": {
+      "Savings Bank Interest": 25000,
+      "Deposit Interest": 30000,
+      "Other Interest": {
+        "EPF Taxable Interest": 8000
+      }
+    },
+    "Gross Total Income": 68000.0,
+    "Deductions": {
+      "80C": 0.0,
+      "80CCC": 0.0,
+      "80CCD(1)": 0.0,
+      "80CCD(1B)": 0.0,
+      "80CCD(2)": 0,
+      "80D": 0.0,
+      "80E": 0.0,
+      "80G": 5000.0,
+      "80TTA": 10000,
+      "80TTB": 0.0,
+      "Total Deductions": 15000.0
+    },
+    "Total Taxable Income": 53000.0,
+    "Tax Computation": {
+      "Tax at Slab Rates": 0.0,
+      "Tax on STCG (Section 111A)": 0.0,
+      "Tax on STCG (Other)": 0.0,
+      "Tax on LTCG (Section 112A)": 0.0,
+      "Tax on LTCG (Non-Equity)": 0.0,
+      "Tax on LTCG (Other)": 0.0,
+      "Total Tax Before Rebate": 0.0,
+      "Less: Rebate under Section 87A": 0.0,
+      "Tax After Rebate": 0.0,
+      "Surcharge": 0.0,
+      "Health and Education Cess": 0.0,
+      "Total Tax Liability": 0.0,
+      "Less: TDS": 10000,
+      "Net Tax Payable / Refund": -10000.0
+    }
+  }
+}

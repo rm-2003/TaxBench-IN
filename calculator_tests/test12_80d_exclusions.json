@@ -1,0 +1,32 @@
+{
+    "_description": "80D exclusions — cash premium excluded (10000 cash→0), group insurance excluded (8000→0), invalid beneficiary excluded (sibling 5000→0), checkup capped at 5000 globally (8000→5000). Only valid: cheque premium 12000 for self. Total = min(12000+5000, 25000) = 17000",
+    "Age": 35,
+    "Employment Type": "private",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+        "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,
+        "Conveyance Allowance": 0, "Medical Allowance": 0,
+        "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0,
+        "Special Allowance": 0, "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
+    "PPF": 0,
+    "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
+    "Health Insurance": [
+        {"Payment Purpose": "insurance premium", "Number of Years Paid": 1, "Beneficiary": "self", "Beneficiary Age": 35, "Paid By": "self", "Payment Mode": "cheque", "Amount": 12000},
+        {"Payment Purpose": "insurance premium", "Number of Years Paid": 1, "Beneficiary": "self", "Beneficiary Age": 35, "Paid By": "self", "Payment Mode": "cash", "Amount": 10000},
+        {"Payment Purpose": "insurance premium", "Number of Years Paid": 1, "Beneficiary": "self", "Beneficiary Age": 35, "Paid By": "group medical insurance", "Payment Mode": "cheque", "Amount": 8000},
+        {"Payment Purpose": "insurance premium", "Number of Years Paid": 1, "Beneficiary": "sibling", "Beneficiary Age": 30, "Paid By": "self", "Payment Mode": "cheque", "Amount": 5000},
+        {"Payment Purpose": "preventive health checkup", "Beneficiary": "self", "Beneficiary Age": 35, "Paid By": "self", "Payment Mode": "cash", "Amount": 8000}
+    ],
+    "Donations": [],
+    "TDS": 0
+}

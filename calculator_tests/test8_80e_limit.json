@@ -1,0 +1,26 @@
+{
+    "_description": "80E — interest=50000, year=5 (within 8yr limit) → deduction=50000. Second sub-test embedded in description: year=9 → 0 (tested separately as test8b)",
+    "Age": 35,
+    "Employment Type": "private",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+        "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,
+        "Conveyance Allowance": 0, "Medical Allowance": 0,
+        "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0,
+        "Special Allowance": 0, "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
+    "PPF": 0,
+    "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 50000, "Year of Repayment": 5},
+    "Health Insurance": [],
+    "Donations": [],
+    "TDS": 0
+}

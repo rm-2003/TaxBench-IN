@@ -1,0 +1,206 @@
+{
+  "input": {
+    "Age": 35,
+    "Employment Type": "government",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+      "Basic Salary": 400000,
+      "Dearness Allowance": 100000,
+      "HRA": 80000,
+      "Conveyance Allowance": 15000,
+      "Medical Allowance": 10000,
+      "Bonuses and Incentives": 25000,
+      "Overtime Pay": 0,
+      "LTA": 20000,
+      "Special Allowance": 350000,
+      "Entertainment Allowance": 3000
+    },
+    "Actual Rent Paid": 90000,
+    "LTA Travel Expenses Claimed": 30000,
+    "Professional Tax": 2400,
+    "Stock Sale Transactions": [
+      {
+        "Sale Price": 400,
+        "Cost Price": 100,
+        "Quantity": 1000,
+        "Brokerage": 0,
+        "STT": 500,
+        "Purchase Date": "2024-04-01",
+        "Sale Date": "2025-10-15",
+        "FMV as of 31 Jan 2018": 180
+      }
+    ],
+    "Long Term Capital Loss": [
+      {
+        "Financial Year": "2023-24",
+        "Loss Amount": 500000
+      }
+    ],
+    "Short Term Capital Loss": [],
+    "Mutual Fund Transactions": [
+      {
+        "Type": "equity",
+        "Purchase Date": "2025-06-01",
+        "Sale Date": "2025-11-15",
+        "Purchase Value": 100000,
+        "Sale Value": 130000
+      },
+      {
+        "Type": "gold-etf",
+        "Purchase Date": "2024-01-01",
+        "Sale Date": "2025-06-01",
+        "Purchase Value": 100000,
+        "Sale Value": 140000
+      }
+    ],
+    "Privately Owned Vehicle": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Bonds": {
+      "Sale Amount": 120000,
+      "Purchase Amount": 100000,
+      "Held for duration in years": 0.5
+    },
+    "Debentures": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "G-Secs": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Savings Bank Interest": 5000,
+    "Deposit Interest": 10000,
+    "Other Interest": 0,
+    "EPF Taxable Interest": 0,
+    "PPF": 80000,
+    "EPF": {
+      "Employee Contribution": {
+        "Deducted from Salary": 40000,
+        "Voluntary": 0
+      },
+      "Employer Contribution": 0
+    },
+    "ELSS": 30000,
+    "NSC": 0,
+    "Sukanya Samriddhi Yojana": 0,
+    "SCSS": 0,
+    "Pension Scheme Premium": {
+      "Amount": 0,
+      "Number of Years Paid": 1
+    },
+    "NPS": {
+      "Tier-1 Self Contribution": 200000,
+      "Tier-1 Employer Contribution": 0,
+      "Tier-2": 0
+    },
+    "Education Loan Interest": {
+      "Interest Paid": 0,
+      "Year of Repayment": 0
+    },
+    "Health Insurance": [
+      {
+        "Payment Purpose": "insurance premium",
+        "Number of Years Paid": 1,
+        "Beneficiary": "self",
+        "Beneficiary Age": 35,
+        "Paid By": "self",
+        "Payment Mode": "cheque",
+        "Amount": 20000
+      },
+      {
+        "Payment Purpose": "insurance premium",
+        "Number of Years Paid": 1,
+        "Beneficiary": "parents",
+        "Beneficiary Age": 65,
+        "Paid By": "self",
+        "Payment Mode": "cheque",
+        "Amount": 45000
+      }
+    ],
+    "Donations": [
+      {
+        "Scheme Name": "PM Cares Fund",
+        "Amount": 5000,
+        "Mode": "cash"
+      }
+    ],
+    "TDS": 0
+  },
+  "_description": "salary_level=low_below_rebate|hra_city=metro_rent_10pct_binding|lta=claim_exceeds_salary_lta|employment_type=government|entertainment_allowance=low_amount_binding|stock_stcg=none|stock_ltcg=ltcg_fmv_benefit|capital_loss_carryforward=ltcl_exceeds_ltcg|other_assets=bonds_short_term|equity_mf=equity_stcg|non_equity_mf=gold_etf_ltcg|deductions_80c_cce=components_sum_exactly_1_5L|nps=spills_to_ccd1b|health_insurance_80d=senior_parent_50k_limit|education_loan_80e=none|donations_80g=cash_over_2k_excluded|age_and_interest=young_low_interest|tax_regime=old|tds=none",
+  "_expected": {
+    "Under Head Salaries": {
+      "Gross Salary": 1003000,
+      "Exemptions": {
+        "Section 10(13A)": 40000.0,
+        "Section 10(5)": 20000
+      },
+      "Section 16(ia)": 50000,
+      "Section 16(ii)": 3000,
+      "Section 16(iii)": 2400,
+      "Net Salary": 887600.0
+    },
+    "Capital Gains": {
+      "STCG (Section 111A)": 30000.0,
+      "STCG (Other)": {
+        "Bonds": 20000.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 20000.0
+      },
+      "LTCG (Section 112A)": 0.0,
+      "LTCG (Non-Equity)": {
+        "Bonds": 0.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 0.0
+      },
+      "LTCG (Other)": 0.0
+    },
+    "Income from Other Sources": {
+      "Savings Bank Interest": 5000,
+      "Deposit Interest": 10000,
+      "Other Interest": {
+        "EPF Taxable Interest": 0
+      }
+    },
+    "Gross Total Income": 952600.0,
+    "Deductions": {
+      "80C": 112500.0,
+      "80CCC": 0.0,
+      "80CCD(1)": 37500.0,
+      "80CCD(1B)": 50000,
+      "80CCD(2)": 70000.0,
+      "80D": 65000.0,
+      "80E": 0.0,
+      "80G": 0.0,
+      "80TTA": 5000,
+      "80TTB": 0.0,
+      "Total Deductions": 340000.0
+    },
+    "Total Taxable Income": 612600.0,
+    "Tax Computation": {
+      "Tax at Slab Rates": 29020.0,
+      "Tax on STCG (Section 111A)": 6000.0,
+      "Tax on STCG (Other)": 0.0,
+      "Tax on LTCG (Section 112A)": 0.0,
+      "Tax on LTCG (Non-Equity)": 0.0,
+      "Tax on LTCG (Other)": 0.0,
+      "Total Tax Before Rebate": 35020.0,
+      "Less: Rebate under Section 87A": 0.0,
+      "Tax After Rebate": 35020.0,
+      "Surcharge": 0.0,
+      "Health and Education Cess": 1400.8,
+      "Total Tax Liability": 36420.8,
+      "Less: TDS": 0,
+      "Net Tax Payable / Refund": 36420.8
+    }
+  }
+}

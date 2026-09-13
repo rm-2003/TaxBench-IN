@@ -1,0 +1,150 @@
+{
+  "input": {
+    "Age": 62,
+    "Employment Type": "government",
+    "Tax Regime": "new",
+    "City": "non-metro",
+    "Gross Salary": {
+      "Basic Salary": 800000,
+      "Dearness Allowance": 200000,
+      "HRA": 600000,
+      "Conveyance Allowance": 30000,
+      "Medical Allowance": 20000,
+      "Bonuses and Incentives": 100000,
+      "Overtime Pay": 0,
+      "LTA": 50000,
+      "Special Allowance": 700000,
+      "Entertainment Allowance": 50000
+    },
+    "Actual Rent Paid": 900000,
+    "LTA Travel Expenses Claimed": 0,
+    "Professional Tax": 2500,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [],
+    "Short Term Capital Loss": [],
+    "Mutual Fund Transactions": [],
+    "Privately Owned Vehicle": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Bonds": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Debentures": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "G-Secs": {
+      "Sale Amount": 0,
+      "Purchase Amount": 0,
+      "Held for duration in years": 0
+    },
+    "Savings Bank Interest": 20000,
+    "Deposit Interest": 15000,
+    "Other Interest": 0,
+    "EPF Taxable Interest": 0,
+    "PPF": 100000,
+    "EPF": {
+      "Employee Contribution": {
+        "Deducted from Salary": 0,
+        "Voluntary": 0
+      },
+      "Employer Contribution": 0
+    },
+    "ELSS": 80000,
+    "NSC": 0,
+    "Sukanya Samriddhi Yojana": 0,
+    "SCSS": 0,
+    "Pension Scheme Premium": {
+      "Amount": 60000,
+      "Number of Years Paid": 3
+    },
+    "NPS": {
+      "Tier-1 Self Contribution": 50000,
+      "Tier-1 Employer Contribution": 50000,
+      "Tier-2": 0
+    },
+    "Education Loan Interest": {
+      "Interest Paid": 0,
+      "Year of Repayment": 0
+    },
+    "Health Insurance": [],
+    "Donations": [],
+    "TDS": 182520.0
+  },
+  "_description": "salary_level=mid|hra_city=nonmetro_40pct_binding|lta=none|employment_type=government|entertainment_allowance=high_5k_cap_binding|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=none|other_assets=none|equity_mf=none|non_equity_mf=none|deductions_80c_cce=over_cap_proportional|nps=with_employer|health_insurance_80d=none|education_loan_80e=none|donations_80g=none|age_and_interest=senior_below_limit|tax_regime=new|tds=partial",
+  "_expected": {
+    "Under Head Salaries": {
+      "Gross Salary": 2550000,
+      "Exemptions": {
+        "Section 10(13A)": 0.0,
+        "Section 10(5)": 0.0
+      },
+      "Section 16(ia)": 75000,
+      "Section 16(ii)": 0.0,
+      "Section 16(iii)": 0.0,
+      "Net Salary": 2475000.0
+    },
+    "Capital Gains": {
+      "STCG (Section 111A)": 0.0,
+      "STCG (Other)": {
+        "Bonds": 0.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 0.0
+      },
+      "LTCG (Section 112A)": 0.0,
+      "LTCG (Non-Equity)": {
+        "Bonds": 0.0,
+        "Debentures": 0.0,
+        "G-Secs": 0.0,
+        "Mutual Funds": 0.0,
+        "Total": 0.0
+      },
+      "LTCG (Other)": 0.0
+    },
+    "Income from Other Sources": {
+      "Savings Bank Interest": 20000,
+      "Deposit Interest": 15000,
+      "Other Interest": {
+        "EPF Taxable Interest": 0
+      }
+    },
+    "Gross Total Income": 2510000.0,
+    "Deductions": {
+      "80C": 0.0,
+      "80CCC": 0.0,
+      "80CCD(1)": 0.0,
+      "80CCD(1B)": 0.0,
+      "80CCD(2)": 140000.0,
+      "80D": 0.0,
+      "80E": 0.0,
+      "80G": 0.0,
+      "80TTA": 0.0,
+      "80TTB": 0.0,
+      "Total Deductions": 140000.0
+    },
+    "Total Taxable Income": 2370000.0,
+    "Tax Computation": {
+      "Tax at Slab Rates": 292500.0,
+      "Tax on STCG (Section 111A)": 0.0,
+      "Tax on STCG (Other)": 0.0,
+      "Tax on LTCG (Section 112A)": 0.0,
+      "Tax on LTCG (Non-Equity)": 0.0,
+      "Tax on LTCG (Other)": 0.0,
+      "Total Tax Before Rebate": 292500.0,
+      "Less: Rebate under Section 87A": 0.0,
+      "Tax After Rebate": 292500.0,
+      "Surcharge": 0.0,
+      "Health and Education Cess": 11700.0,
+      "Total Tax Liability": 304200.0,
+      "Less: TDS": 182520.0,
+      "Net Tax Payable / Refund": 121680.0
+    }
+  }
+}
