@@ -1,2 +1,0 @@
-model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
-tencent/hy3-preview:free,0.5541,0.6971,0.33,0.9133,0.02,0.7244,0.4043,1.0,1,50,335.99,2109.0,21078.0,23187.0,105462,1053902,0.0,0.0
