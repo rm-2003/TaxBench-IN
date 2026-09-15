@@ -239,6 +239,7 @@ CALCULATE_TOOL = {
 class CaseResult:
     case_file: str
     description: str
+    archetype: str  # taxpayer profile ID, e.g. "P01" (empty for pairwise/ota modes)
     model: str
     method: str
     rounds_used: int
@@ -914,6 +915,7 @@ def load_cases():
             "input": data["input"],
             "expected": data["_expected"],
             "description": data.get("_description", ""),
+            "archetype": data.get("_archetype") or "",
         })
     return cases
 
@@ -949,6 +951,7 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
     return CaseResult(
         case_file=case["file"],
         description=case["description"],
+        archetype=case["archetype"],
         model=model,
         method=method,
         rounds_used=rounds,
@@ -970,11 +973,13 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
 # ---------------------------------------------------------------------------
 # Reporting
 # ---------------------------------------------------------------------------
-def result_from_checkpoint_entry(entry, model, method):
+def result_from_checkpoint_entry(entry, model, method, case_by_file=None):
     """Reconstruct enough of a CaseResult from a checkpoint dict for reporting."""
+    case = (case_by_file or {}).get(entry["case_file"], {})
     return CaseResult(
         case_file=entry["case_file"],
-        description="",
+        description=case.get("description", ""),
+        archetype=case.get("archetype", ""),
         model=model,
         method=method,
         rounds_used=entry["rounds_used"],
@@ -999,7 +1004,7 @@ def write_per_model_method_csv(model, method, results):
     path = RESULTS_DIR / fname
 
     fieldnames = (
-        ["case_file", "description", "model", "method", "rounds_used", "parsed",
+        ["case_file", "description", "archetype", "model", "method", "rounds_used", "parsed",
          "latency_sec", "prompt_tokens", "completion_tokens", "total_tokens", "cost"]
         + ALL_FIELD_NAMES
         + [f"{f}_pct_error" for f in ALL_FIELD_NAMES]
@@ -1013,6 +1018,7 @@ def write_per_model_method_csv(model, method, results):
             row = {
                 "case_file": r.case_file,
                 "description": r.description,
+                "archetype": r.archetype,
                 "model": r.model,
                 "method": r.method,
                 "rounds_used": r.rounds_used,
@@ -1180,8 +1186,9 @@ def run_model(client, model, method, cases, args):
     with _print_lock:
         print(f"\n[{tag}] Starting — rpm={cfg['rpm']}, concurrency={concurrency}")
 
+    case_by_file = {c["file"]: c for c in cases}
     completed, checkpoint_entries = load_checkpoint(model, method)
-    prior_results = [result_from_checkpoint_entry(e, model, method) for e in checkpoint_entries]
+    prior_results = [result_from_checkpoint_entry(e, model, method, case_by_file) for e in checkpoint_entries]
 
     pending_cases = [c for c in cases if c["file"] not in completed]
     if completed:

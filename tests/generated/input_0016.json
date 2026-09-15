@@ -128,6 +128,8 @@
     "TDS": 232128.0
   },
   "_description": "salary_level=mid|hra_city=metro_pct_binding|lta=claim_less_than_salary_lta|employment_type=private|entertainment_allowance=high_5k_cap_binding|stock_stcg=stcg_loss|stock_ltcg=none|capital_loss_carryforward=stcl_offsets_stcg|other_assets=none|equity_mf=elss_matured|non_equity_mf=debt_pre2023_jan_mar|deductions_80c_cce=partial_under_cap|nps=tier2_only_trap|health_insurance_80d=preventive_checkup_cap|education_loan_80e=none|donations_80g=mixed_100_and_50_pct|age_and_interest=young_low_interest|tax_regime=new|tds=partial",
+  "_profile": "P01_mid_salary_private_new_metro",
+  "_archetype": "P01",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 2700000,
@@ -154,8 +156,8 @@
         "Bonds": 0.0,
         "Debentures": 0.0,
         "G-Secs": 0.0,
-        "Mutual Funds": 42776.03,
-        "Total": 42776.03
+        "Mutual Funds": 80000.0,
+        "Total": 80000.0
       },
       "LTCG (Other)": 0.0
     },
@@ -166,7 +168,7 @@
         "EPF Taxable Interest": 0
       }
     },
-    "Gross Total Income": 2712276.03,
+    "Gross Total Income": 2749500.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
@@ -180,7 +182,7 @@
       "80TTB": 0.0,
       "Total Deductions": 0.0
     },
-    "Total Taxable Income": 2712276.03,
+    "Total Taxable Income": 2749500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 372000.0,
       "Tax on STCG (Section 111A)": 0.0,

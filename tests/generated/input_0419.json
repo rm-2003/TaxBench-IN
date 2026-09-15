@@ -114,9 +114,11 @@
         "Mode": "cheque"
       }
     ],
-    "TDS": 5642371.41
+    "TDS": 5646000.75
   },
   "_description": "salary_level=above_2Cr|hra_city=metro_pct_binding|lta=claim_exceeds_salary_lta|employment_type=private|entertainment_allowance=high_5k_cap_binding|stock_stcg=none|stock_ltcg=ltcg_above_exempt|capital_loss_carryforward=ltcl_offsets_ltcg|other_assets=none|equity_mf=none|non_equity_mf=debt_pre2023_jan_mar|deductions_80c_cce=over_cap_proportional|nps=with_employer|health_insurance_80d=invalid_beneficiary_sibling|education_loan_80e=beyond_8yr_trap|donations_80g=full_exempt_100pct|age_and_interest=young_high_interest|tax_regime=new|tds=partial",
+  "_profile": "P08_above_2cr_new_regime",
+  "_archetype": "P08",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 25500000,
@@ -143,8 +145,8 @@
         "Bonds": 0.0,
         "Debentures": 0.0,
         "G-Secs": 0.0,
-        "Mutual Funds": 42776.03,
-        "Total": 42776.03
+        "Mutual Funds": 80000.0,
+        "Total": 80000.0
       },
       "LTCG (Other)": 0.0
     },
@@ -155,7 +157,7 @@
         "EPF Taxable Interest": 8000
       }
     },
-    "Gross Total Income": 25785276.03,
+    "Gross Total Income": 25822500.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
@@ -169,22 +171,22 @@
       "80TTB": 0.0,
       "Total Deductions": 50000.0
     },
-    "Total Taxable Income": 25735276.03,
+    "Total Taxable Income": 25772500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 7212900.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 15562.5,
-      "Tax on LTCG (Non-Equity)": 5347.0,
+      "Tax on LTCG (Non-Equity)": 10000.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 7233809.5,
+      "Total Tax Before Rebate": 7238462.5,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 7233809.5,
-      "Surcharge": 1808452.38,
-      "Health and Education Cess": 361690.48,
-      "Total Tax Liability": 9403952.35,
-      "Less: TDS": 5642371.41,
-      "Net Tax Payable / Refund": 3761580.94
+      "Tax After Rebate": 7238462.5,
+      "Surcharge": 1809615.62,
+      "Health and Education Cess": 361923.12,
+      "Total Tax Liability": 9410001.25,
+      "Less: TDS": 5646000.75,
+      "Net Tax Payable / Refund": 3764000.5
     }
   }
 }

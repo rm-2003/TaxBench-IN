@@ -161,10 +161,10 @@ TESTS = [
         ],
     },
     {
-        "name": "Test 18 — Debt MF pre-2023 LTCG with CII indexation",
+        "name": "Test 18 — Debt MF pre-2023 LTCG, no indexation (post Budget 2024)",
         "input": "test18_mf_debt_pre2023.json",
         "checks": [
-            ("Gross Total Income", 34385.38),
+            ("Gross Total Income", 50000),
         ],
     },
     {

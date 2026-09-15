@@ -268,3 +268,29 @@ Detailed per-area plans stored in `.claude/plans/`:
 | Self-healing rate-limit pause | Run 2: Transient platform-wide free-tier rate limits caused cascading failures | On `RateLimitExhausted`: stop feeding new cases, drain in-flight. If any in-flight succeeds → reset and resume. If all drain with rate limits → cooldown sleep (120s), then retry remaining. After 2 cooldowns → halt model |
 | **`MAX_OUTPUT_TOKENS` removed** | Models were capped at 32768 even when they could benefit from unlimited output | `MAX_OUTPUT_TOKENS = None` — `max_tokens` param is no longer sent in API calls, letting each model use its provider default. Per-model overrides possible via `MODEL_CONFIG["max_tokens"]`. **Important:** removes the safety cap on token generation; runaway reasoning models may produce very large (and costly) responses. |
 | Free-model rate limits raised | hy3-preview and nemotron were under-utilised at rpm=12, concurrency=4 | hy3-preview: 12→20 RPM, 4→8 concurrency. nemotron-nano-9b: 12→20 RPM, 4→8 concurrency. Gemma unchanged (still 429-prone, relies on paid fallback). |
+
+#### Archetype ID now carried through the dataset and evaluation results
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `tests/generate_test_cases.py` | Generated cases now embed `_profile` (full archetype name, e.g. `P01_mid_salary_private_new_metro`) and `_archetype` (short ID, e.g. `P01`) fields | Previously the archetype was only recoverable from the filename, and only under a naming scheme (`{slug}_{idx:04d}.json`) that didn't match what `evaluate_llm.py` actually globs for (`input_*.json`) — the two had drifted apart. Filename generation fixed back to `input_{idx:04d}.json` so the generator output matches the harness's expectations; regenerated all 569 cases (569/569 pass ground-truth re-verification). |
+| `tests/evaluate_llm.py` — `CaseResult` | New `archetype` field | Populated from the case's `_archetype` on a fresh run, and recovered via a `case_file → case` lookup on checkpoint resume (previously `description` was also silently dropped to `""` on resume; now restored the same way) |
+| `tests/evaluate_llm.py` — results CSV | New `archetype` column | Per-model-method results CSV (`write_per_model_method_csv`) now carries the P01–P10 archetype per row, enabling per-archetype accuracy analysis without re-deriving it from parameter combinations |
+
+#### Debt mutual fund indexation removed (Budget 2024 correctness fix)
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `tax_calculator.py` — `classify_mf_transaction()` | Debt-MF LTCG (units bought before 1 Apr 2023, held >24 months) now taxed on flat gain (`sale − cost`), not CII-indexed cost | Budget 2024 (23 Jul 2024) retroactively withdrew indexation for **all** debt-fund LTCG, including units bought before 1 Apr 2023, for any sale on/after that date. Every case in this benchmark's FY 2025-26 scope has a sale date after the cutoff, so indexation never legally applies here — the prior code was giving these cases an incorrect (indexed, lower) taxable gain. Verified against Budget 2024 Section 50AA analysis (see sources in conversation). |
+| `tax_calculator.py` | Removed `CII_TABLE` and `fy_start()` | Dead code once indexation was removed — nothing else in the calculator used them |
+| `calculator_tests/test18_mf_debt_pre2023.json` + `run_tests.py` | Updated to an in-scope FY 2025-26 sale date (2025-06-01, was 2024-01-01) and the correct flat-gain expected value (₹50,000, was the indexed ₹34,385.38) | The old test's sale date preceded the Budget 2024 cutoff, so its old expected value was still technically correct for that date — but out of scope for a calculator that only targets FY 2025-26 |
+| `tests/generated/*.json` | Regenerated all 569 cases | 158 of 569 cases (the `non_equity_mf=debt_pre2023_*` factor levels, present across all 10 profiles) had their `LTCG (Non-Equity)` ground truth change from an indexed to a flat gain. Ground-truth re-verification: 569/569 pass. Calculator unit tests: 26/26 pass. |
+
+#### Section 16(iii) professional tax cap corrected to ₹5,000 (primary-source verification against CBDT ITR-2 Validation Rules, AY 2026-27)
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `tax_calculator.py` | Section 16(iii) professional tax deduction cap raised from ₹2,500 to ₹5,000 | Confirmed directly from the official **CBDT e-Filing ITR-2 Validation Rules for AY 2026-27, V1.0 (26 May 2026)**, Rule 37: *"In Schedule Salary, Professional tax u/s 16(iii) will be allowed only to the extent of Rs.5000/-"*. The ₹2,500 figure (Article 276(2) of the Constitution) was the long-standing historical cap and is what every other source, including this project's own `Reference.md`, had documented — but the AY 2026-27 official validation rules supersede it for this benchmark's scope. |
+| `Reference.md` | Updated Section 16(iii) limit to ₹5,000, with source citation | — |
+| Dataset impact | None | The generator never feeds a `Professional Tax` value above ₹2,500 (max used: ₹2,500 across all profiles), so `min(2500, x) == min(5000, x)` for every one of the 569 cases — no case's ground truth actually changes from this fix, but it's now correct for any future case with a higher value. Verified: 569/569 ground-truth pass, 26/26 unit tests pass. |
+| Cross-check method | User supplied primary sources: CBDT ITR-2 Validation Rules PDF (AY 2026-27) and the ITR-2 JSON Schema, both downloaded from incometax.gov.in | Cross-referenced against `tax_calculator.py`'s HRA (50%/40% split), entertainment allowance (₹5,000/20%-of-basic/govt-only), standard deduction (₹50,000 old / ₹75,000 new), 80D limits (₹25k/₹50k self, ₹25k/₹50k parents, ₹5k preventive checkup, ₹1L overall), 80G cash >₹2,000 rule, 80CCD(2) 10%/14% split, 80TTA/80TTB age-gating, 87A thresholds (₹12L new / ₹5L old), and STCG 111A (20%) / LTCG 112A (12.5%) rates — all confirmed correct, no further discrepancies found |

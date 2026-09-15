@@ -1,11 +1,11 @@
 {
-    "_description": "Debt MF pre-2023 LTCG with CII indexation — purchased 2021-01-01 (FY 2020-21, CII=301), sold 2024-01-01 (FY 2023-24, CII=348). indexed_cost=100000*(348/301)=115614.62. gain=150000-115614.62=34385.38",
+    "_description": "Debt MF pre-2023 LTCG, no indexation — purchased 2021-01-01, sold 2025-06-01 (FY 2025-26). Budget 2024 (23 Jul 2024) retroactively removed indexation for all debt-fund LTCG, including units bought before 1 Apr 2023, for sales from that date onward — every sale in this benchmark's FY 2025-26 scope falls after the cutoff. gain=150000-100000=50000 (flat, unindexed)",
     "Age": 35, "Employment Type": "private", "Tax Regime": "new", "City": "metro",
     "Gross Salary": {"Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0, "Conveyance Allowance": 0, "Medical Allowance": 0, "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0, "Special Allowance": 0, "Entertainment Allowance": 0},
     "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
     "Stock Sale Transactions": [], "Long Term Capital Loss": [], "Short Term Capital Loss": [],
     "Mutual Fund Transactions": [
-        {"Type": "debt", "Purchase Date": "2021-01-01", "Sale Date": "2024-01-01", "Purchase Value": 100000, "Sale Value": 150000}
+        {"Type": "debt", "Purchase Date": "2021-01-01", "Sale Date": "2025-06-01", "Purchase Value": 100000, "Sale Value": 150000}
     ],
     "Bonds": {}, "Debentures": {}, "G-Secs": {},
     "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,

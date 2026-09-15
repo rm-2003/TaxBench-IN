@@ -64,20 +64,9 @@ NEW_REGIME_SURCHARGE_RATES = [
 
 SURCHARGE_BOUNDARIES = [5_000_000, 10_000_000, 20_000_000, 50_000_000]
 
-CII_TABLE = {
-    2001: 100, 2002: 105, 2003: 109, 2004: 113, 2005: 117, 2006: 122,
-    2007: 129, 2008: 137, 2009: 148, 2010: 167, 2011: 184, 2012: 200,
-    2013: 220, 2014: 240, 2015: 254, 2016: 264, 2017: 272, 2018: 280,
-    2019: 289, 2020: 301, 2021: 317, 2022: 331, 2023: 348, 2024: 363,
-    2025: 376,
-}
 DEBT_PRE_2023_CUTOFF = date(2023, 4, 1)
 EQUITY_LIKE_TYPES    = {"equity", "hybrid-equity", "elss"}
 ELSS_LOCK_IN_MONTHS  = 36
-
-def fy_start(d: date) -> int:
-    """Return the FY start year for a date (Apr–Mar cycle). Jan 2024 → 2023 (FY 2023-24)."""
-    return d.year if d.month >= 4 else d.year - 1
 
 def classify_mf_transaction(txn):
     fund_type   = txn.get("Type", "").lower()
@@ -101,12 +90,14 @@ def classify_mf_transaction(txn):
         return ("stcg_111A", gain) if months_held <= 12 else ("ltcg_112A", gain)
 
     elif fund_type == "debt":
+        # Units bought on/after 1 Apr 2023 are "specified mutual funds" under
+        # Section 50AA — always deemed short-term regardless of holding period.
+        # Units bought earlier get normal long/short-term treatment, but Budget
+        # 2024 (23 Jul 2024) retroactively withdrew indexation for ALL debt-fund
+        # LTCG — so even pre-2023 units are taxed on the flat (unindexed) gain.
         is_pre_2023 = purchase_dt < DEBT_PRE_2023_CUTOFF
         if is_pre_2023 and months_held > 24:
-            cii_p = CII_TABLE.get(fy_start(purchase_dt), 100)
-            cii_s = CII_TABLE.get(fy_start(sale_dt), cii_p)
-            indexed_cost = pv * (cii_s / cii_p)
-            return ("ltcg_other_12_mf", sv - indexed_cost)
+            return ("ltcg_other_12_mf", sv - pv)
         else:
             return ("stcg_other_mf", sv - pv)
 
@@ -299,7 +290,7 @@ def calculate(inp: dict) -> dict:
         s16_ii = 0.0
 
     # Section 16(iii) — professional tax (old regime only)
-    s16_iii = min(2_500, g(inp, "Professional Tax")) if regime == "old" else 0.0
+    s16_iii = min(5_000, g(inp, "Professional Tax")) if regime == "old" else 0.0
 
     net_salary = gross_salary - hra_10_13A - lta_10_5 - s16_ia - s16_ii - s16_iii
 

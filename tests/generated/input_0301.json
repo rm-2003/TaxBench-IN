@@ -129,6 +129,8 @@
     "TDS": 10000
   },
   "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=stcg_loss|stock_ltcg=none|capital_loss_carryforward=ltcl_exceeds_ltcg|other_assets=none|equity_mf=equity_stcg|non_equity_mf=gold_etf_ltcg|deductions_80c_cce=partial_under_cap|nps=self_only_within_ccd1|health_insurance_80d=invalid_beneficiary_sibling|education_loan_80e=none|donations_80g=mixed_100_and_50_pct|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
+  "_profile": "P06_zero_salary_capital_gains_only",
+  "_archetype": "P06",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 0,

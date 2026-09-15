@@ -119,6 +119,8 @@
     "TDS": 0
   },
   "_description": "salary_level=just_above_12L_marginal|hra_city=metro_rent_10pct_binding|lta=claim_exceeds_salary_lta|employment_type=private|entertainment_allowance=none|stock_stcg=none|stock_ltcg=ltcg_above_exempt|capital_loss_carryforward=none|other_assets=bonds_short_term|equity_mf=equity_ltcg|non_equity_mf=debt_post2023_slab|deductions_80c_cce=components_sum_exactly_1_5L|nps=none|health_insurance_80d=valid_cheque_self|education_loan_80e=within_8yr_window|donations_80g=cash_over_2k_excluded|age_and_interest=young_low_interest|tax_regime=new|tds=none",
+  "_profile": "P04_marginal_relief_new_regime",
+  "_archetype": "P04",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 1300000,
