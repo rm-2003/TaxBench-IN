@@ -1,0 +1,89 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 143 done, 426 remaining
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+[nemotron-3-ultra-550b-a55b:free] [144/569] input_0060.json OK score=26/37 (70%) rounds=1 latency=455.7s tokens=13915 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [145/569] input_0215.json OK score=20/37 (54%) rounds=1 latency=649.8s tokens=14565 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [146/569] input_0046.json OK score=25/37 (68%) rounds=1 latency=726.9s tokens=17437 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [147/569] input_0038.json OK score=29/37 (78%) rounds=1 latency=502.9s tokens=15599 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [148/569] input_0111.json OK score=22/37 (59%) rounds=1 latency=974.2s tokens=20628 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [149/569] input_0452.json OK score=23/37 (62%) rounds=1 latency=654.2s tokens=17495 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [150/569] input_0482.json OK score=24/37 (65%) rounds=1 latency=944.1s tokens=27351 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [151/569] input_0362.json OK score=25/37 (68%) rounds=1 latency=786.3s tokens=18873 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [152/569] input_0516.json OK score=22/37 (59%) rounds=1 latency=1017.3s tokens=22205 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [153/569] input_0213.json OK score=26/37 (70%) rounds=1 latency=697.5s tokens=17031 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [154/569] input_0114.json OK score=24/37 (65%) rounds=1 latency=598.8s tokens=17107 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [155/569] input_0042.json OK score=28/37 (76%) rounds=1 latency=591.4s tokens=16804 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [156/569] input_0429.json OK score=23/37 (62%) rounds=1 latency=567.8s tokens=15293 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [157/569] input_0281.json OK score=24/37 (65%) rounds=1 latency=600.6s tokens=15397 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [158/569] input_0546.json OK score=22/37 (59%) rounds=1 latency=963.9s tokens=24234 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [159/569] input_0441.json OK score=23/37 (62%) rounds=1 latency=643.4s tokens=17842 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [160/569] input_0024.json OK score=23/37 (62%) rounds=1 latency=333.4s tokens=12405 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [161/569] input_0507.json OK score=22/37 (59%) rounds=1 latency=493.4s tokens=14844 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [162/569] input_0014.json OK score=28/37 (76%) rounds=1 latency=439.8s tokens=12064 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [163/569] input_0445.json OK score=21/37 (57%) rounds=1 latency=891.8s tokens=20392 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [164/569] input_0478.json OK score=20/37 (54%) rounds=1 latency=457.6s tokens=13295 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [165/569] input_0497.json OK score=28/37 (76%) rounds=1 latency=524.3s tokens=13498 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+[nemotron-3-ultra-550b-a55b:free] [166/569] input_0054.json OK score=24/37 (65%) rounds=1 latency=594.4s tokens=15305 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [167/569] input_0435.json OK score=25/37 (68%) rounds=1 latency=890.0s tokens=20544 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [168/569] input_0040.json OK score=25/37 (68%) rounds=1 latency=323.0s tokens=9840 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [169/569] input_0191.json OK score=23/37 (62%) rounds=1 latency=736.4s tokens=18193 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [170/569] input_0155.json OK score=25/37 (68%) rounds=1 latency=879.7s tokens=18999 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [171/569] input_0180.json OK score=20/37 (54%) rounds=1 latency=367.7s tokens=11112 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [172/569] input_0070.json OK score=21/37 (57%) rounds=1 latency=1150.8s tokens=21666 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+[nemotron-3-ultra-550b-a55b:free] [173/569] input_0504.json PARSE_FAIL score=0/37 (0%) rounds=1 latency=10.4s tokens=0 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [174/569] input_0386.json OK score=28/37 (76%) rounds=1 latency=725.8s tokens=17957 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+[nemotron-3-ultra-550b-a55b:free] [175/569] input_0525.json OK score=24/37 (65%) rounds=1 latency=608.5s tokens=15410 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [176/569] input_0027.json OK score=28/37 (76%) rounds=1 latency=465.5s tokens=13141 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [177/569] input_0258.json OK score=19/37 (51%) rounds=1 latency=953.6s tokens=27092 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [178/569] input_0171.json OK score=23/37 (62%) rounds=1 latency=522.0s tokens=14271 cost=$0.0000
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+[nemotron-3-ultra-550b-a55b:free] [179/569] input_0142.json OK score=22/37 (59%) rounds=1 latency=638.5s tokens=17869 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [180/569] input_0462.json OK score=24/37 (65%) rounds=1 latency=980.0s tokens=27994 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [181/569] input_0454.json OK score=24/37 (65%) rounds=1 latency=839.8s tokens=16351 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [182/569] input_0157.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    64.0% (181 cases)
+Failed to parse:     1 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields):            87.9%
+  Capital Gains (2 fields):     48.9%
+  Other Sources (3 fields):     91.3%
+  Aggregates (2 fields):        7.5%
+  Deductions (9 fields):        80.8%
+  Tax Computation (14 fields):  45.7%
+
+Cost / efficiency:
+  Mean latency:          1096.3 sec/case
+  Mean tokens:           17,819 total (2,318 prompt + 15,501 completion)
+  Total tokens (all):    3,225,221
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20260923_110716.log

@@ -1,0 +1,18 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 143 done, 426 remaining
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 1/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+      Empty completion (200 OK, 0 tokens) — retry 2/2
+[nemotron-3-ultra-550b-a55b:free] [144/569] input_0060.json PARSE_FAIL score=0/37 (0%) rounds=1 latency=901.3s tokens=0 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [145/569] input_0215.json PARSE_FAIL score=0/37 (0%) rounds=1 latency=906.0s tokens=0 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [146/569] input_0046.json PARSE_FAIL score=0/37 (0%) rounds=1 latency=910.9s tokens=0 cost=$0.0000

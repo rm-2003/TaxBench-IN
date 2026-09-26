@@ -221,6 +221,16 @@ TESTS = [
             ("Gross Total Income", 10000),
         ],
     },
+    {
+        "name": "Test 27 — s.80A(2): deductions capped at gross total income",
+        "input": "test27_80a2_deduction_cap.json",
+        "checks": [
+            ("Gross Total Income", 68000),
+            ("Deductions.Total Deductions", 68000),
+            ("Total Taxable Income", 0),
+            ("Tax Computation.Total Tax Liability", 0),
+        ],
+    },
 ]
 
 

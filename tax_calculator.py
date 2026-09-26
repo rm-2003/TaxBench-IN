@@ -556,6 +556,13 @@ def calculate(inp: dict) -> dict:
         c80d, c80e, c80tta, c80ttb,
     ])
 
+    # Section 80A(2): the aggregate of Chapter VI-A deductions "shall not, in any
+    # case, exceed the gross total income of the assessee". Deductions may reduce
+    # taxable income to zero but never below it — without this cap 11 of the 569
+    # generated cases produced a negative Total Taxable Income, and a model that
+    # correctly answered zero was scored wrong.
+    total_deductions = min(total_deductions, gross_total)
+
     # ------------------------------------------------------------------
     # Total Taxable Income
     # ------------------------------------------------------------------

@@ -1,0 +1,78 @@
+Method: zero-shot | Models: 1 | Cases: 50 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=50, budget=$17.00
+  gemma4-12b-ctx8k                    rpm=600  concurrency=1
+
+[gemma4-12b-ctx8k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx8k] Resuming: 3 done, 47 remaining
+[gemma4-12b-ctx8k] [4/50] input_0287.json OK score=10/37 (27%) rounds=1 latency=111.0s tokens=3281 cost=$0.0000
+[gemma4-12b-ctx8k] [5/50] input_0529.json OK score=10/37 (27%) rounds=1 latency=153.6s tokens=3386 cost=$0.0000
+[gemma4-12b-ctx8k] [6/50] input_0132.json OK score=15/37 (41%) rounds=1 latency=150.6s tokens=3400 cost=$0.0000
+[gemma4-12b-ctx8k] [7/50] input_0097.json OK score=9/37 (24%) rounds=1 latency=154.2s tokens=3407 cost=$0.0000
+[gemma4-12b-ctx8k] [8/50] input_0280.json OK score=12/37 (32%) rounds=1 latency=221.8s tokens=3255 cost=$0.0000
+[gemma4-12b-ctx8k] [9/50] input_0208.json OK score=19/37 (51%) rounds=1 latency=355.1s tokens=3157 cost=$0.0000
+[gemma4-12b-ctx8k] [10/50] input_0156.json OK score=16/37 (43%) rounds=1 latency=379.3s tokens=3214 cost=$0.0000
+[gemma4-12b-ctx8k] [11/50] input_0443.json OK score=13/37 (35%) rounds=1 latency=217.8s tokens=3289 cost=$0.0000
+[gemma4-12b-ctx8k] [12/50] input_0016.json OK score=17/37 (46%) rounds=1 latency=166.2s tokens=3222 cost=$0.0000
+[gemma4-12b-ctx8k] [13/50] input_0212.json OK score=20/37 (54%) rounds=1 latency=162.1s tokens=3245 cost=$0.0000
+[gemma4-12b-ctx8k] [14/50] input_0549.json OK score=12/37 (32%) rounds=1 latency=182.3s tokens=3250 cost=$0.0000
+[gemma4-12b-ctx8k] [15/50] input_0089.json OK score=11/37 (30%) rounds=1 latency=182.5s tokens=3224 cost=$0.0000
+[gemma4-12b-ctx8k] [16/50] input_0060.json OK score=20/37 (54%) rounds=1 latency=175.3s tokens=3169 cost=$0.0000
+[gemma4-12b-ctx8k] [17/50] input_0179.json OK score=19/37 (51%) rounds=1 latency=176.5s tokens=3073 cost=$0.0000
+[gemma4-12b-ctx8k] [18/50] input_0355.json OK score=18/37 (49%) rounds=1 latency=163.2s tokens=2870 cost=$0.0000
+[gemma4-12b-ctx8k] [19/50] input_0248.json OK score=12/37 (32%) rounds=1 latency=349.1s tokens=3335 cost=$0.0000
+[gemma4-12b-ctx8k] [20/50] input_0141.json OK score=13/37 (35%) rounds=1 latency=159.3s tokens=3215 cost=$0.0000
+[gemma4-12b-ctx8k] [21/50] input_0215.json OK score=19/37 (51%) rounds=1 latency=164.4s tokens=3288 cost=$0.0000
+[gemma4-12b-ctx8k] [22/50] input_0121.json OK score=15/37 (41%) rounds=1 latency=199.0s tokens=3189 cost=$0.0000
+[gemma4-12b-ctx8k] [23/50] input_0423.json OK score=17/37 (46%) rounds=1 latency=199.4s tokens=3248 cost=$0.0000
+[gemma4-12b-ctx8k] [24/50] input_0381.json OK score=11/37 (30%) rounds=1 latency=182.1s tokens=3344 cost=$0.0000
+[gemma4-12b-ctx8k] [25/50] input_0313.json OK score=29/37 (78%) rounds=1 latency=181.1s tokens=3119 cost=$0.0000
+[gemma4-12b-ctx8k] [26/50] input_0472.json OK score=15/37 (41%) rounds=1 latency=194.8s tokens=3251 cost=$0.0000
+[gemma4-12b-ctx8k] [27/50] input_0550.json OK score=11/37 (30%) rounds=1 latency=178.3s tokens=3226 cost=$0.0000
+[gemma4-12b-ctx8k] [28/50] input_0411.json OK score=14/37 (38%) rounds=1 latency=220.2s tokens=3379 cost=$0.0000
+[gemma4-12b-ctx8k] [29/50] input_0547.json OK score=11/37 (30%) rounds=1 latency=206.8s tokens=3214 cost=$0.0000
+[gemma4-12b-ctx8k] [30/50] input_0515.json OK score=17/37 (46%) rounds=1 latency=211.9s tokens=3219 cost=$0.0000
+[gemma4-12b-ctx8k] [31/50] input_0194.json OK score=19/37 (51%) rounds=1 latency=204.9s tokens=3120 cost=$0.0000
+[gemma4-12b-ctx8k] [32/50] input_0201.json OK score=14/37 (38%) rounds=1 latency=215.9s tokens=3302 cost=$0.0000
+[gemma4-12b-ctx8k] [33/50] input_0093.json OK score=9/37 (24%) rounds=1 latency=215.3s tokens=3240 cost=$0.0000
+[gemma4-12b-ctx8k] [34/50] input_0552.json OK score=10/37 (27%) rounds=1 latency=212.5s tokens=3309 cost=$0.0000
+[gemma4-12b-ctx8k] [35/50] input_0376.json OK score=12/37 (32%) rounds=1 latency=214.5s tokens=3387 cost=$0.0000
+[gemma4-12b-ctx8k] [36/50] input_0363.json OK score=12/37 (32%) rounds=1 latency=193.7s tokens=3315 cost=$0.0000
+[gemma4-12b-ctx8k] [37/50] input_0267.json OK score=10/37 (27%) rounds=1 latency=214.5s tokens=3474 cost=$0.0000
+[gemma4-12b-ctx8k] [38/50] input_0119.json OK score=13/37 (35%) rounds=1 latency=217.7s tokens=3277 cost=$0.0000
+[gemma4-12b-ctx8k] [39/50] input_0539.json OK score=13/37 (35%) rounds=1 latency=195.8s tokens=3214 cost=$0.0000
+[gemma4-12b-ctx8k] [40/50] input_0259.json OK score=9/37 (24%) rounds=1 latency=208.1s tokens=3402 cost=$0.0000
+[gemma4-12b-ctx8k] [41/50] input_0451.json OK score=11/37 (30%) rounds=1 latency=197.4s tokens=3388 cost=$0.0000
+[gemma4-12b-ctx8k] [42/50] input_0022.json OK score=19/37 (51%) rounds=1 latency=203.4s tokens=3152 cost=$0.0000
+[gemma4-12b-ctx8k] [43/50] input_0076.json OK score=8/37 (22%) rounds=1 latency=174.9s tokens=3200 cost=$0.0000
+[gemma4-12b-ctx8k] [44/50] input_0106.json OK score=13/37 (35%) rounds=1 latency=168.3s tokens=3300 cost=$0.0000
+[gemma4-12b-ctx8k] [45/50] input_0512.json OK score=17/37 (46%) rounds=1 latency=209.7s tokens=3312 cost=$0.0000
+[gemma4-12b-ctx8k] [46/50] input_0439.json OK score=16/37 (43%) rounds=1 latency=179.6s tokens=3236 cost=$0.0000
+[gemma4-12b-ctx8k] [47/50] input_0075.json OK score=11/37 (30%) rounds=1 latency=179.4s tokens=3182 cost=$0.0000
+[gemma4-12b-ctx8k] [48/50] input_0442.json OK score=17/37 (46%) rounds=1 latency=206.7s tokens=3288 cost=$0.0000
+[gemma4-12b-ctx8k] [49/50] input_0498.json OK score=16/37 (43%) rounds=1 latency=212.4s tokens=3426 cost=$0.0000
+[gemma4-12b-ctx8k] [50/50] input_0107.json OK score=14/37 (38%) rounds=1 latency=174.6s tokens=3347 cost=$0.0000
+
+=== Evaluation Report: ollama/gemma4-12b-ctx8k [zero-shot] ===
+Overall accuracy:    38.4% (50 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields):            23.4%
+  Capital Gains (2 fields):     12.0%
+  Other Sources (3 fields):     100.0%
+  Aggregates (2 fields):        0.0%
+  Deductions (9 fields):        50.2%
+  Tax Computation (14 fields):  34.3%
+
+Cost / efficiency:
+  Mean latency:          197.9 sec/case
+  Mean tokens:           3,261 total (2,442 prompt + 819 completion)
+  Total tokens (all):    163,040
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx8k] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx8k__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20260926_013413.log

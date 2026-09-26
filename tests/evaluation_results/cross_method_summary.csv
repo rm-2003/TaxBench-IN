@@ -1,2 +1,12 @@
 model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_accuracy,script_mean_tokens,script_mean_latency,tool-call_accuracy,tool-call_mean_tokens,tool-call_mean_latency
-tencent/hy3-preview:free,0.5541,23187.0,335.99,,,,,,
+deepseek/deepseek-chat-v3-0324,0.4746,4172.0,131.17,,,,,,
+google/gemma-4-31b-it:free,0.4941,3317.0,58.64,,,,,,
+meta-llama/llama-3.3-70b-instruct,0.3676,3109.0,38.53,,,,,,
+nvidia/nemotron-3-ultra-550b-a55b:free,0.6404,17506.0,993.6,,,,,,
+nvidia/nemotron-nano-9b-v2:free,0.3892,7057.0,176.4,,,,,,
+ollama/gemma4-12b-ctx16k,,,,0.4685,14483.0,1160.44,,,
+ollama/gemma4-12b-ctx8k,0.3838,3261.0,197.91,,,,0.2703,48001.0,281.1
+openai/gpt-oss-120b,0.534,7051.0,122.1,,,,,,
+openai/gpt-oss-120b:free,0.1054,3406.0,52.1,,,,,,
+openai/gpt-oss-20b,0.4043,9113.0,96.41,,,,,,
+tencent/hy3-preview:free,0.5535,23187.0,335.99,,,,,,

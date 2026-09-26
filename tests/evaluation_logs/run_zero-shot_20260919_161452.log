@@ -1,0 +1,33 @@
+Method: zero-shot | Models: 1 | Cases: 1 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=1, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] [1/1] input_0289.json OK score=23/37 (62%) rounds=1 latency=449.7s tokens=16876 cost=$0.0000
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    62.2% (1 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields):            100.0%
+  Capital Gains (2 fields):     0.0%
+  Other Sources (3 fields):     100.0%
+  Aggregates (2 fields):        0.0%
+  Deductions (9 fields):        77.8%
+  Tax Computation (14 fields):  42.9%
+
+Cost / efficiency:
+  Mean latency:          449.7 sec/case
+  Mean tokens:           16,876 total (2,255 prompt + 14,621 completion)
+  Total tokens (all):    16,876
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20260919_161452.log

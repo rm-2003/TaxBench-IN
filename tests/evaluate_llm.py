@@ -50,8 +50,24 @@ LOGS_DIR = SCRIPT_DIR / "evaluation_logs"
 MAX_OUTPUT_TOKENS = None
 MAX_TRANSIENT_RETRIES = 3 # overridable with CLI
 COST_CHECK_INTERVAL = 5
-FREE_COOLDOWN_SECS = 120 
+FREE_COOLDOWN_SECS = 120
 FREE_COOLDOWN_MAX_RETRIES = 2
+API_TIMEOUT_SECS = 600  # per-attempt request timeout; without this a stuck
+                         # provider blocks the case (and its concurrency slot)
+                         # forever, as observed with nemotron-3-ultra hanging
+                         # 20+ min on a single request. 600s gives ~2x headroom
+                         # over the slowest model's observed average latency
+                         # (hy3-preview, 336s/case) so a legitimately slow but
+                         # working reasoning model isn't cut off mid-response,
+                         # while still failing well before a genuine hang.
+EMPTY_COMPLETION_RETRIES = 2  # a 200 OK with 0 completion tokens is a distinct
+                               # failure mode from a 429/503 — api_call_with_retry
+                               # treats it as success since the HTTP call itself
+                               # succeeded, so it's never retried by that logic.
+                               # Observed on nemotron-3-ultra: whole stretches of
+                               # cases coming back with genuinely empty content,
+                               # burning scarce daily-cap requests on 0-score
+                               # PARSE_FAILs instead of a real answer.
 
 # ---------------------------------------------------------------------------
 # Evaluation defaults (overridable via CLI)
@@ -92,6 +108,25 @@ MODEL_CONFIG = {
     "deepseek/deepseek-chat-v3-0324":    {"rpm": 25, "concurrency": 8},
     "meta-llama/llama-3.3-70b-instruct": {"rpm": 25, "concurrency": 8},
     "qwen/qwen3.5-9b":                   {"rpm": 25, "concurrency": 8},
+    # Gemini (direct, not via OpenRouter) — this key's actual free-tier burst
+    # tolerance is much lower than the nominal 10 rpm; concurrency=3 tripped
+    # 429s immediately in testing, so start conservative (single in-flight).
+    "gemini-3.8-flash":                  {"rpm": 4, "concurrency": 1},
+    # Local Ollama — no quota and no cost, so the only limit is the machine.
+    # concurrency stays at 1: local generation is memory-bandwidth-bound, so
+    # parallel requests split the same bandwidth instead of adding throughput.
+    # reasoning_effort="none" suppresses the thinking trace, which otherwise
+    # consumes most of the context and dominates runtime: 277 -> 41 completion
+    # tokens (34.0s -> 6.0s) on an identical probe prompt. The benchmark scores
+    # 37 numeric answer fields, not reasoning quality, and it makes this model
+    # comparable to the non-reasoning models already in the table.
+    "ollama/gemma4-12b-ctx8k":           {"rpm": 600, "concurrency": 1,
+                                          "reasoning_effort": "none"},
+    # Same weights at num_ctx 16384, for the script method only: a generated tax
+    # script runs ~2,500 tokens, and a retry round must also carry the previous
+    # script in full plus the traceback, which does not fit in 8192.
+    "ollama/gemma4-12b-ctx16k":          {"rpm": 600, "concurrency": 1,
+                                          "reasoning_effort": "none"},
 }
 
 FREE_FALLBACKS = {
@@ -257,15 +292,47 @@ class CaseResult:
     messages: list | None  # conversation transcript for failed/low-score cases
 
 
+LOCAL_PREFIX = "ollama/"
+LOCAL_BASE_URL = "http://localhost:11434/v1"
+LOCAL_TIMEOUT_SECS = 1800  # a 12B on consumer hardware can spend >10 min on one
+                           # case; there is no provider-hang risk to guard against
+                           # locally, so the API_TIMEOUT_SECS ceiling is too tight
+
+
+def is_local_model(model):
+    return bool(model) and model.startswith(LOCAL_PREFIX)
+
+
+def api_model_name(model):
+    """Strip the routing prefix so the request carries the provider's own ID."""
+    return model[len(LOCAL_PREFIX):] if is_local_model(model) else model
+
+
 # ---------------------------------------------------------------------------
-# OpenRouter client
+# Provider client — OpenRouter for most models, Gemini's own OpenAI-compatible
+# endpoint for "gemini-*" model IDs (these aren't available on OpenRouter's
+# free tier, so they're evaluated directly against Google's API instead), and a
+# local Ollama server for "ollama/*" IDs (no quota, no cost — used for the
+# high-request-count method comparison that the free-tier daily cap forbids).
 # ---------------------------------------------------------------------------
-def get_client():
+def get_client(model=None):
+    if is_local_model(model):
+        return OpenAI(base_url=LOCAL_BASE_URL, api_key="ollama", timeout=LOCAL_TIMEOUT_SECS)
+    if model and model.startswith("gemini-"):
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            print("ERROR: Set GEMINI_API_KEY environment variable.")
+            sys.exit(1)
+        return OpenAI(
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            api_key=api_key,
+            timeout=API_TIMEOUT_SECS,
+        )
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         print("ERROR: Set OPENROUTER_API_KEY environment variable.")
         sys.exit(1)
-    return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
+    return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key, timeout=API_TIMEOUT_SECS)
 
 
 class CostGuard:
@@ -395,10 +462,20 @@ def build_messages(method, system_prompt, input_json):
             "You have access to the Python standard library only."
         )
     elif method == "tool-call":
+        # Batching is mandatory, not optional. With one calculate call per round a
+        # 37-field return cannot finish inside MAX_ROUNDS: observed 19 sequential
+        # single-call rounds still mid-computation at the cutoff, scoring 0.
         user_content += (
             "\n\nUse the calculate tool for ALL arithmetic — never perform mental "
-            "math. You may request multiple calculate calls in parallel when "
-            "calculations are independent."
+            "math.\n"
+            "Batch your calls: group independent calculations into the same "
+            "response as several parallel calculate calls, rather than sending "
+            "one at a time. Aim for roughly 5-10 calls per response — enough to "
+            "make progress, but stop and wait for the results rather than trying "
+            "to emit every remaining calculation at once.\n"
+            f"You have a budget of {MAX_TOOL_ROUNDS} rounds, so a handful of "
+            "moderate batches will comfortably cover a 37-field return. Once you "
+            "have the numbers you need, output the final JSON."
         )
     return [
         {"role": "system", "content": system_prompt},
@@ -505,6 +582,14 @@ def extract_code(text):
     fenced = re.search(r"```(?:python)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
     if fenced:
         return fenced.group(1)
+    # Unterminated fence: the response was cut off mid-script, so there is an
+    # opening ``` but no closing one. Without this branch the fallback below
+    # returned the fence line as part of the code and every such case died with
+    # "SyntaxError: invalid syntax" on line 1 instead of surfacing the real
+    # problem (a truncated response).
+    unterminated = re.search(r"```(?:python)?[^\S\n]*\n(.*)", text, re.DOTALL)
+    if unterminated:
+        return re.sub(r"\n\s*```[^\S\n]*$", "", unterminated.group(1))
     lines = text.strip().split("\n")
     if any("import" in l or "print" in l or "open(" in l for l in lines):
         return text.strip()
@@ -530,6 +615,19 @@ class RateLimitExhausted(Exception):
     pass
 
 
+def _is_daily_cap_error(err_str):
+    """True if a 429's message indicates a hard per-day quota (no point retrying
+    today), as opposed to a transient per-minute rate limit.
+
+    Providers phrase this differently: OpenRouter says "...free-models-per-day"
+    (matched by "daily"/"limit exceeded"); Gemini's quotaId is
+    "GenerateRequestsPerDayPerProjectPerModel-FreeTier" — no "daily" substring,
+    hence the separate normalized "perday" check.
+    """
+    normalized = err_str.replace("-", "").replace("_", "")
+    return "daily" in err_str or "limit exceeded" in err_str or "perday" in normalized
+
+
 def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
     """Wraps client.chat.completions.create with retry + 429 handling.
 
@@ -541,7 +639,9 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
                                           "json_format_supported": bool}
     """
     use_json_format = model_delay_state.get("json_format_supported", False)
-    active_model = kwargs.get("model", "")
+    requested_model = kwargs.get("model", "")
+    active_model = api_model_name(requested_model)
+    reasoning_effort = MODEL_CONFIG.get(requested_model, {}).get("reasoning_effort")
     last_was_rate_limit = False
     model_max_tokens = model_delay_state.get("max_tokens", MAX_OUTPUT_TOKENS)
 
@@ -549,6 +649,8 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
         rate_limiter.wait()
         call_kwargs = dict(kwargs)
         call_kwargs["model"] = active_model
+        if reasoning_effort:
+            call_kwargs.setdefault("reasoning_effort", reasoning_effort)
         if model_max_tokens is not None:
             call_kwargs.setdefault("max_tokens", model_max_tokens)
         if use_json_format and "tools" not in call_kwargs:
@@ -592,7 +694,7 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
                     model_delay_state["rate_limiter"] = rate_limiter
                     continue
 
-                if "daily" in err_str:
+                if _is_daily_cap_error(err_str):
                     raise  # true daily cap with no fallback — let caller handle
 
                 wait = [5, 15, 45, 120][min(attempt, 3)]
@@ -604,7 +706,10 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
             # Transient server errors
             if status in (500, 502, 503) or "timeout" in err_str or "server" in err_str:
                 wait = [2, 8, 32][min(attempt, 2)]
-                print(f"      Transient error ({status or type(e).__name__}) — retry in {wait}s")
+                # Include the server's own message: a bare status code gives no way
+                # to tell a context/template rejection from a real outage.
+                print(f"      Transient error ({status or type(e).__name__}) — retry in {wait}s"
+                      f"\n        detail: {str(e)[:300]}")
                 time.sleep(wait)
                 continue
 
@@ -620,11 +725,19 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
 def run_zero_shot(client, model, system_prompt, input_json, mds, rate_limiter):
     tracker = TokenTracker()
     messages = build_messages("zero-shot", system_prompt, input_json)
-    resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=messages, temperature=0)
-    tracker.add(resp)
-    if not resp.choices or not resp.choices[0].message:
-        return None, 1, tracker, messages
-    raw = get_response_text(resp.choices[0].message)
+
+    for attempt in range(1 + EMPTY_COMPLETION_RETRIES):
+        resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=messages, temperature=0)
+        tracker.add(resp)
+        if not resp.choices or not resp.choices[0].message:
+            raw = ""
+        else:
+            raw = get_response_text(resp.choices[0].message)
+        if raw.strip():
+            break
+        if attempt < EMPTY_COMPLETION_RETRIES:
+            print(f"      Empty completion (200 OK, 0 tokens) — retry {attempt + 1}/{EMPTY_COMPLETION_RETRIES}")
+
     messages.append({"role": "assistant", "content": raw[:500]})
     output = extract_json(raw)
     return output, 1, tracker, (messages if output is None else None)
@@ -642,7 +755,13 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
         if not resp.choices or not resp.choices[0].message:
             return None, rounds, tracker, messages
         raw = get_response_text(resp.choices[0].message)
-        messages.append({"role": "assistant", "content": raw[:500]})
+        # Append the response in full, exactly once per round. Truncating it to 500
+        # chars left the model looking at a fragment of its own script cut off
+        # mid-expression, right beside a "'{' was never closed" error it was asked
+        # to fix — the stub was itself an instance of that error. The error and
+        # timeout branches below used to append the full text a second time, so
+        # every retry round also paid for the script twice in prompt tokens.
+        messages.append({"role": "assistant", "content": raw})
         code = extract_code(raw)
         if not code:
             messages.append({"role": "user", "content": "Error: Could not find Python code in your response. Please provide the complete script."})
@@ -666,10 +785,8 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
                 return output, rounds, tracker, (messages if output is None else None)
             else:
                 err = result.stderr[:2000] if result.stderr else "Unknown error"
-                messages.append({"role": "assistant", "content": raw})
                 messages.append({"role": "user", "content": f"Script error (exit code {result.returncode}):\n{err}\n\nPlease fix the script."})
         except subprocess.TimeoutExpired:
-            messages.append({"role": "assistant", "content": raw})
             messages.append({"role": "user", "content": f"Script timed out after {script_timeout}s. Please optimize."})
         finally:
             shutil.rmtree(sandbox, ignore_errors=True)
@@ -1052,40 +1169,51 @@ def write_method_summary_csv(method, all_model_results):
         "total_cost", "mean_cost",
     ]
 
+    # Merge into whatever is already on disk: a single-model run (--model X) must
+    # not wipe out the rows for every other model previously evaluated.
+    rows = {}
+    if path.exists():
+        with open(path, newline="") as f:
+            for old in csv.DictReader(f):
+                if old.get("model"):
+                    rows[old["model"]] = {k: old.get(k, "") for k in fieldnames}
+
+    for model, results in all_model_results.items():
+        n = len(results)
+        if n == 0:
+            continue
+
+        def section_acc(section_fields):
+            total = sum(r.scores.get(f, 0) for r in results for f in section_fields)
+            return round(total / (n * len(section_fields)), 4) if n else 0
+
+        rows[model] = {
+            "model": model,
+            "overall_accuracy": round(sum(r.total_pct for r in results) / n, 4),
+            "salary_accuracy": section_acc(SECTION_MAP["salary"]),
+            "capital_gains_accuracy": section_acc(SECTION_MAP["capital_gains"]),
+            "other_sources_accuracy": section_acc(SECTION_MAP["other_sources"]),
+            "aggregates_accuracy": section_acc(SECTION_MAP["aggregates"]),
+            "deductions_accuracy": section_acc(SECTION_MAP["deductions"]),
+            "tax_computation_accuracy": section_acc(SECTION_MAP["tax_computation"]),
+            "mean_rounds": round(sum(r.rounds_used for r in results) / n, 1),
+            "parse_fail_count": sum(1 for r in results if not r.parsed),
+            "total_cases": n,
+            "mean_latency_sec": round(sum(r.latency_sec for r in results) / n, 2),
+            "mean_prompt_tokens": round(sum(r.prompt_tokens for r in results) / n, 0),
+            "mean_completion_tokens": round(sum(r.completion_tokens for r in results) / n, 0),
+            "mean_total_tokens": round(sum(r.total_tokens for r in results) / n, 0),
+            "total_prompt_tokens": sum(r.prompt_tokens for r in results),
+            "total_completion_tokens": sum(r.completion_tokens for r in results),
+            "total_cost": round(sum(r.cost for r in results), 6),
+            "mean_cost": round(sum(r.cost for r in results) / n, 6),
+        }
+
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for model, results in all_model_results.items():
-            n = len(results)
-            if n == 0:
-                continue
-
-            def section_acc(section_fields):
-                total = sum(r.scores.get(f, 0) for r in results for f in section_fields)
-                return round(total / (n * len(section_fields)), 4) if n else 0
-
-            row = {
-                "model": model,
-                "overall_accuracy": round(sum(r.total_pct for r in results) / n, 4),
-                "salary_accuracy": section_acc(SECTION_MAP["salary"]),
-                "capital_gains_accuracy": section_acc(SECTION_MAP["capital_gains"]),
-                "other_sources_accuracy": section_acc(SECTION_MAP["other_sources"]),
-                "aggregates_accuracy": section_acc(SECTION_MAP["aggregates"]),
-                "deductions_accuracy": section_acc(SECTION_MAP["deductions"]),
-                "tax_computation_accuracy": section_acc(SECTION_MAP["tax_computation"]),
-                "mean_rounds": round(sum(r.rounds_used for r in results) / n, 1),
-                "parse_fail_count": sum(1 for r in results if not r.parsed),
-                "total_cases": n,
-                "mean_latency_sec": round(sum(r.latency_sec for r in results) / n, 2),
-                "mean_prompt_tokens": round(sum(r.prompt_tokens for r in results) / n, 0),
-                "mean_completion_tokens": round(sum(r.completion_tokens for r in results) / n, 0),
-                "mean_total_tokens": round(sum(r.total_tokens for r in results) / n, 0),
-                "total_prompt_tokens": sum(r.prompt_tokens for r in results),
-                "total_completion_tokens": sum(r.completion_tokens for r in results),
-                "total_cost": round(sum(r.cost for r in results), 6),
-                "mean_cost": round(sum(r.cost for r in results) / n, 6),
-            }
-            writer.writerow(row)
+        for model in sorted(rows):
+            writer.writerow(rows[model])
     return path
 
 
@@ -1294,7 +1422,7 @@ def run_model(client, model, method, cases, args):
                             print(f"[{tag}] [{count}/{total_count}] {case['file']} "
                                   f"SKIP ({type(e).__name__}: {str(e)[:80]})")
 
-                        if "daily" in err_str or "limit exceeded" in err_str:
+                        if _is_daily_cap_error(err_str):
                             stop = True
                             break
 
@@ -1394,7 +1522,7 @@ def main():
     sys.stderr = _Tee(sys.__stderr__, log_file)
 
     args.system_prompt = load_system_prompt()
-    client = get_client()
+    client = get_client(args.model)
     all_cases = load_cases()
     random.Random(args.seed).shuffle(all_cases)
     cases = all_cases[:args.max_cases]
@@ -1410,7 +1538,10 @@ def main():
         cfg = MODEL_CONFIG.get(m, DEFAULT_MODEL_CONFIG)
         print(f"  {_model_tag(m):35s} rpm={cfg['rpm']:2d}  concurrency={cfg['concurrency']}")
 
-    _cost_guard.initialize()
+    # Local models cannot cost anything, so skip the credits polling entirely
+    # rather than hit OpenRouter every COST_CHECK_INTERVAL cases to be told $0.
+    if not all(is_local_model(m) for m in models):
+        _cost_guard.initialize()
 
     if len(models) == 1:
         results = run_model(client, models[0], args.method, cases, args)

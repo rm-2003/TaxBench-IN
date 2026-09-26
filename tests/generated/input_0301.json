@@ -181,9 +181,9 @@
       "80G": 14000.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 134000.0
+      "Total Deductions": 68000.0
     },
-    "Total Taxable Income": -66000.0,
+    "Total Taxable Income": 0.0,
     "Tax Computation": {
       "Tax at Slab Rates": 0.0,
       "Tax on STCG (Section 111A)": 0.0,

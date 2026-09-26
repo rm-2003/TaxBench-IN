@@ -1,0 +1,17 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=569, budget=$17.00
+  gemini-3.8-flash                    rpm= 4  concurrency=1
+
+[gemini-3.8-flash] Starting — rpm=4, concurrency=1
+      Transient error (503) — retry in 2s
+      Transient error (503) — retry in 8s
+      Transient error (503) — retry in 32s
+[gemini-3.8-flash] [1/569] input_0289.json SKIP (Exception: All 3 retries exhausted)
+      Transient error (503) — retry in 2s
+      Transient error (503) — retry in 8s
+[gemini-3.8-flash] [1/569] input_0255.json SKIP (RateLimitError: Error code: 429 - [{'error': {'code': 429, 'message': 'You exceeded your current)
+[gemini-3.8-flash] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/gemini-3.8-flash__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20260920_033404.log

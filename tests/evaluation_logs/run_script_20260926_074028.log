@@ -1,0 +1,33 @@
+Method: script | Models: 1 | Cases: 3 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=3, budget=$17.00
+  gemma4-12b-ctx8k                    rpm=600  concurrency=1
+
+[gemma4-12b-ctx8k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx8k] [1/3] input_0289.json PARSE_FAIL score=0/37 (0%) rounds=4 latency=1669.0s tokens=29579 cost=$0.0000
+[gemma4-12b-ctx8k] [2/3] input_0255.json PARSE_FAIL score=0/37 (0%) rounds=1 latency=948.1s tokens=8192 cost=$0.0000
+[gemma4-12b-ctx8k] [3/3] input_0199.json PARSE_FAIL score=0/37 (0%) rounds=2 latency=919.5s tokens=14426 cost=$0.0000
+
+=== Evaluation Report: ollama/gemma4-12b-ctx8k [script] ===
+Overall accuracy:    0.0% (3 cases)
+Failed to parse:     3 cases (scored as 0)
+Mean rounds:         2.3 per case
+
+Per-section accuracy:
+  Salary (7 fields):            0.0%
+  Capital Gains (2 fields):     0.0%
+  Other Sources (3 fields):     0.0%
+  Aggregates (2 fields):        0.0%
+  Deductions (9 fields):        0.0%
+  Tax Computation (14 fields):  0.0%
+
+Cost / efficiency:
+  Mean latency:          1178.9 sec/case
+  Mean tokens:           17,399 total (10,737 prompt + 6,662 completion)
+  Total tokens (all):    52,197
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx8k] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx8k__script_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/script_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20260926_074028.log

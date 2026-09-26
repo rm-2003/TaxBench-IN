@@ -1,0 +1,16 @@
+{
+    "_description": "Section 80A(2) — Chapter VI-A deductions cannot exceed gross total income. GTI here is interest income only: 25000+30000+5000+8000 = 68000. Claimed deductions (80C via PPF 75000) exceed that, so the allowed aggregate caps at 68000 and Total Taxable Income floors at 0, never negative. Regression test for 11 generated cases that previously produced negative taxable income, where a model correctly answering 0 was scored wrong.",
+    "Age": 45, "Employment Type": "private", "Tax Regime": "old", "City": "metro",
+    "Gross Salary": {"Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0, "Conveyance Allowance": 0, "Medical Allowance": 0, "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0, "Special Allowance": 0, "Entertainment Allowance": 0},
+    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
+    "Stock Sale Transactions": [], "Long Term Capital Loss": [], "Short Term Capital Loss": [],
+    "Mutual Fund Transactions": [],
+    "Bonds": {}, "Debentures": {}, "G-Secs": {},
+    "Savings Bank Interest": 25000, "Deposit Interest": 30000, "Other Interest": 5000, "EPF Taxable Interest": 8000,
+    "PPF": 75000, "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
+    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
+    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
+    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
+    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
+    "Health Insurance": [], "Donations": [], "TDS": 0
+}

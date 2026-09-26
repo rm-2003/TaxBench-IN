@@ -1,0 +1,6 @@
+Method: script | Models: 1 | Cases: 3 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=3, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] [1/3] input_0289.json OK score=14/37 (38%) rounds=2 latency=879.0s tokens=13832 cost=$0.0000
