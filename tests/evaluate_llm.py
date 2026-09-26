@@ -294,7 +294,7 @@ class CaseResult:
 
 LOCAL_PREFIX = "ollama/"
 LOCAL_BASE_URL = "http://localhost:11434/v1"
-LOCAL_TIMEOUT_SECS = 1800  # a 12B on consumer hardware can spend >10 min on one
+LOCAL_TIMEOUT_SECS = 3600  # a 12B on consumer hardware can spend >10 min on one
                            # case; there is no provider-hang risk to guard against
                            # locally, so the API_TIMEOUT_SECS ceiling is too tight
 
@@ -782,7 +782,28 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
             )
             if result.returncode == 0:
                 output = extract_json(result.stdout)
-                return output, rounds, tracker, (messages if output is None else None)
+                if output is not None:
+                    return output, rounds, tracker, None
+                # Exit code 0 but nothing parseable on stdout. The usual cause is a
+                # script that defines its entrypoint and never calls it (no __main__
+                # guard), so Python executes the definitions and exits cleanly having
+                # printed nothing. This is trivially recoverable by saying so, but the
+                # old code returned here and burned the case with every retry unused —
+                # input_0287 scored 0/37 at rounds=1 after 1,802s for exactly this.
+                if result.stdout.strip():
+                    complaint = (
+                        "Your script ran successfully but what it printed was not valid JSON. "
+                        f"It printed:\n{result.stdout[:1000]}\n\n"
+                        "Print ONLY the output JSON to stdout, nothing else."
+                    )
+                else:
+                    complaint = (
+                        "Your script ran successfully (exit code 0) but printed nothing to "
+                        "stdout. Check that the script actually CALLS your function at top "
+                        "level — defining it is not enough — and that it prints the result "
+                        "with print(json.dumps(output))."
+                    )
+                messages.append({"role": "user", "content": complaint})
             else:
                 err = result.stderr[:2000] if result.stderr else "Unknown error"
                 messages.append({"role": "user", "content": f"Script error (exit code {result.returncode}):\n{err}\n\nPlease fix the script."})
