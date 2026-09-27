@@ -125,9 +125,11 @@
       }
     ],
     "Donations": [],
-    "TDS": 16088.8
+    "TDS": 22003.8
   },
   "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=stcg_gain|stock_ltcg=ltcg_below_exempt|capital_loss_carryforward=stcl_offsets_stcg|other_assets=bonds_short_term|equity_mf=equity_stcg|non_equity_mf=debt_pre2023_jan_mar|deductions_80c_cce=partial_under_cap|nps=self_only_within_ccd1|health_insurance_80d=valid_cheque_self|education_loan_80e=within_8yr_window|donations_80g=none|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
+  "_profile": "P06_zero_salary_capital_gains_only",
+  "_archetype": "P06",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 0,
@@ -154,8 +156,8 @@
         "Bonds": 0.0,
         "Debentures": 0.0,
         "G-Secs": 0.0,
-        "Mutual Funds": 42776.03,
-        "Total": 42776.03
+        "Mutual Funds": 80000.0,
+        "Total": 80000.0
       },
       "LTCG (Other)": 0.0
     },
@@ -166,7 +168,7 @@
         "EPF Taxable Interest": 8000
       }
     },
-    "Gross Total Income": 270276.03,
+    "Gross Total Income": 307500.0,
     "Deductions": {
       "80C": 80000.0,
       "80CCC": 0.0,
@@ -180,22 +182,22 @@
       "80TTB": 0.0,
       "Total Deductions": 215000.0
     },
-    "Total Taxable Income": 55276.03,
+    "Total Taxable Income": 92500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 0.0,
       "Tax on STCG (Section 111A)": 11900.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
-      "Tax on LTCG (Non-Equity)": 0.0,
+      "Tax on LTCG (Non-Equity)": 4375.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 11900.0,
+      "Total Tax Before Rebate": 16275.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 11900.0,
+      "Tax After Rebate": 16275.0,
       "Surcharge": 0.0,
-      "Health and Education Cess": 476.0,
-      "Total Tax Liability": 12376.0,
-      "Less: TDS": 16088.8,
-      "Net Tax Payable / Refund": -3712.8
+      "Health and Education Cess": 651.0,
+      "Total Tax Liability": 16926.0,
+      "Less: TDS": 22003.8,
+      "Net Tax Payable / Refund": -5077.8
     }
   }
 }

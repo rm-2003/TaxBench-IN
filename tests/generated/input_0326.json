@@ -118,6 +118,8 @@
     "TDS": 10000
   },
   "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=loss_beyond_8_years|other_assets=bonds_short_term|equity_mf=elss_matured|non_equity_mf=debt_pre2023_apr_dec|deductions_80c_cce=none|nps=spills_to_ccd1b|health_insurance_80d=group_medical_excluded|education_loan_80e=within_8yr_window|donations_80g=mixed_100_and_50_pct|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
+  "_profile": "P06_zero_salary_capital_gains_only",
+  "_archetype": "P06",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 0,
@@ -144,8 +146,8 @@
         "Bonds": 0.0,
         "Debentures": 0.0,
         "G-Secs": 0.0,
-        "Mutual Funds": 42776.03,
-        "Total": 42776.03
+        "Mutual Funds": 80000.0,
+        "Total": 80000.0
       },
       "LTCG (Other)": 0.0
     },
@@ -156,7 +158,7 @@
         "EPF Taxable Interest": 8000
       }
     },
-    "Gross Total Income": 230776.03,
+    "Gross Total Income": 268000.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
@@ -170,22 +172,22 @@
       "80TTB": 0.0,
       "Total Deductions": 154000.0
     },
-    "Total Taxable Income": 76776.03,
+    "Total Taxable Income": 114000.0,
     "Tax Computation": {
       "Tax at Slab Rates": 0.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
-      "Tax on LTCG (Non-Equity)": 2222.0,
+      "Tax on LTCG (Non-Equity)": 6875.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 2222.0,
+      "Total Tax Before Rebate": 6875.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 2222.0,
+      "Tax After Rebate": 6875.0,
       "Surcharge": 0.0,
-      "Health and Education Cess": 88.88,
-      "Total Tax Liability": 2310.88,
+      "Health and Education Cess": 275.0,
+      "Total Tax Liability": 7150.0,
       "Less: TDS": 10000,
-      "Net Tax Payable / Refund": -7689.12
+      "Net Tax Payable / Refund": -2850.0
     }
   }
 }

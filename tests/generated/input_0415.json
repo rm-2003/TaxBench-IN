@@ -124,6 +124,8 @@
     "TDS": 5630888.25
   },
   "_description": "salary_level=above_2Cr|hra_city=metro_pct_binding|lta=none|employment_type=private|entertainment_allowance=high_5k_cap_binding|stock_stcg=stcg_loss|stock_ltcg=ltcg_below_exempt|capital_loss_carryforward=ltcl_offsets_ltcg|other_assets=bonds_short_term|equity_mf=equity_ltcg|non_equity_mf=gold_etf_stcg|deductions_80c_cce=over_cap_proportional|nps=with_employer|health_insurance_80d=none|education_loan_80e=within_8yr_window|donations_80g=half_exempt_50pct|age_and_interest=young_high_interest|tax_regime=new|tds=partial",
+  "_profile": "P08_above_2cr_new_regime",
+  "_archetype": "P08",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 25500000,

@@ -821,8 +821,12 @@ def resolve_cross_dependencies(case, meta):
 # Build case
 # ---------------------------------------------------------------------------
 
-def build_case(combo):
-    """Build one test case from a combo dict {param_name: factor_name}."""
+def build_case(combo, profile=None):
+    """Build one test case from a combo dict {param_name: factor_name}.
+
+    `profile` is the taxpayer archetype key (e.g. "P01_mid_salary_private_new_metro")
+    for profile-mode cases, or None/"pairwise"/"ota" for the other generation modes.
+    """
     merged = copy.deepcopy(BASE_INPUT)
     stock_txns = []
     mf_txns = []
@@ -864,9 +868,12 @@ def build_case(combo):
     result = calculate(copy.deepcopy(merged))
 
     desc = "|".join(f"{p}={combo[p]}" for p in PARAM_ORDER if p in combo)
+    archetype = profile.split("_")[0] if profile and profile in PROFILES else None
     return {
         "input": merged,
         "_description": desc,
+        "_profile": profile,
+        "_archetype": archetype,
         "_expected": result,
     }
 
@@ -988,9 +995,8 @@ def main():
 
     for idx, (profile, combo) in enumerate(cases, 1):
         try:
-            case = build_case(combo)
-            slug = profile.replace(" ", "_")[:40]
-            filename = f"{slug}_{idx:04d}.json"
+            case = build_case(combo, profile)
+            filename = f"input_{idx:04d}.json"
             filepath = os.path.join(out_dir, filename)
 
             with open(filepath, "w") as f:

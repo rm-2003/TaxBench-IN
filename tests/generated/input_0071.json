@@ -129,6 +129,8 @@
     "TDS": 767816.4
   },
   "_description": "salary_level=just_above_50L|hra_city=nonmetro_40pct_binding|lta=claim_exceeds_salary_lta|employment_type=government|entertainment_allowance=high_5k_cap_binding|stock_stcg=none|stock_ltcg=ltcg_below_exempt|capital_loss_carryforward=loss_beyond_8_years|other_assets=gsecs_long_term|equity_mf=equity_stcg|non_equity_mf=debt_post2023_slab|deductions_80c_cce=over_cap_proportional|nps=with_employer|health_insurance_80d=invalid_beneficiary_sibling|education_loan_80e=beyond_8yr_trap|donations_80g=mixed_100_and_50_pct|age_and_interest=young_high_interest|tax_regime=old|tds=partial",
+  "_profile": "P02_high_salary_govt_old_nonmetro",
+  "_archetype": "P02",
   "_expected": {
     "Under Head Salaries": {
       "Gross Salary": 6130000,

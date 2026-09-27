@@ -86,10 +86,10 @@ Under head: Salaries:
   4. Source of information: [https://www.tataaia.com/blogs/tax-savings/the-detailed-guide-on-section-16-of-the-income-tax-act.html](https://www.tataaia.com/blogs/tax-savings/the-detailed-guide-on-section-16-of-the-income-tax-act.html)
 5. (Deduction under) Section 16(iii): Professional tax
   1. Meaning: A certain state level tax levied from salaried people that can be deducted from the gross income
-  2. Limit: max 2,500
+  2. Limit: max 5,000 (per CBDT ITR-2 Validation Rules for AY 2026-27, Rule 37: "Professional tax u/s 16(iii) will be allowed only to the extent of Rs.5000/-". Older sources — Article 276(2) of the Constitution, and older AY validation rules — cap this at Rs. 2,500; the AY 2026-27 figure supersedes that for this benchmark's scope.)
   3. Parameters in data model:
     1. Only some states levy it :- list of the states (but we can ignore this for now)
-  4. Source of information: [https://www.tataaia.com/blogs/tax-savings/the-detailed-guide-on-section-16-of-the-income-tax-act.html](https://www.tataaia.com/blogs/tax-savings/the-detailed-guide-on-section-16-of-the-income-tax-act.html)
+  4. Source of information: CBDT, e-Filing ITR 2 – Validation Rules for AY 2026-27, V1.0 (26 May 2026), Rule 37
 
 [https://www.perplexity.ai/search/in-the-income-tax-filing-porta-scixpKFaRcyQQ9uxqJlIgg](https://www.perplexity.ai/search/in-the-income-tax-filing-porta-scixpKFaRcyQQ9uxqJlIgg)  taxliability won’t differ if we enter all the gains into 1 quarter
 

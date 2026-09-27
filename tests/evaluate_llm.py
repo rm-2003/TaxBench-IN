@@ -7,7 +7,7 @@ tool-call), scores outputs against ground truth, and produces CSV reports.
 Usage:
     python3 tests/evaluate_llm.py                                  # zero-shot, all models
     python3 tests/evaluate_llm.py --method tool-call
-    python3 tests/evaluate_llm.py --method script
+    python3 tests/evaluate_llm.py --method script --model "openai/gpt-oss-120b:free"
     python3 tests/evaluate_llm.py --method tool-call --max-rounds 30
 """
 
@@ -39,6 +39,7 @@ from openai import OpenAI
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 GENERATED_DIR = SCRIPT_DIR / "generated"
+PROMPT_FILE = SCRIPT_DIR / "prompts" / "system_prompt.txt"
 CHECKPOINT_DIR = SCRIPT_DIR / "evaluation_checkpoints"
 RESULTS_DIR = SCRIPT_DIR / "evaluation_results"
 LOGS_DIR = SCRIPT_DIR / "evaluation_logs"
@@ -61,23 +62,44 @@ SCRIPT_TIMEOUT = 20
 TOLERANCE = 0.01
 DELAY_BETWEEN_CASES = 1.0
 CONSECUTIVE_SKIP_LIMIT = 5
+MAX_CASES = 500
 
 # ---------------------------------------------------------------------------
 # Models & per-model config
 # ---------------------------------------------------------------------------
-MODELS = ["openai/gpt-5.6-sol","google/gemini-3.8-flash", "anthropic/claude-haiku-4.5", "nvidia/nemotron-3-ultra-550b-a55b:free", 
-          "deepseek/deepseek-v4-pro-0813", "x-ai/grok-4.6"]
+MODELS = [
+    # Strong
+    "openai/gpt-oss-120b",
+    "tencent/hy3-preview:free",
+    # Mid
+    "deepseek/deepseek-chat-v3-0324",
+    "meta-llama/llama-3.3-70b-instruct",
+    "google/gemma-4-31b-it:free",
+    # Weak
+    "openai/gpt-oss-20b",
+    "nvidia/nemotron-nano-9b-v2:free",
+    # "qwen/qwen3.5-9b",
+]
 
 MODEL_CONFIG = {
-    "nvidia/nemotron-3-ultra-550b-a55b:free": {"rpm": 20, "concurrency": 8,},
-    "openai/gpt-5.6-sol": {"rpm": 25, "concurrency": 8,},
-    "google/gemini-3.8-flash": {"rpm": 25,"concurrency": 8,},
-    "anthropic/claude-haiku-4.5": {"rpm": 25,"concurrency": 8,},
-    "deepseek/deepseek-v4-pro-0813": {"rpm": 25,"concurrency": 8,},
-    "x-ai/grok-4.6": {"rpm": 25,"concurrency": 8,},
+    # Free models: conservative to avoid 429 storms
+    "tencent/hy3-preview:free":          {"rpm": 20, "concurrency": 8},
+    "google/gemma-4-31b-it:free":        {"rpm": 12, "concurrency": 4},
+    "nvidia/nemotron-nano-9b-v2:free":   {"rpm": 20, "concurrency": 8},
+    # Paid models: push harder
+    "openai/gpt-oss-120b":               {"rpm": 25, "concurrency": 8},
+    "openai/gpt-oss-20b":                {"rpm": 25, "concurrency": 8},
+    "deepseek/deepseek-chat-v3-0324":    {"rpm": 25, "concurrency": 8},
+    "meta-llama/llama-3.3-70b-instruct": {"rpm": 25, "concurrency": 8},
+    "qwen/qwen3.5-9b":                   {"rpm": 25, "concurrency": 8},
+}
+
+FREE_FALLBACKS = {
+    "google/gemma-4-31b-it:free": "google/gemma-4-31b-it",
 }
 
 DEFAULT_MODEL_CONFIG = {"rpm": 12, "concurrency": 4}
+DEFAULT_BUDGET = 17.00  # USD — max spend before halting
 
 # ---------------------------------------------------------------------------
 # Scored field definitions (37 fields)
@@ -217,6 +239,7 @@ CALCULATE_TOOL = {
 class CaseResult:
     case_file: str
     description: str
+    archetype: str  # taxpayer profile ID, e.g. "P01" (empty for pairwise/ota modes)
     model: str
     method: str
     rounds_used: int
@@ -246,7 +269,8 @@ def get_client():
 
 
 class CostGuard:
-    def __init__(self):
+    def __init__(self, budget=DEFAULT_BUDGET):
+        self.budget = budget
         self.cases_since_check = 0
         self.initial_usage = None
         self._lock = threading.Lock()
@@ -254,6 +278,8 @@ class CostGuard:
     def initialize(self):
         """Capture the starting usage from OpenRouter credits endpoint."""
         self.initial_usage = self._fetch_usage()
+        if self.initial_usage is not None:
+            print(f"  Cost guard: initial usage = ${self.initial_usage:.4f}, budget = ${self.budget:.2f}")
 
     def case_completed(self):
         """Call after each case completes. Checks balance every N cases."""
@@ -294,8 +320,16 @@ class CostGuard:
         if current is None:
             return
         cost = current - self.initial_usage
+        if cost > self.budget:
+            raise RuntimeError(
+                f"BUDGET EXCEEDED: ${cost:.4f} spent (budget: ${self.budget:.2f}). "
+                f"Halting. Use --budget to increase."
+            )
+        if cost > 0:
+            print(f"  [cost guard] ${cost:.4f} spent of ${self.budget:.2f} budget")
 
-_cost_guard = CostGuard()
+
+_cost_guard = CostGuard()  # re-initialized in main() with --budget value
 
 # ---------------------------------------------------------------------------
 # Rate limiter — thread-safe, enforces N requests per minute
@@ -340,7 +374,18 @@ class TokenTracker:
     def total_tokens(self):
         return self.prompt_tokens + self.completion_tokens
 
-def build_messages(method, input_json):
+
+# ---------------------------------------------------------------------------
+# Prompt loading
+# ---------------------------------------------------------------------------
+def load_system_prompt():
+    if not PROMPT_FILE.exists():
+        print(f"ERROR: Prompt file not found: {PROMPT_FILE}")
+        sys.exit(1)
+    return PROMPT_FILE.read_text().strip()
+
+
+def build_messages(method, system_prompt, input_json):
     user_content = "Here is the taxpayer input:\n" + json.dumps(input_json, indent=2)
     if method == "script":
         user_content += (
@@ -355,7 +400,10 @@ def build_messages(method, input_json):
             "math. You may request multiple calculate calls in parallel when "
             "calculations are independent."
         )
-    return [{"role": "user", "content": user_content},]
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_content},
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -364,7 +412,7 @@ def build_messages(method, input_json):
 def get_response_text(message):
     """Extract text from a message, checking content then reasoning fields.
 
-    Reasoning models (Nemotron, GPT-Sol) put chain-of-thought in `reasoning`
+    Reasoning models (Nemotron, GPT-OSS) put chain-of-thought in `reasoning`
     and the final answer in `content`. If `content` is empty/None, fall back
     to `reasoning` (the model may have put everything there).
     """
@@ -385,11 +433,24 @@ def _valid_output(obj):
     """Return obj if it's a non-empty dict, else None."""
     return obj if isinstance(obj, dict) and len(obj) > 0 else None
 
+
+def _normalize_keys(obj):
+    """Recursively fix tokenizer-mangled key names."""
+    if not isinstance(obj, dict):
+        return obj
+    normalized = {}
+    for k, v in obj.items():
+        stripped = k.replace(" ", "").lower()
+        correct_key = _KEY_LOOKUP.get(stripped, k)
+        normalized[correct_key] = _normalize_keys(v)
+    return normalized
+
+
 def extract_json(text):
     try:
         result = _valid_output(json.loads(text))
         if result is not None:
-            return result
+            return _normalize_keys(result)
     except (json.JSONDecodeError, TypeError):
         pass
     if not text:
@@ -398,7 +459,7 @@ def extract_json(text):
     try:
         result = _valid_output(json.loads(cleaned))
         if result is not None:
-            return result
+            return _normalize_keys(result)
     except (json.JSONDecodeError, TypeError):
         pass
     fenced = re.search(r"```(?:json)?\s*\n?(.*?)\n?\s*```", cleaned, re.DOTALL)
@@ -406,7 +467,7 @@ def extract_json(text):
         try:
             result = _valid_output(json.loads(fenced.group(1)))
             if result is not None:
-                return result
+                return _normalize_keys(result)
         except json.JSONDecodeError:
             pass
     # Find the largest valid JSON object (skip trivially small ones like {})
@@ -436,7 +497,7 @@ def extract_json(text):
         else:
             break
     if best is not None:
-        return best
+        return _normalize_keys(best)
     return None
 
 
@@ -520,6 +581,17 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
                 if model_delay_state["consecutive_429"] >= 3:
                     model_delay_state["delay"] = min(model_delay_state["delay"] * 2, 120)
 
+                # If a paid fallback exists, switch permanently for this call
+                fallback = FREE_FALLBACKS.get(active_model)
+                if fallback:
+                    print(f"      429 on free tier — switching {active_model} → {fallback}")
+                    active_model = fallback
+                    paid_cfg = MODEL_CONFIG.get(fallback, DEFAULT_MODEL_CONFIG)
+                    rate_limiter = RateLimiter(paid_cfg["rpm"])
+                    model_delay_state["fallback_model"] = fallback
+                    model_delay_state["rate_limiter"] = rate_limiter
+                    continue
+
                 if "daily" in err_str:
                     raise  # true daily cap with no fallback — let caller handle
 
@@ -545,9 +617,9 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
 # ---------------------------------------------------------------------------
 # Method runners
 # ---------------------------------------------------------------------------
-def run_zero_shot(client, model, input_json, mds, rate_limiter):
+def run_zero_shot(client, model, system_prompt, input_json, mds, rate_limiter):
     tracker = TokenTracker()
-    messages = build_messages("zero-shot", input_json)
+    messages = build_messages("zero-shot", system_prompt, input_json)
     resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=messages, temperature=0)
     tracker.add(resp)
     if not resp.choices or not resp.choices[0].message:
@@ -558,9 +630,9 @@ def run_zero_shot(client, model, input_json, mds, rate_limiter):
     return output, 1, tracker, (messages if output is None else None)
 
 
-def run_script(client, model, input_json, mds, max_retries, script_timeout, rate_limiter):
+def run_script(client, model, system_prompt, input_json, mds, max_retries, script_timeout, rate_limiter):
     tracker = TokenTracker()
-    messages = build_messages("script", input_json)
+    messages = build_messages("script", system_prompt, input_json)
     rounds = 0
 
     for attempt in range(1 + max_retries):
@@ -605,9 +677,9 @@ def run_script(client, model, input_json, mds, max_retries, script_timeout, rate
     return None, rounds, tracker, messages
 
 
-def run_tool_call(client, model, input_json, mds, max_rounds, rate_limiter):
+def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rate_limiter):
     tracker = TokenTracker()
-    messages = build_messages("tool-call", input_json)
+    messages = build_messages("tool-call", system_prompt, input_json)
     rounds = 0
 
     for _round in range(max_rounds):
@@ -766,14 +838,14 @@ def model_slug(model):
     return model.replace("/", "_").replace(":", "_")
 
 
-def checkpoint_path(model, method, args):
+def checkpoint_path(model, method):
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-    return CHECKPOINT_DIR / f"{model_slug(model)}__{method}__{args.dataset}.jsonl"
+    return CHECKPOINT_DIR / f"{model_slug(model)}__{method}.jsonl"
 
 
-def load_checkpoint(model, method, args):
+def load_checkpoint(model, method):
     """Returns (completed_set, results_list)."""
-    path = checkpoint_path(model, method, args)
+    path = checkpoint_path(model, method)
     completed = set()
     results = []
     if path.exists():
@@ -843,6 +915,7 @@ def load_cases():
             "input": data["input"],
             "expected": data["_expected"],
             "description": data.get("_description", ""),
+            "archetype": data.get("_archetype") or "",
         })
     return cases
 
@@ -855,16 +928,16 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
 
     if method == "zero-shot":
         output, rounds, tracker, fail_msgs = run_zero_shot(
-            client, model, case["input"], mds, rate_limiter
+            client, model, args.system_prompt, case["input"], mds, rate_limiter
         )
     elif method == "script":
         output, rounds, tracker, fail_msgs = run_script(
-            client, model, case["input"], mds,
+            client, model, args.system_prompt, case["input"], mds,
             args.max_script_retries, args.script_timeout, rate_limiter
         )
     elif method == "tool-call":
         output, rounds, tracker, fail_msgs = run_tool_call(
-            client, model, case["input"], mds,
+            client, model, args.system_prompt, case["input"], mds,
             args.max_rounds, rate_limiter
         )
 
@@ -878,6 +951,7 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
     return CaseResult(
         case_file=case["file"],
         description=case["description"],
+        archetype=case["archetype"],
         model=model,
         method=method,
         rounds_used=rounds,
@@ -899,11 +973,13 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
 # ---------------------------------------------------------------------------
 # Reporting
 # ---------------------------------------------------------------------------
-def result_from_checkpoint_entry(entry, model, method):
+def result_from_checkpoint_entry(entry, model, method, case_by_file=None):
     """Reconstruct enough of a CaseResult from a checkpoint dict for reporting."""
+    case = (case_by_file or {}).get(entry["case_file"], {})
     return CaseResult(
         case_file=entry["case_file"],
-        description="",
+        description=case.get("description", ""),
+        archetype=case.get("archetype", ""),
         model=model,
         method=method,
         rounds_used=entry["rounds_used"],
@@ -928,7 +1004,7 @@ def write_per_model_method_csv(model, method, results):
     path = RESULTS_DIR / fname
 
     fieldnames = (
-        ["case_file", "description", "model", "method", "rounds_used", "parsed",
+        ["case_file", "description", "archetype", "model", "method", "rounds_used", "parsed",
          "latency_sec", "prompt_tokens", "completion_tokens", "total_tokens", "cost"]
         + ALL_FIELD_NAMES
         + [f"{f}_pct_error" for f in ALL_FIELD_NAMES]
@@ -942,6 +1018,7 @@ def write_per_model_method_csv(model, method, results):
             row = {
                 "case_file": r.case_file,
                 "description": r.description,
+                "archetype": r.archetype,
                 "model": r.model,
                 "method": r.method,
                 "rounds_used": r.rounds_used,
@@ -1109,8 +1186,9 @@ def run_model(client, model, method, cases, args):
     with _print_lock:
         print(f"\n[{tag}] Starting — rpm={cfg['rpm']}, concurrency={concurrency}")
 
-    completed, checkpoint_entries = load_checkpoint(model, method, args)
-    prior_results = [result_from_checkpoint_entry(e, model, method) for e in checkpoint_entries]
+    case_by_file = {c["file"]: c for c in cases}
+    completed, checkpoint_entries = load_checkpoint(model, method)
+    prior_results = [result_from_checkpoint_entry(e, model, method, case_by_file) for e in checkpoint_entries]
 
     pending_cases = [c for c in cases if c["file"] not in completed]
     if completed:
@@ -1189,6 +1267,14 @@ def run_model(client, model, method, cases, args):
                                   f"cost=${result.cost:.4f}")
 
                         _cost_guard.case_completed()
+
+                    except RuntimeError as e:
+                        if "BUDGET" in str(e):
+                            with _print_lock:
+                                print(f"\n[{tag}] COST GUARD: {e}")
+                                print("ABORTING — budget exceeded.")
+                            os._exit(1)
+                        raise
 
                     except RateLimitExhausted:
                         consecutive_skips += 1
@@ -1295,9 +1381,9 @@ def main():
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
     parser.add_argument("--script-timeout", type=int, default=SCRIPT_TIMEOUT)
     parser.add_argument("--delay", type=float, default=DELAY_BETWEEN_CASES)
+    parser.add_argument("--max-cases", type=int, default=MAX_CASES, help="Max number of cases to evaluate (default 500)")
+    parser.add_argument("--budget", type=float, default=DEFAULT_BUDGET, help="Max USD to spend before halting (default $17)")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for case selection (default 42)")
-    parser.add_argument("--dataset", choices=["pairwise", "ota", "profiles"], default="profiles", help="Test-case dataset being evaluated"
-)
     args = parser.parse_args()
 
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -1307,13 +1393,19 @@ def main():
     sys.stdout = _Tee(sys.__stdout__, log_file)
     sys.stderr = _Tee(sys.__stderr__, log_file)
 
+    args.system_prompt = load_system_prompt()
     client = get_client()
-    cases = load_cases()
+    all_cases = load_cases()
+    random.Random(args.seed).shuffle(all_cases)
+    cases = all_cases[:args.max_cases]
     models = [args.model] if args.model else MODELS
+
+    global _cost_guard
+    _cost_guard = CostGuard(budget=args.budget)
 
     print(f"Method: {args.method} | Models: {len(models)} | Cases: {len(cases)} (seed={args.seed})")
     print(f"Constants: max_rounds={args.max_rounds}, max_script_retries={args.max_script_retries}, "
-          f"script_timeout={args.script_timeout}s")
+          f"script_timeout={args.script_timeout}s, max_cases={args.max_cases}, budget=${args.budget:.2f}")
     for m in models:
         cfg = MODEL_CONFIG.get(m, DEFAULT_MODEL_CONFIG)
         print(f"  {_model_tag(m):35s} rpm={cfg['rpm']:2d}  concurrency={cfg['concurrency']}")
