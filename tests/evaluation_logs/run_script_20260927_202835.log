@@ -1,0 +1,22 @@
+Method: script | Models: 1 | Cases: 50 (seed=42)
+Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=50, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 30 done, 20 remaining
+[gemma4-12b-ctx16k] [31/50] input_0194.json OK score=22/37 (59%) rounds=2 latency=1218.5s tokens=15584 cost=$0.0000
+[gemma4-12b-ctx16k] [32/50] input_0201.json OK score=20/37 (54%) rounds=2 latency=1151.6s tokens=13468 cost=$0.0000
+[gemma4-12b-ctx16k] [33/50] input_0093.json OK score=12/37 (32%) rounds=2 latency=1237.1s tokens=13467 cost=$0.0000
+[gemma4-12b-ctx16k] [34/50] input_0552.json PARSE_FAIL score=0/37 (0%) rounds=4 latency=3438.9s tokens=64514 cost=$0.0000
+[gemma4-12b-ctx16k] [35/50] input_0376.json OK score=17/37 (46%) rounds=1 latency=2806.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [36/50] input_0363.json PARSE_FAIL score=0/37 (0%) rounds=4 latency=3728.8s tokens=52501 cost=$0.0000
+[gemma4-12b-ctx16k] [37/50] input_0267.json OK score=14/37 (38%) rounds=1 latency=2602.8s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [38/50] input_0119.json OK score=11/37 (30%) rounds=1 latency=2616.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [39/50] input_0539.json OK score=15/37 (41%) rounds=2 latency=1241.0s tokens=14568 cost=$0.0000
+[gemma4-12b-ctx16k] [40/50] input_0259.json OK score=8/37 (22%) rounds=1 latency=2692.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [41/50] input_0451.json OK score=18/37 (49%) rounds=2 latency=1204.2s tokens=14112 cost=$0.0000
+[gemma4-12b-ctx16k] [42/50] input_0022.json OK score=25/37 (68%) rounds=3 latency=1792.0s tokens=29715 cost=$0.0000
+[gemma4-12b-ctx16k] [43/50] input_0076.json OK score=10/37 (27%) rounds=3 latency=1570.5s tokens=27502 cost=$0.0000
+[gemma4-12b-ctx16k] [44/50] input_0106.json OK score=15/37 (41%) rounds=1 latency=1234.5s tokens=10348 cost=$0.0000
+[gemma4-12b-ctx16k] [45/50] input_0512.json PARSE_FAIL score=0/37 (0%) rounds=4 latency=2918.1s tokens=51485 cost=$0.0000
+[gemma4-12b-ctx16k] [46/50] input_0439.json PARSE_FAIL score=0/37 (0%) rounds=4 latency=3153.4s tokens=52076 cost=$0.0000

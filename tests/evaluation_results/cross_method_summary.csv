@@ -2,9 +2,9 @@ model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_acc
 deepseek/deepseek-chat-v3-0324,0.4746,4172.0,131.17,,,,,,
 google/gemma-4-31b-it:free,0.4941,3317.0,58.64,,,,,,
 meta-llama/llama-3.3-70b-instruct,0.3676,3109.0,38.53,,,,,,
-nvidia/nemotron-3-ultra-550b-a55b:free,0.6401,17689.0,954.56,,,,,,
+nvidia/nemotron-3-ultra-550b-a55b:free,0.6309,17334.0,828.04,,,,,,
 nvidia/nemotron-nano-9b-v2:free,0.3892,7057.0,176.4,,,,,,
-ollama/gemma4-12b-ctx16k,,,,0.4685,14483.0,1160.44,,,
+ollama/gemma4-12b-ctx16k,,,,0.3103,29039.0,2283.21,,,
 ollama/gemma4-12b-ctx8k,0.3838,3261.0,197.91,,,,0.2703,48001.0,281.1
 openai/gpt-oss-120b,0.534,7051.0,122.1,,,,,,
 openai/gpt-oss-120b:free,0.1054,3406.0,52.1,,,,,,
