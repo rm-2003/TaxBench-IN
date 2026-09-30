@@ -1,2 +1,2 @@
 model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
-ollama/gemma4-12b-ctx8k,0.2703,0.2857,0.0,0.6667,0.0,0.3704,0.1905,15.0,1,3,281.1,46919.0,1082.0,48001.0,140758,3245,0.0,0.0
+ollama/gemma4-12b-ctx8k,0.2523,0.1905,0.0,0.6667,0.0,0.3704,0.1905,15.0,1,3,281.1,46919.0,1082.0,48001.0,140758,3245,0.0,0.0

@@ -49,7 +49,53 @@ calculator splits 1,99,000 of s.112A from 1,30,000 of non-equity. The tax is
 identical either way (25,500), because the shared 1,25,000 exemption is applied
 once and both buckets are charged at 12.5%.
 
-## What this does NOT settle: whether 80CCD(2) survives in the new regime
+## RESOLVED: the estimator was right and the ground truth was wrong
+
+The section below was written before page 7 of `Input_176_Portal.pdf` was read.
+It records a hypothesis — that the 50,000 had been typed into a field the new
+regime disallows — which **the PDF disproves**: the amount sits on the
+`Deductions u/s 80CCD (2) (Employers contribution towards NPS)` line, correctly
+entered, with every other deduction line at 0. It is left here unedited because
+the reasoning it contains is what the next section corrects.
+
+The actual cause was a bug in `tax_calculator.py`. `gross_salary` was built from
+ten named salary components, and the employer's NPS contribution is not one of
+them — but it was then deducted under 80CCD(2). The same rupees were excluded
+from income and subtracted from it. Under s.17(1)(viii) an employer's
+contribution to NPS **is** salary, and 80CCD(2) then relieves it: net neutral up
+to the cap, but it has to enter income before it can be taken out.
+
+`input_0176` after the fix:
+
+| Line | Estimator | Ground truth (fixed) | Ground truth (before) |
+|---|---|---|---|
+| Gross Salary | 13,50,000 implied | 13,50,000 | 13,00,000 |
+| Taxable Income | 12,89,500 | **12,89,500** | 12,39,500 |
+| Total Tax on Income | 51,896 | **51,896** | 10,296 |
+
+`input_0186` reconciles too. It now computes to 43,485 against the estimator's
+53,884, and the gap is exactly the 80,000 of LTCG that was over-entered:
+80,000 x 12.5% = 10,000, plus 4% cess = 10,400, and 53,885 - 43,485 = 10,400.
+All four PDFs are therefore fully accounted for, three matching to the rupee and
+the fourth explained by a known entry error.
+
+**Scope of the correction: 367 of 569 cases carried a non-zero 80CCD(2)** (227
+old regime, 140 new; 212 government, 155 private) and every one had its taxable
+income understated by the contribution — median 70,000, up to 3,22,000.
+Regenerating `_expected` moved 378 cases in all, the extra 11 being low-salary
+cases where the 75,000 standard deduction had been capped by a gross salary
+below it. All collected model outputs were re-graded offline with
+`tests/rescore.py`; no inference was re-run.
+
+Two things worth recording about how this was missed. The bug survived all 27
+calculator tests because only one involved a government employer and that test
+asserted nothing beyond `Section 16(ii)` — the error lived in the interaction
+between salary construction and a deduction, which no single test spanned.
+`test28_80ccd2_employer_nps_in_salary.json` now covers it. And it was found only
+because two of four estimator checks *disagreed*: had all four matched, it would
+have shipped.
+
+## Superseded hypothesis: whether 80CCD(2) survives in the new regime
 
 `input_0176`'s income entries are correct — the 9,900 of special-rate tax is
 exactly 49,500 x 20%, and the estimator's Taxable Income of 12,89,500 equals the

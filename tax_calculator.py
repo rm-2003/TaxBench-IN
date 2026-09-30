@@ -237,6 +237,29 @@ def calculate(inp: dict) -> dict:
     city       = inp.get("City", "non-metro").lower()
 
     gs = inp.get("Gross Salary", {})
+    basic_da = g(gs, "Basic Salary") + g(gs, "Dearness Allowance")
+
+    # The employer's NPS contribution is TAXABLE SALARY under s.17(1)(viii) and is
+    # then relieved by the 80CCD(2) deduction further down — net neutral up to the
+    # cap, but it has to enter income before it can be taken out of it. This was
+    # previously deducted under 80CCD(2) without ever being added to salary, so the
+    # same rupees were both excluded from income and subtracted from it, and every
+    # affected case's Total Taxable Income came out low by the contribution. The
+    # ITD estimator disagreed with the stored ground truth on input_0176 for
+    # exactly this reason (12,89,500 against our 12,39,500) and was right.
+    #
+    # Computed here, ahead of gross_salary, because a government employee's
+    # contribution is imputed rather than declared (below) and the imputed amount
+    # is just as taxable as a declared one. basic_da stays Basic + DA only: it is
+    # the base for the HRA exemption and for the 80CCD caps, none of which count
+    # the employer's contribution.
+    nps          = inp.get("NPS", {})
+    nps_employer = g(nps, "Tier-1 Employer Contribution")
+    c80ccd2_pct  = 0.14 if (regime == "new" or employment == "government") else 0.10
+    if employment == "government":
+        # Government employers contribute 14% of Basic+DA compulsorily, so treat a
+        # missing or short declaration as that statutory minimum.
+        nps_employer = max(nps_employer, c80ccd2_pct * basic_da)
 
     # ------------------------------------------------------------------
     # Under Head Salaries
@@ -252,9 +275,9 @@ def calculate(inp: dict) -> dict:
         g(gs, "LTA"),
         g(gs, "Special Allowance"),
         g(gs, "Entertainment Allowance"),
+        nps_employer,
     ])
 
-    basic_da = g(gs, "Basic Salary") + g(gs, "Dearness Allowance")
     metro_pct = 0.50 if city == "metro" else 0.40
 
     # Section 10(13A) — HRA exemption (old regime only)
@@ -470,9 +493,9 @@ def calculate(inp: dict) -> dict:
     c80ccc     = pen_amount / pen_years
 
     # 80CCD(1)
-    nps = inp.get("NPS", {})
+    # `nps`, `nps_employer` and `c80ccd2_pct` are set up top, before gross_salary,
+    # because the employer's contribution has to be added to salary income there.
     nps_self       = g(nps, "Tier-1 Self Contribution")
-    nps_employer   = g(nps, "Tier-1 Employer Contribution")
     c80ccd1_limit  = 0.10 * basic_da
     c80ccd1        = min(nps_self, c80ccd1_limit)
 
@@ -494,14 +517,10 @@ def calculate(inp: dict) -> dict:
     c80ccd1b = min(max(0.0, nps_self - c80ccd1), 50_000)
 
     # 80CCD(2) — employer NPS contribution
-    # New regime: 14% for all; Old regime: 14% for govt, 10% for others
-    # Govt employees always have compulsory employer contribution of 14% of Basic+DA
-    if regime == "new" or employment == "government":
-        c80ccd2_pct = 0.14
-    else:
-        c80ccd2_pct = 0.10
-    if employment == "government":
-        nps_employer = max(nps_employer, c80ccd2_pct * basic_da)
+    # The rate (14% new regime or government, else 10%) and the government
+    # imputation are applied up top, where the contribution is added to salary.
+    # Only the capped amount is deductible while the WHOLE contribution is
+    # taxable, so a contribution above the cap is correctly left partly taxed.
     c80ccd2 = min(nps_employer, c80ccd2_pct * basic_da)
 
     # 80G — Donations

@@ -231,6 +231,23 @@ TESTS = [
             ("Tax Computation.Total Tax Liability", 0),
         ],
     },
+    {
+        "name": "Test 28 — 80CCD(2): employer NPS is taxable salary before it is deducted",
+        "input": "test28_80ccd2_employer_nps_in_salary.json",
+        "checks": [
+            # 13,00,000 of components + the 50,000 employer contribution. The
+            # contribution is salary under s.17(1)(viii); deducting it under
+            # 80CCD(2) without adding it here gave a double benefit and put
+            # Total Taxable Income 50,000 low on 367 of the 569 generated cases.
+            ("Under Head Salaries.Gross Salary", 1350000),
+            ("Under Head Salaries.Net Salary", 1275000),
+            ("Gross Total Income", 1290000),
+            ("Deductions.80CCD(2)", 50000),
+            # The whole point of the deduction: the taxpayer ends up exactly
+            # where they would have been with no NPS arrangement at all.
+            ("Total Taxable Income", 1240000),
+        ],
+    },
 ]
 
 

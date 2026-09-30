@@ -138,12 +138,12 @@
   "_archetype": "P06",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 0,
+      "Gross Salary": 50000,
       "Exemptions": {
         "Section 10(13A)": 0.0,
         "Section 10(5)": 0
       },
-      "Section 16(ia)": 0,
+      "Section 16(ia)": 50000,
       "Section 16(ii)": 0.0,
       "Section 16(iii)": 0,
       "Net Salary": 0.0

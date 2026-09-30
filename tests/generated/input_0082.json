@@ -131,7 +131,7 @@
   "_archetype": "P02",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 6130000,
+      "Gross Salary": 6452000.0,
       "Exemptions": {
         "Section 10(13A)": 920000.0,
         "Section 10(5)": 40000
@@ -139,7 +139,7 @@
       "Section 16(ia)": 50000,
       "Section 16(ii)": 5000,
       "Section 16(iii)": 2500,
-      "Net Salary": 5112500.0
+      "Net Salary": 5434500.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 0.0,
@@ -167,7 +167,7 @@
         "EPF Taxable Interest": 8000
       }
     },
-    "Gross Total Income": 5330000.0,
+    "Gross Total Income": 5652000.0,
     "Deductions": {
       "80C": 102272.73,
       "80CCC": 13636.36,
@@ -181,22 +181,22 @@
       "80TTB": 0.0,
       "Total Deductions": 482000.0
     },
-    "Total Taxable Income": 4848000.0,
+    "Total Taxable Income": 5170000.0,
     "Tax Computation": {
-      "Tax at Slab Rates": 1222050.0,
+      "Tax at Slab Rates": 1318650.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
       "Tax on LTCG (Non-Equity)": 3062.5,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 1225112.5,
+      "Total Tax Before Rebate": 1321712.5,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 1225112.5,
-      "Surcharge": 0.0,
-      "Health and Education Cess": 49004.5,
-      "Total Tax Liability": 1274117.0,
+      "Tax After Rebate": 1321712.5,
+      "Surcharge": 132171.25,
+      "Health and Education Cess": 58155.35,
+      "Total Tax Liability": 1512039.1,
       "Less: TDS": 764470.2,
-      "Net Tax Payable / Refund": 509646.8
+      "Net Tax Payable / Refund": 747568.9
     }
   }
 }

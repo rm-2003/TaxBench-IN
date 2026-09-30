@@ -1,0 +1,78 @@
+{
+  "_description": "80CCD(2): the employer's NPS contribution must be TAXABLE SALARY under s.17(1)(viii) before it is deducted under 80CCD(2) — net neutral up to the cap, but it has to enter income before it can be taken out of it. Regression test for a bug in which the contribution was deducted without ever being added to salary, so the same rupees were both excluded from income and subtracted from it and Total Taxable Income came out low by the contribution. It survived all 27 earlier tests because only one of them involved a government employer and that test asserted nothing beyond Section 16(ii); the error lived in the interaction between salary construction and a deduction, which no single test spanned. Private employee, new regime. Basic 5,00,000 + DA 1,00,000 = 6,00,000, so the 80CCD(2) ceiling is 14% = 84,000 and the declared 50,000 is fully deductible. Gross Salary must therefore be 13,00,000 of components + 50,000 = 13,50,000, Net Salary 13,50,000 - 75,000 = 12,75,000, Gross Total Income 12,75,000 + 15,000 = 12,90,000, and Total Taxable Income 12,90,000 - 50,000 = 12,40,000 — the same figure the taxpayer would have reached with no NPS arrangement at all, which is the point of the deduction. Verified against the ITD Income & Tax Calculator via input_0176, which the estimator scored at a Total Taxable Income of 12,89,500 against the pre-fix ground truth's 12,39,500; see docs/ground_truth_validation/.",
+  "Age": 35,
+  "Employment Type": "private",
+  "Tax Regime": "new",
+  "City": "non-metro",
+  "Gross Salary": {
+    "Basic Salary": 500000,
+    "Dearness Allowance": 100000,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 700000,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Mutual Fund Transactions": [],
+  "Privately Owned Vehicle": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Bonds": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Debentures": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "G-Secs": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Savings Bank Interest": 5000,
+  "Deposit Interest": 10000,
+  "Other Interest": 0,
+  "EPF Taxable Interest": 0,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
+    },
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 1
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 50000,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
+}
