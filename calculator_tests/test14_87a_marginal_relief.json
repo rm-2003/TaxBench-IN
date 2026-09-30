@@ -1,68 +1,68 @@
 {
-    "_description": "87A marginal relief. Normal income 1225000 (salary 1300000 less 75000 standard deduction), equity STCG 20000, total taxable 1245000 (>12L). Slab tax on 1225000 = 63750 (20000 at 5% + 40000 at 10% + 3750 at 15%); STCG tax = 4000; total before rebate = 67750. The calculator measures the excess over the 12L threshold against NORMAL income only: 1225000 - 1200000 = 25000, so rebate = max(0, 63750 - 25000) = 38750 and tax after rebate = 67750 - 38750 = 29000. NOTE 1: an earlier version of this description stated 'slab tax on 1225000 = 67750' and derived rebate = 67750 - 25000 = 42750. Both were wrong — 67750 is the total BEFORE rebate, not the slab tax. The error was self-cancelling (67750 - 42750 + 4000 and 67750 - 38750 both give 29000), which is why it survived unnoticed. NOTE 2: measuring the threshold against normal income rather than total income is DISPUTED and pending adjudication against the ITD estimator. s.87A reads on 'total income', which here is 1245000; under that reading the relief would be computed from the 45000 excess, not 25000. This test currently encodes the calculator's own interpretation and is therefore NOT independent evidence that the interpretation is correct. If the estimator contradicts it, both tax_calculator.py and this test must change.",
-    "Age": 35,
-    "Employment Type": "private",
-    "Tax Regime": "new",
-    "City": "metro",
-    "Gross Salary": {
-        "Basic Salary": 1300000,
-        "Dearness Allowance": 0,
-        "HRA": 0,
-        "Conveyance Allowance": 0,
-        "Medical Allowance": 0,
-        "Bonuses and Incentives": 0,
-        "Overtime Pay": 0,
-        "LTA": 0,
-        "Special Allowance": 0,
-        "Entertainment Allowance": 0
+  "_description": "87A marginal relief. Normal income 1225000 (salary 1300000 less 75000 standard deduction), equity STCG 20000, total taxable 1245000 (>12L). Slab tax on 1225000 = 63750 (20000 at 5% + 40000 at 10% + 3750 at 15%); STCG tax = 4000; total before rebate = 67750. The calculator measures the excess over the 12L threshold against NORMAL income only: 1225000 - 1200000 = 25000, so rebate = max(0, 63750 - 25000) = 38750 and tax after rebate = 67750 - 38750 = 29000. NOTE 1: an earlier version of this description stated 'slab tax on 1225000 = 67750' and derived rebate = 67750 - 25000 = 42750. Both were wrong \u2014 67750 is the total BEFORE rebate, not the slab tax. The error was self-cancelling (67750 - 42750 + 4000 and 67750 - 38750 both give 29000), which is why it survived unnoticed. NOTE 2: measuring the threshold against normal income rather than total income is DISPUTED and pending adjudication against the ITD estimator. s.87A reads on 'total income', which here is 1245000; under that reading the relief would be computed from the 45000 excess, not 25000. This test currently encodes the calculator's own interpretation and is therefore NOT independent evidence that the interpretation is correct. If the estimator contradicts it, both tax_calculator.py and this test must change. NOTE 3 (resolution, supersedes the DISPUTED status in NOTE 2): the normal-income reading was checked against the Income Tax Department's own estimator on four cases drawn from the generated set, chosen to isolate each way the reading shows up: input_0170 (no capital gains at all \u2014 the marginal-relief formula by itself), input_0176 (s.111A STCG, normal income 1190000 below the threshold, full rebate), input_0186 (s.112A and non-equity LTCG only, no STCG), and input_0172 (normal income 1240000 ABOVE the threshold with 329000 of gains, where relief is computed as though the gains did not exist \u2014 the shape covering 40 of the 56 affected cases and the one the earlier three-scenario check never tested). The estimator agreed with the stored ground truth on all four. The threshold is therefore measured against normal income, and both this test and tax_calculator.py stand as written; no re-run of collected model outputs is required. Standing caveat: the estimator is the department's own tool and so is the right standard for this benchmark, but it is administrative practice rather than the statute, and this issue was contested for AY 2025-26 when the filing utility was changed mid-season to block the rebate against s.111A gains. The check was performed manually by a third party; the estimator's line-by-line output should be archived in the repository so the validation is auditable rather than reported.",
+  "Age": 35,
+  "Employment Type": "private",
+  "Tax Regime": "new",
+  "City": "metro",
+  "Gross Salary": {
+    "Basic Salary": 1300000,
+    "Dearness Allowance": 0,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 0,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [
+    {
+      "Sale Price": 300,
+      "Cost Price": 100,
+      "Quantity": 100,
+      "Brokerage": 0,
+      "STT": 0,
+      "Purchase Date": "2024-01-01",
+      "Sale Date": "2024-06-01",
+      "FMV as of 31 Jan 2018": 0
+    }
+  ],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Savings Bank Interest": 0,
+  "Deposit Interest": 0,
+  "Other Interest": 0,
+  "EPF Taxable Interest": 0,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
     },
-    "Actual Rent Paid": 0,
-    "LTA Travel Expenses Claimed": 0,
-    "Professional Tax": 0,
-    "Stock Sale Transactions": [
-        {
-            "Sale Price": 300,
-            "Cost Price": 100,
-            "Quantity": 100,
-            "Brokerage": 0,
-            "STT": 0,
-            "Purchase Date": "2024-01-01",
-            "Sale Date": "2024-06-01",
-            "FMV as of 31 Jan 2018": 0
-        }
-    ],
-    "Long Term Capital Loss": [],
-    "Short Term Capital Loss": [],
-    "Savings Bank Interest": 0,
-    "Deposit Interest": 0,
-    "Other Interest": 0,
-    "EPF Taxable Interest": 0,
-    "PPF": 0,
-    "EPF": {
-        "Employee Contribution": {
-            "Deducted from Salary": 0,
-            "Voluntary": 0
-        },
-        "Employer Contribution": 0
-    },
-    "ELSS": 0,
-    "NSC": 0,
-    "Sukanya Samriddhi Yojana": 0,
-    "SCSS": 0,
-    "Pension Scheme Premium": {
-        "Amount": 0,
-        "Number of Years Paid": 0
-    },
-    "NPS": {
-        "Tier-1 Self Contribution": 0,
-        "Tier-1 Employer Contribution": 0,
-        "Tier-2": 0
-    },
-    "Education Loan Interest": {
-        "Interest Paid": 0,
-        "Year of Repayment": 0
-    },
-    "Health Insurance": [],
-    "Donations": [],
-    "TDS": 0
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 0
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 0,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
 }
