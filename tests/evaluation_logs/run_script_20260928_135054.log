@@ -1,0 +1,19 @@
+Method: script | Models: 1 | Cases: 50 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=50, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 28 done, 22 remaining
+[gemma4-12b-ctx16k] [29/50] input_0287.json OK score=14/37 (38%) rounds=4 latency=4416.3s tokens=48364 cost=$0.0000
+[gemma4-12b-ctx16k] [30/50] input_0097.json OK score=14/37 (38%) rounds=2 latency=1234.7s tokens=14566 cost=$0.0000
+[gemma4-12b-ctx16k] [31/50] input_0280.json OK score=15/37 (41%) rounds=5 latency=5139.9s tokens=54630 cost=$0.0000
+[gemma4-12b-ctx16k] [32/50] input_0156.json OK score=18/37 (49%) rounds=2 latency=1017.3s tokens=14346 cost=$0.0000
+[gemma4-12b-ctx16k] [33/50] input_0016.json OK score=26/37 (70%) rounds=6 latency=5796.6s tokens=79784 cost=$0.0000
+[gemma4-12b-ctx16k] [34/50] input_0212.json OK score=24/37 (65%) rounds=3 latency=997.2s tokens=15898 cost=$0.0000
+[gemma4-12b-ctx16k] [35/50] input_0248.json OK score=15/37 (41%) rounds=3 latency=3757.7s tokens=38614 cost=$0.0000
+[gemma4-12b-ctx16k] [36/50] input_0141.json OK score=14/37 (38%) rounds=5 latency=6795.1s tokens=71459 cost=$0.0000
+[gemma4-12b-ctx16k] [37/50] input_0121.json OK score=16/37 (43%) rounds=7 latency=3356.1s tokens=49436 cost=$0.0000
+[gemma4-12b-ctx16k] [38/50] input_0423.json OK score=21/37 (57%) rounds=5 latency=4373.4s tokens=50262 cost=$0.0000
+[gemma4-12b-ctx16k] [39/50] input_0313.json OK score=26/37 (70%) rounds=6 latency=7066.3s tokens=80231 cost=$0.0000
+[gemma4-12b-ctx16k] [40/50] input_0472.json OK score=28/37 (76%) rounds=7 latency=15449.8s tokens=92220 cost=$0.0000
+[gemma4-12b-ctx16k] [41/50] input_0550.json OK score=12/37 (32%) rounds=4 latency=4907.9s tokens=52810 cost=$0.0000

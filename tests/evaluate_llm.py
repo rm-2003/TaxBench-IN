@@ -60,7 +60,20 @@ API_TIMEOUT_SECS = 600  # per-attempt request timeout; without this a stuck
                          # (hy3-preview, 336s/case) so a legitimately slow but
                          # working reasoning model isn't cut off mid-response,
                          # while still failing well before a genuine hang.
-EMPTY_COMPLETION_RETRIES = 2  # a 200 OK with 0 completion tokens is a distinct
+EMPTY_COMPLETION_RETRIES = 4  # raised from 2 after 30 Sep: the provider went
+                               # through a bad patch (26 empties in 56 cases) and
+                               # 8 cases exhausted all 3 attempts, landing in the
+                               # results as PARSE_FAIL 0/37 with 0 completion
+                               # tokens. That is an infrastructure failure scored
+                               # as a model failure: completed-only accuracy for
+                               # that batch was 65.5%, in line with 64.6% and
+                               # 64.4% for the two before it, while the raw figure
+                               # fell to 56.1%. Retries are nearly free here —
+                               # an empty response is not billed against the
+                               # 50/day free-model quota (56 cases cost 55
+                               # requests despite the 26 empties), so the only
+                               # cost of more attempts is wall-clock time.
+                               # a 200 OK with 0 completion tokens is a distinct
                                # failure mode from a 429/503 — api_call_with_retry
                                # treats it as success since the HTTP call itself
                                # succeeded, so it's never retried by that logic.
@@ -73,7 +86,19 @@ EMPTY_COMPLETION_RETRIES = 2  # a 200 OK with 0 completion tokens is a distinct
 # Evaluation defaults (overridable via CLI)
 # ---------------------------------------------------------------------------
 MAX_TOOL_ROUNDS = 20
-MAX_SCRIPT_RETRIES = 3
+# Raised from 3 once run_script() stopped resending the whole retry history.
+# Under the old behaviour each extra round added a superseded script to the
+# prompt, so more retries made things strictly worse. With only the most recent
+# script and error sent, the prompt is flat at ~6,800 tokens per round against a
+# 16,384 ceiling, and the rounds became productive rather than degenerate:
+# input_0287 spent all three of its old retries re-emitting JSON instead of
+# Python (the same "Could not find Python code" error three times, anchored on
+# its own prior reply), and under the trim instead progressed to real scripts
+# that failed on the known "Other Interest" schema defect and then on a bare
+# variable-name typo — recoverable, but out of rounds. Rounds 1-4 are unchanged
+# by this value, so a run at 6 contains a run at 3 as a strict prefix and the
+# two conditions are separable after the fact from rounds_used.
+MAX_SCRIPT_RETRIES = 6
 SCRIPT_TIMEOUT = 20
 TOLERANCE = 0.01
 DELAY_BETWEEN_CASES = 1.0
@@ -749,7 +774,27 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
     rounds = 0
 
     for attempt in range(1 + max_retries):
-        resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=messages, temperature=0)
+        # Send only the most recent script and its error, never the whole retry
+        # history. `messages` grows by two entries per round and used to be sent
+        # entire, so round 4 re-read three superseded scripts (~3,500 tokens
+        # each) plus three tracebacks before writing the fourth: a 14,000-19,000
+        # token prompt against num_ctx 16,384, which in the worst cases left no
+        # room to emit a script at all. 17 of 18 rounds=4 cases scored 0 for this
+        # reason, and accumulated prompt size separated the outcomes perfectly --
+        # the sole survivor was the one case under 29,000 summed prompt tokens,
+        # every failure above 36,180. build_messages() returns exactly
+        # [system, user], so messages[:2] is always the base.
+        #
+        # Round 2 already sends exactly this shape and succeeds 13 of 13 at
+        # 48.4%, so the trim makes every later round structurally identical to
+        # one with a perfect success rate rather than introducing a new regime.
+        #
+        # `messages` itself keeps accumulating: it is what gets returned and
+        # stored in the checkpoint, and the full sequence of attempts is the
+        # record of what the model actually tried on a failed case. Only the
+        # copy sent to the model is trimmed.
+        sent = messages if len(messages) <= 4 else messages[:2] + messages[-2:]
+        resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=sent, temperature=0)
         tracker.add(resp)
         rounds += 1
         if not resp.choices or not resp.choices[0].message:
