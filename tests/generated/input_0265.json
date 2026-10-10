@@ -163,9 +163,8 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
     "Gross Total Income": 9598000.0,
     "Deductions": {

@@ -153,9 +153,8 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
     "Gross Total Income": 25872500.0,
     "Deductions": {
@@ -182,11 +181,11 @@
       "Total Tax Before Rebate": 7253462.5,
       "Less: Rebate under Section 87A": 0.0,
       "Tax After Rebate": 7253462.5,
-      "Surcharge": 1813365.62,
-      "Health and Education Cess": 362673.12,
-      "Total Tax Liability": 9429501.25,
+      "Surcharge": 1810809.38,
+      "Health and Education Cess": 362570.88,
+      "Total Tax Liability": 9426842.75,
       "Less: TDS": 5646000.75,
-      "Net Tax Payable / Refund": 3783500.5
+      "Net Tax Payable / Refund": 3780842.0
     }
   }
 }

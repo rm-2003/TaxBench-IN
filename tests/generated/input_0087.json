@@ -122,7 +122,7 @@
   "_archetype": "P02",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 6452000.0,
+      "Gross Salary": 6180000,
       "Exemptions": {
         "Section 10(13A)": 920000.0,
         "Section 10(5)": 80000
@@ -130,7 +130,7 @@
       "Section 16(ia)": 50000,
       "Section 16(ii)": 5000,
       "Section 16(iii)": 2500,
-      "Net Salary": 5394500.0
+      "Net Salary": 5122500.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 0.0,
@@ -141,7 +141,7 @@
         "Mutual Funds": 0.0,
         "Total": 0.0
       },
-      "LTCG (Section 112A)": 370000.0,
+      "LTCG (Section 112A)": 450000.0,
       "LTCG (Non-Equity)": {
         "Bonds": 0.0,
         "Debentures": 0.0,
@@ -154,40 +154,39 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
-    "Gross Total Income": 5882500.0,
+    "Gross Total Income": 5690500.0,
     "Deductions": {
       "80C": 102272.73,
       "80CCC": 13636.36,
       "80CCD(1)": 34090.91,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 322000.0,
+      "80CCD(2)": 50000,
       "80D": 15000.0,
       "80E": 0.0,
       "80G": 0.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 497000.0
+      "Total Deductions": 225000.0
     },
-    "Total Taxable Income": 5385500.0,
+    "Total Taxable Income": 5465500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 1302150.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
-      "Tax on LTCG (Section 112A)": 30625.0,
+      "Tax on LTCG (Section 112A)": 40625.0,
       "Tax on LTCG (Non-Equity)": 6250.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 1339025.0,
+      "Total Tax Before Rebate": 1349025.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 1339025.0,
-      "Surcharge": 133902.5,
-      "Health and Education Cess": 58917.1,
-      "Total Tax Liability": 1531844.6,
+      "Tax After Rebate": 1349025.0,
+      "Surcharge": 134902.5,
+      "Health and Education Cess": 59357.1,
+      "Total Tax Liability": 1543284.6,
       "Less: TDS": 852800.52,
-      "Net Tax Payable / Refund": 679044.08
+      "Net Tax Payable / Refund": 690484.08
     }
   }
 }

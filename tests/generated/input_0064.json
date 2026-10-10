@@ -132,7 +132,7 @@
   "_archetype": "P02",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 6452000.0,
+      "Gross Salary": 6180000,
       "Exemptions": {
         "Section 10(13A)": 920000.0,
         "Section 10(5)": 40000
@@ -140,7 +140,7 @@
       "Section 16(ia)": 50000,
       "Section 16(ii)": 5000,
       "Section 16(iii)": 2500,
-      "Net Salary": 5434500.0
+      "Net Salary": 5162500.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 59500.0,
@@ -164,23 +164,22 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
-    "Gross Total Income": 5742000.0,
+    "Gross Total Income": 5470000.0,
     "Deductions": {
       "80C": 102272.73,
       "80CCC": 13636.36,
       "80CCD(1)": 34090.91,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 322000.0,
+      "80CCD(2)": 50000,
       "80D": 15000.0,
       "80E": 80000,
       "80G": 0.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 577000.0
+      "Total Deductions": 305000.0
     },
     "Total Taxable Income": 5165000.0,
     "Tax Computation": {
@@ -188,16 +187,16 @@
       "Tax on STCG (Section 111A)": 11900.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
-      "Tax on LTCG (Non-Equity)": 4375.0,
+      "Tax on LTCG (Non-Equity)": 10000.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 1312425.0,
+      "Total Tax Before Rebate": 1318050.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 1312425.0,
-      "Surcharge": 131242.5,
-      "Health and Education Cess": 57746.7,
-      "Total Tax Liability": 1501414.2,
+      "Tax After Rebate": 1318050.0,
+      "Surcharge": 115500.0,
+      "Health and Education Cess": 57342.0,
+      "Total Tax Liability": 1490892.0,
       "Less: TDS": 758674.8,
-      "Net Tax Payable / Refund": 742739.4
+      "Net Tax Payable / Refund": 732217.2
     }
   }
 }

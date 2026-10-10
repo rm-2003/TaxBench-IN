@@ -118,7 +118,7 @@
   "_archetype": "P09",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 2690000.0,
+      "Gross Salary": 2600000,
       "Exemptions": {
         "Section 10(13A)": 0.0,
         "Section 10(5)": 0.0
@@ -126,7 +126,7 @@
       "Section 16(ia)": 75000,
       "Section 16(ii)": 0.0,
       "Section 16(iii)": 0.0,
-      "Net Salary": 2615000.0
+      "Net Salary": 2525000.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 0.0,
@@ -150,23 +150,22 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 20000,
       "Deposit Interest": 15000,
-      "Other Interest": {
-        "EPF Taxable Interest": 0
-      }
+      "Other Interest": 0,
+      "EPF Taxable Interest": 0
     },
-    "Gross Total Income": 2709500.0,
+    "Gross Total Income": 2619500.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
       "80CCD(1)": 0.0,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 140000.0,
+      "80CCD(2)": 50000,
       "80D": 0.0,
       "80E": 0.0,
       "80G": 0.0,
       "80TTA": 0.0,
       "80TTB": 0.0,
-      "Total Deductions": 140000.0
+      "Total Deductions": 50000.0
     },
     "Total Taxable Income": 2569500.0,
     "Tax Computation": {
@@ -174,16 +173,16 @@
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
-      "Tax on LTCG (Non-Equity)": 0.0,
+      "Tax on LTCG (Non-Equity)": 5000.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 333000.0,
+      "Total Tax Before Rebate": 338000.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 333000.0,
+      "Tax After Rebate": 338000.0,
       "Surcharge": 0.0,
-      "Health and Education Cess": 13320.0,
-      "Total Tax Liability": 346320.0,
+      "Health and Education Cess": 13520.0,
+      "Total Tax Liability": 351520.0,
       "Less: TDS": 182520.0,
-      "Net Tax Payable / Refund": 163800.0
+      "Net Tax Payable / Refund": 169000.0
     }
   }
 }

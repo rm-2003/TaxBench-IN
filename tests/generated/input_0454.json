@@ -171,7 +171,7 @@
         "Mutual Funds": 0.0,
         "Total": 0.0
       },
-      "LTCG (Section 112A)": 24500.0,
+      "LTCG (Section 112A)": 104500.0,
       "LTCG (Non-Equity)": {
         "Bonds": 0.0,
         "Debentures": 0.0,
@@ -184,11 +184,10 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
-    "Gross Total Income": 25567500.0,
+    "Gross Total Income": 25647500.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
@@ -202,7 +201,7 @@
       "80TTB": 0.0,
       "Total Deductions": 50000.0
     },
-    "Total Taxable Income": 25517500.0,
+    "Total Taxable Income": 25597500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 7227900.0,
       "Tax on STCG (Section 111A)": 0.0,

@@ -165,9 +165,8 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
     "Gross Total Income": 9688500.0,
     "Deductions": {
@@ -189,16 +188,16 @@
       "Tax on STCG (Section 111A)": 6000.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 0.0,
-      "Tax on LTCG (Non-Equity)": 625.0,
+      "Tax on LTCG (Non-Equity)": 6250.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 2610475.0,
+      "Total Tax Before Rebate": 2616100.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 2610475.0,
-      "Surcharge": 261047.5,
-      "Health and Education Cess": 114860.9,
-      "Total Tax Liability": 2986383.4,
+      "Tax After Rebate": 2616100.0,
+      "Surcharge": 261610.0,
+      "Health and Education Cess": 115108.4,
+      "Total Tax Liability": 2992818.4,
       "Less: TDS": 1781534.04,
-      "Net Tax Payable / Refund": 1204849.36
+      "Net Tax Payable / Refund": 1211284.36
     }
   }
 }

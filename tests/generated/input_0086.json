@@ -132,7 +132,7 @@
   "_archetype": "P02",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 6452000.0,
+      "Gross Salary": 6180000,
       "Exemptions": {
         "Section 10(13A)": 920000.0,
         "Section 10(5)": 40000
@@ -140,7 +140,7 @@
       "Section 16(ia)": 50000,
       "Section 16(ii)": 5000,
       "Section 16(iii)": 2500,
-      "Net Salary": 5434500.0
+      "Net Salary": 5162500.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 0.0,
@@ -164,23 +164,22 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
-    "Gross Total Income": 5502500.0,
+    "Gross Total Income": 5230500.0,
     "Deductions": {
       "80C": 102272.73,
       "80CCC": 13636.36,
       "80CCD(1)": 34090.91,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 322000.0,
+      "80CCD(2)": 50000,
       "80D": 0.0,
       "80E": 80000,
       "80G": 0.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 562000.0
+      "Total Deductions": 290000.0
     },
     "Total Taxable Income": 4940500.0,
     "Tax Computation": {

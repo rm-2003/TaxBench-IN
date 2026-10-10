@@ -161,7 +161,7 @@
         "Mutual Funds": 39500.0,
         "Total": 39500.0
       },
-      "LTCG (Section 112A)": 220000.0,
+      "LTCG (Section 112A)": 300000.0,
       "LTCG (Non-Equity)": {
         "Bonds": 0.0,
         "Debentures": 0.0,
@@ -174,11 +174,10 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
-    "Gross Total Income": 25802500.0,
+    "Gross Total Income": 25882500.0,
     "Deductions": {
       "80C": 0.0,
       "80CCC": 0.0,
@@ -192,22 +191,22 @@
       "80TTB": 0.0,
       "Total Deductions": 50000.0
     },
-    "Total Taxable Income": 25752500.0,
+    "Total Taxable Income": 25832500.0,
     "Tax Computation": {
       "Tax at Slab Rates": 7239750.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
-      "Tax on LTCG (Section 112A)": 11875.0,
+      "Tax on LTCG (Section 112A)": 21875.0,
       "Tax on LTCG (Non-Equity)": 0.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 7251625.0,
+      "Total Tax Before Rebate": 7261625.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 7251625.0,
-      "Surcharge": 1812906.25,
-      "Health and Education Cess": 362581.25,
-      "Total Tax Liability": 9427112.5,
+      "Tax After Rebate": 7261625.0,
+      "Surcharge": 1813218.75,
+      "Health and Education Cess": 362993.75,
+      "Total Tax Liability": 9437837.5,
       "Less: TDS": 5644567.5,
-      "Net Tax Payable / Refund": 3782545.0
+      "Net Tax Payable / Refund": 3793270.0
     }
   }
 }

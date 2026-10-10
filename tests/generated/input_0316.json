@@ -168,9 +168,8 @@
     "Income from Other Sources": {
       "Savings Bank Interest": 25000,
       "Deposit Interest": 30000,
-      "Other Interest": {
-        "EPF Taxable Interest": 8000
-      }
+      "Other Interest": 5000,
+      "EPF Taxable Interest": 8000
     },
     "Gross Total Income": 447000.0,
     "Deductions": {
@@ -184,9 +183,9 @@
       "80G": 14000.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 239000.0
+      "Total Deductions": 68000.0
     },
-    "Total Taxable Income": 208000.0,
+    "Total Taxable Income": 379000.0,
     "Tax Computation": {
       "Tax at Slab Rates": 0.0,
       "Tax on STCG (Section 111A)": 9900.0,
