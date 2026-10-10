@@ -688,3 +688,64 @@ loop, trimming the context for room and fixing temperature for reproducibility
 combine to make the loop deterministic, so a model that fails a repair cannot
 escape it.** Any agentic benchmark with a bounded retry budget and a trimmed
 transcript has this failure mode.
+
+#### Audit of rescore.py and generate_test_cases.py (the two unaudited files)
+
+**`rescore.py` is sound, and a dry run gives the strongest whole-dataset
+consistency check available:** 13 model/method arms, 986 stored entries,
+`delta +0.0000` on every arm and `0` cases differing. Every stored score in
+every checkpoint reproduces exactly from the current ground truth, so the
+regenerate-and-rescore pass over 569 cases left nothing stale and no arm is
+graded against an old answer key. Stored field counts are uniform at `{35: 986}`,
+which also makes `rescore.py`'s pooled `score/fields` figure arithmetically
+identical to the per-case mean the harness reports -- the two can never
+disagree.
+
+Two latent notes, neither worth changing now. `CHECKPOINT_DIR.glob` rather than
+`rglob` is the only thing keeping `v1_preschemafix/` out of the leaderboard,
+which is load-bearing and undocumented. And `all_model_results[model]` is keyed
+by resolved model ID, so two slugs resolving to one ID would silently overwrite
+each other -- unreachable today, but `resolve_model_id`'s fallback makes it
+possible.
+
+**`generate_test_cases.py`: the coverage gap is in the factor *definitions*,
+not in the profile wiring.** Every one of the 19 parameters is varied by at
+least one of the 10 profiles and every factor value is reachable -- 0 unreachable
+factors, 0 pinned parameters. So the uncovered rules cannot be fixed by adding
+parameters to a profile's `vary` list; they need new factor values that set the
+relevant leaf to something other than its default.
+
+Measured directly from the 569 generated cases, the genuinely constant scalar
+input leaves are:
+
+| Input leaf | Constant value | Consequence |
+|---|---|---|
+| `Debentures/{duration,purchase,sale}` | 0 | provision never exercised |
+| `EPF/Employer Contribution` | 0 | |
+| `EPF/Employee Contribution/Voluntary` | 0 | VPF never exercised |
+| `NSC`, `SCSS`, `Sukanya Samriddhi Yojana` | 0 | 3 of the 80C instruments |
+| `Health Insurance[]/Number of Years Paid` | 1 | s.80D(4A) spreading never fires |
+| `Short Term Capital Loss[]/Financial Year` | `2023-24` | STCL 8-year expiry untestable |
+| `Stock Sale Transactions[]/Quantity` | 1000 | |
+| `Stock Sale Transactions[]/Sale Date` | `2025-10-15` | see holding period below |
+
+**s.55(2)(ac) grandfathering is confirmed unexercised, and more completely than
+previously recorded.** Purchase dates take exactly two values across all 569
+cases -- `2024-04-01` (394 transactions) and `2025-04-01` (383) -- so 0
+transactions fall before 01-Feb-2018. `FMV as on 31-Jan-2018` is `None` in all
+777 transactions, meaning the field was never populated rather than merely
+unused. The grandfathering branch is therefore unreachable on this dataset and
+cannot have altered any stored answer.
+
+**New gap found by this audit: the holding-period threshold is never tested near
+its boundary.** Two purchase dates against a constant sale date gives every
+transaction a holding period of either ~18.5 months or ~6.5 months. The
+12-month equity threshold is only ever probed at those two distant points, so an
+off-by-one in the comparison would pass all 569 cases. The same shape as the
+pinned STCL financial year.
+
+v2 input worklist, to land in one pass: pre-2018 purchase dates with a populated
+FMV; holding periods at 11 and 13 months; non-zero Debentures, VPF, EPF employer
+contribution, NSC, SCSS and Sukanya Samriddhi; `Number of Years Paid` > 1; an
+STCL financial year outside the 8-year window; and the `Other Interest` input
+rename.

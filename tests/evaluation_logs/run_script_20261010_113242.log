@@ -4,3 +4,8 @@ Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=50
 
 [gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
 [gemma4-12b-ctx16k] Resuming: 2 done, 48 remaining
+[gemma4-12b-ctx16k] [3/50] input_0199.json OK score=18/35 (51%) rounds=2 latency=1423.3s tokens=20104 cost=$0.0000
+[gemma4-12b-ctx16k] [4/50] input_0287.json OK score=12/35 (34%) rounds=1 latency=1893.1s tokens=7285 cost=$0.0000
+[gemma4-12b-ctx16k] [5/50] input_0529.json OK score=12/35 (34%) rounds=1 latency=1456.5s tokens=6976 cost=$0.0000
+[gemma4-12b-ctx16k] [6/50] input_0132.json OK score=12/35 (34%) rounds=1 latency=684.3s tokens=7949 cost=$0.0000
+[gemma4-12b-ctx16k] [7/50] input_0097.json OK score=10/35 (29%) rounds=2 latency=1056.1s tokens=16002 cost=$0.0000
