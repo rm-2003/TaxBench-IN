@@ -1,0 +1,60 @@
+Method: script | Models: 1 | Cases: 50 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=50, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] [1/50] input_0199.json OK score=22/37 (59%) rounds=3 latency=890.3s tokens=51766 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [2/50] input_0289.json OK score=20/37 (54%) rounds=3 latency=1213.4s tokens=71939 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [3/50] input_0255.json OK score=22/37 (59%) rounds=3 latency=1724.1s tokens=63281 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [4/50] input_0287.json OK score=21/37 (57%) rounds=2 latency=2113.9s tokens=51279 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [5/50] input_0132.json OK score=22/37 (59%) rounds=1 latency=1415.8s tokens=31099 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [6/50] input_0529.json OK score=19/37 (51%) rounds=6 latency=1786.2s tokens=98836 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [7/50] input_0280.json OK score=22/37 (59%) rounds=4 latency=1073.2s tokens=55042 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [8/50] input_0156.json OK score=26/37 (70%) rounds=2 latency=533.0s tokens=23640 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [9/50] input_0208.json OK score=24/37 (65%) rounds=2 latency=697.2s tokens=39498 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [10/50] input_0016.json OK score=26/37 (70%) rounds=2 latency=813.9s tokens=29228 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [11/50] input_0097.json OK score=16/37 (43%) rounds=2 latency=2481.5s tokens=73657 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [12/50] input_0443.json OK score=18/37 (49%) rounds=2 latency=1339.3s tokens=65374 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [13/50] input_0549.json OK score=21/37 (57%) rounds=3 latency=885.2s tokens=54633 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [14/50] input_0089.json OK score=17/37 (46%) rounds=2 latency=860.1s tokens=52576 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [15/50] input_0179.json OK score=24/37 (65%) rounds=3 latency=811.5s tokens=40860 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [16/50] input_0248.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [script] ===
+Overall accuracy:    57.7% (15 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         2.7 per case
+
+Per-section accuracy:
+  Salary (7 fields):            72.4%
+  Capital Gains (2 fields):     36.7%
+  Other Sources (3 fields):     88.9%
+  Aggregates (2 fields):        0.0%
+  Deductions (9 fields):        79.3%
+  Tax Computation (14 fields):  41.0%
+
+Cost / efficiency:
+  Mean latency:          1242.6 sec/case
+  Mean tokens:           53,514 total (20,464 prompt + 33,050 completion)
+  Total tokens (all):    802,708
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__script_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/script_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261001_052827.log

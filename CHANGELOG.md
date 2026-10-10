@@ -449,3 +449,186 @@ Detailed per-area plans stored in `.claude/plans/`:
 | The composition finding is strengthened, not weakened | Nemotron per-section, completed-only, before → after: Salary **85.7% → 72.0%**, Aggregates **8.5% → 4.7%**, Other Sources 89.8% → 91.7%, Deductions 79.5% → 80.9%, Capital Gains 50.4% → 52.3%, Tax Computation 44.8% → 46.6% | Salary fell 14 points because the models do not add the employer's contribution to salary either and were previously credited for sharing the error. The gap the benchmark exists to measure **widened**: 72.0% on the seven salary fields against 4.7% on the two that sum them. Checked separately that the bug was not itself producing the Aggregates result — of 329 affected completed cases only **5 (2%)** had a model answer differing from the key by exactly the 80CCD(2) amount, so the models are wrong in their own varied ways rather than systematically offset. |
 | `calculator_tests/test28_80ccd2_employer_nps_in_salary.json` (new) + `run_tests.py` | Asserts Gross Salary 13,50,000, Net Salary 12,75,000, GTI 12,90,000, 80CCD(2) 50,000 and Total Taxable Income 12,40,000 — the last being the figure the taxpayer reaches with no NPS arrangement at all, which is the point of the deduction. Suite now **28 passed, 0 failed** | The bug survived all 27 earlier tests because only `test7_s16ii_govt` involved a government employer and it asserted nothing beyond `Section 16(ii)`. The error lived in the interaction between salary construction and a deduction, which no single test spanned — an instance of the oracle problem this benchmark exists to study. A property test ("taxable income must not fall when an employer contribution is added") would have caught it immediately. |
 | Invariant checks re-run against the regenerated ground truth | 336 of 569 cases violate "Gross Total Income = sum of all heads", and **all 336 are explained exactly by the unreportable input `Other Interest`** — 0 unexplained. Monotonicity: 0 violations over 40 cases | Confirms the regeneration introduced nothing: the remaining violations are entirely the pre-existing `"Other Interest"` schema-shadowing defect recorded above, which is still unfixed. |
+
+#### Benchmark validity: two defects that made the ground truth undeliverable from the input
+
+Both were found by asking why `gross_total_income` was wrong in **every single
+one** of nemotron's 36 `script` cases. Neither is a tax error — the statute was
+applied correctly in both — and that is what made them survive 28 tests and four
+ITD-estimator checks. They are defects in what the benchmark *asks*.
+
+| Change | Detail | Consequence |
+|---|---|---|
+| **Removed the 14% employer-NPS imputation for government employees** (`tax_calculator.py`) | The contribution was raised to `max(declared, 0.14 × (Basic+DA))`. Government employers really do contribute 14% compulsorily, so the arithmetic was right — but the amount appears nowhere in the input JSON and the rule nowhere in `system_prompt.txt`, so the answer key depended on a figure no model could derive. It applied to **all 212 government cases**: median 90,000 of salary invented from nothing, maximum 272,000, and **48 cases declared exactly 0** | The declared figure is now taken at face value. A benchmark may only ask what its inputs support. |
+| Why it hid for 212 cases | The imputation **cancelled out of Total Taxable Income** — the 80CCD(2) deduction equalled the imputed amount exactly in all 212 cases — so the entire tax chain stayed correct while Gross Salary, Net Salary, Gross Total Income, Total Deductions and 80CCD(2) were all wrong. Every test that checked a *tax* figure passed | Found only via the fingerprint: `input_0355` and `input_0381` both had **correct Total Taxable Income with GTI wrong by exactly −70,000**. A right answer sitting on top of a wrong one. |
+| **`Other Interest` is now a reportable amount, `EPF Taxable Interest` its sibling** (`tax_calculator.py`, `tests/prompts/system_prompt.txt`) | The output schema nested `EPF Taxable Interest` inside a container called `Other Interest`, while the input used `Other Interest` as a separate flat number. The same key meant a container on the way out and an amount on the way in. The input's amount entered GTI (correctly — it is income) with **nowhere to be reported** | The invariant "GTI = sum of the reported heads" now holds: **0 violations in 569 cases, previously 336.** `input_0160`'s ₹3,000 is finally visible in the output it belongs to. |
+| The collision was costing real accuracy, but only where code is executed | Models writing Python inferred the input's shape from the output schema — the only template the prompt offered — and read `data["Other Interest"]["EPF Taxable Interest"]`, raising `TypeError` on an int. **Both** retry transcripts in the project do exactly this. Measured on the field itself: gemma `script` **63.3%** against **100.0%** for the same model in `zero-shot`, a 37-point collapse from switching to code generation, with 6 of 49 cases provably conflating the two meanings | Verified harmless in `zero-shot` across all nine arms: **0 conflations, 0 shape errors**, nemotron 508/508. The defect is a hazard of making a model infer input structure, not of the output schema as a specification. |
+| **Added an explicit input schema to the prompt**, which never had one | The prompt documented *field semantics* but never the input's *structure*, so a script-writing model had to guess it. The new section states the shape of all 33 top-level keys and says in terms that `Other Interest` is not a container, plus: "Use the values exactly as given. Do not substitute a statutory default for a declared figure, even when the declared figure is 0" | Removes the guesswork that caused the crash class, and forecloses the imputation misreading at the same time. |
+| **Zero-shot runs were preserved rather than discarded** (`LEGACY_FIELD_PATHS` in `tests/evaluate_llm.py`) | Flattening the schema moved `epf_taxable_interest`'s path, which would have made all **816** stored zero-shot answers unscorable on that field and forced a re-run of roughly two weeks of free quota. The scorer now reads a field at its former location when the current path is absent **in the answer only**; `expected` is regenerated and always uses the current path, so this never changes what counts as correct | Verified by re-grading: nemotron zero-shot `epf_taxable_interest` **508/511 (99.4%)**, gemma `script` **63.3%** — identical to the figures measured before the change. `Other Interest` is reportable but deliberately **unscored**, keeping the count at 37 so no old answer is marked wrong for a field it was never asked to produce. |
+| Ground truth regenerated and all models re-graded offline | All 569 cases changed shape; the five NPS fields moved on exactly 212. `_expected` recomputed in place from each case's own stored `input`, so the inputs are byte-identical and **no inference was re-run** | Every model gained and none lost, ordering unchanged: nemotron zero-shot **60.63% → 62.52%** (190 cases changed), hy3 52.43% → **54.38%**, gpt-oss-120b 51.03% → **52.54%**, gemma-4-31b 49.19% → **50.70%**, deepseek 45.57% → **47.19%**, gpt-oss-20b 38.22% → **39.57%**, gemma4-12b zero-shot 37.84% → **38.81%**, llama-3.3-70b 36.49% → **37.68%**, nemotron-nano 36.86% → **37.30%**. The defect had been understating every model by 1–2 points. |
+| What the NPS fix did **not** fix | Field-level recovery was far narrower than the case count suggests: `80ccd_2` flipped on all 190 affected nemotron cases, but `gross_salary` on only 42 and `gross_total_income` on **9** — on the rest a second, independent error sits underneath | So Aggregates is **not** rescued (5.6% → unchanged in substance) and remains genuinely hard rather than mis-specified. An earlier note in this session estimated the defect at ~5% of every model's score; the measured cost was 1–2 points. |
+| `test29_other_interest_reportable.json`, `test30_no_govt_nps_imputation.json` (new) + `run_tests.py` | Test 29 asserts the flat shape and, as a lambda, the invariant itself — that the Other Sources leaves sum to GTI. Test 30 asserts Gross Salary 6,00,000 and 80CCD(2) 0 for a government employee declaring 0, where the old code would have added 84,000 and deducted it again. Suite now **30 passed, 0 failed** | Test 30 is the property test whose absence let the imputation survive: no earlier test asserted a *salary* figure for a government employee. |
+| Script-arm checkpoints archived, not deleted | `tests/evaluation_checkpoints/v1_preschemafix/` holds gemma `script` (50 cases, 45.73%) and nemotron `script` (36 cases, 61.19%) with a README explaining why they are not comparable | The prompt changed, so the question changed. These two arms are being re-collected; the nine zero-shot arms are not, and that asymmetry is the whole point of the legacy reader. |
+
+#### s.112A grandfathering: a provision applied to the wrong shares, and never actually tested
+
+Found by solving `input_0141` and then `input_0549` by hand against the statute
+rather than against the engine — the only way to break the circularity of
+validating a ground truth with the code that produced it.
+
+| Change | Detail | Consequence |
+|---|---|---|
+| **Grandfathering now requires acquisition before 1 Feb 2018** (`tax_calculator.py`) | `effective_cost_per_share = max(cost_price, fmv)` ran for **every** long-term holding, with no date test. s.55(2)(ac) restricts the step-up to equity shares acquired before the cutoff. Shares bought in 2024 were therefore given a cost basis lifted to their "FMV as of 31 Jan 2018" — a figure with no meaning for a share that did not exist in the holder's hands in 2018 | **166 transactions across 166 cases (29% of the benchmark)** had an inflated cost basis, understating LTCG by **₹1,32,80,000** in total. `input_0549`: a share bought 2024-04-01 stepped from ₹100 to ₹180 per share. |
+| **The step-up is now capped at the sale consideration** | The rule is cost = HIGHER of actual cost and the LOWER of FMV and sale consideration. The inner `min()` was missing, so an FMV above the sale price would manufacture a loss from a break-even sale | Latent, not observed: **0 of 777** transactions have FMV above sale price. Fixed because the generator may eventually produce one. `test3d` now guards it. |
+| Why 28 calculator tests and four ITD-estimator checks all passed over it | **The one test covering grandfathering asserted the bug.** `test3b_ltcg_grandfathering.json` used a purchase date of 2020-01-01 — six years inside the cutoff — and its own `_description` stated the wrong rule as if it were the law: "effective_cost = max(100, 200)=200" | The test did not merely fail to catch the defect; it documented it as correct. Repaired to 2017-06-01, which makes it genuinely eligible and leaves the expected 950 unchanged. |
+| Two complementary errors that cancelled into a plausible result | The generator's `ltcg_fmv_benefit` variant sets `"FMV as of 31 Jan 2018": 180` with `"Purchase Date": "2024-04-01"`, so it was never eligible. The calculator's missing date test is the only reason the variant appeared to do anything at all — FMV 180 *did* change the answer, the variant *did* differ from its siblings, and nothing failed | A textbook instance of the oracle problem this benchmark exists to study, found in its own harness: a scenario that looked like it validated a rule while validating nothing. |
+| `test3c_ltcg_no_grandfathering_post_2018.json`, `test3d_ltcg_grandfather_clamped_at_sale.json` (new), `test3b` repaired | 3c asserts 1,950 for an identical trade bought in 2020 (actual cost used, FMV ignored); before the fix it returned 950. 3d asserts 0 where FMV 500 exceeds a 300 sale price. Suite now **32 passed, 0 failed** | Grandfathering now has eligible, ineligible and clamped coverage, which it has never had. |
+| Ground truth regenerated and all models re-graded offline | **143 of 569 cases moved**: LTCG (112A), GTI and Total Taxable Income on all 143, the tax chain on 140, surcharge on 41. `_expected` recomputed from each case's own stored `input`, so **no inference was re-run** | Score effect is near zero and not uniformly positive: nemotron zero-shot 62.52% → **62.77%**, nemotron `script` 63.14% → **63.47%**, gemma-4-31b and hy3 unchanged, while deepseek 47.19% → 47.08%, llama-3.3-70b 37.68% → 37.51%, nemotron-nano 37.30% → 37.19%, gpt-oss-120b 52.54% → 52.49%, gpt-oss-20b 39.57% → 39.51%, gemma4-12b 38.81% → 38.76%. |
+| An earlier reading of this, corrected | It was initially framed as "our key was wrong, so models were being marked wrong for being right". The re-grade refutes that: **four of seven arms score slightly lower** after the correction. The models were not getting these cases right either — correcting the key moved the target, and they were missing it in their own ways | LTCG (112A) is wrong in **305 of 351** nemotron zero-shot cases where it is non-zero (87%), and the stale ₹1,00,000 exemption explains only 55 of those. The remaining failures are genuine model difficulty, not a ground-truth artifact. |
+| Invariant re-checked after regeneration | "GTI = sum of the reported heads": **0 violations in 569** | Unchanged by this fix, as expected — it touches the value of LTCG, not where income is reported. |
+
+#### Deferred to v2 (input-level changes — each invalidates every collected model output)
+
+Recorded here so the reasoning is not lost. Both require re-running the arms
+they affect, because they change what the model is shown rather than what the
+answer key says. Collected runs stand at **1,015** across 11 model/method
+combinations, so neither is worth doing piecemeal; they should land together.
+
+| Item | Why | Cost |
+|---|---|---|
+| **Give s.112A grandfathering real coverage** — set some `ltcg_fmv_benefit` purchase dates to e.g. `2017-06-01` in `generate_test_cases.py` | After the fix above, **no stock transaction in the dataset is eligible**: the earliest purchase date anywhere is 2024-04-01, so the FMV field is now **dead** — carried in all 777 transactions, documented in the system prompt, and never load-bearing. The provision the field exists for is untested by the benchmark, and `CHANGELOG.md` v1.0 claims "LTCG grandfathering (FMV 31 Jan 2018)" as implemented, which overstates it on both counts. **This note supersedes that claim**; per the project rule the earlier entry is left unedited | Changes inputs → re-run every arm |
+| **Rename the input's `Other Interest`** so it no longer collides with the output key | The output nesting was fixed this version and the input schema documented, which stops models crashing on `data["Other Interest"][...]`. The underlying name collision remains: one key still means a flat amount in the input and a reported leaf in the output | Changes inputs → re-run every arm |
+| Known limitation to state in the write-up either way | Grandfathering is implemented and unit-tested but **not exercised by any of the 569 cases**. Claiming the benchmark covers it would be false | — |
+
+#### Statutory audit: six further defects in the tax engine
+
+The grandfathering bug prompted a rule-by-rule audit of `tax_calculator.py`
+against the Act rather than against its own tests. Six more defects, all in the
+answer key only — `_expected` regenerated from each case's stored `input`, all
+1,015 collected runs re-graded by `tests/rescore.py`, **no inference re-run**.
+
+| # | Defect | Exposure | Fix |
+|---|---|---|---|
+| **A** | **The 1,25,000 s.112A relief was spilled onto non-equity LTCG.** s.112A(2) attaches it to "such long-term capital gains" — the s.112A(1) ones, equity with STT paid. Bonds, debentures, G-Secs and debt funds fall under s.112, which has no equivalent allowance | **94 of 569 cases** undertaxed; **44** paid nothing at all on non-equity LTCG. ₹5,36,625 of tax before cess | The remainder no longer carries over; non-equity LTCG is charged at a flat 12.5% |
+| **B** | **The old regime's basic exemption was 2,50,000 at every age.** It is age-dependent: 3,00,000 at 60-79, 5,00,000 at 80+, and the 5% band disappears entirely for a super senior | **48 cases** (all exactly age 72) overtaxed by ₹2,500 each. No 80+ case exists, so that path had no coverage at all | `old_regime_slabs_for_age()` selects one of three tables |
+| **C** | **No 15% surcharge ceiling on special-rate income.** Surcharge on s.111A/112A/112 income is capped at 15% however high total income goes; the headline 25%/37% rate was applied to the whole liability | **48 cases** above ₹2 crore holding capital gains | `_surcharge_amount()` charges the normal and special components at different rates |
+| **D** | **Chapter VI-A deductions were set against special-rate gains.** s.112A(6) and s.111A(2) allow them from GTI "as reduced by" those gains; the cap was against unreduced `gross_total` | **25 cases**, ₹16,16,500 sheltered. Tax barely moves — the gains are charged from their own gross amounts and slab income was already clamped at zero — but **reported Total Deductions and Total Taxable Income were both wrong, and both are scored fields** | Ceiling is now `gross_total - special_gains` |
+| **E** | **Surcharge marginal relief compared against pure-slab tax at the boundary.** `compute_slab_tax(boundary)` treats every rupee of the threshold as slab income, which overstates the comparator whenever capital gains are present (slab reaches 30% against 12.5% on LTCG) and so understates relief | **129 of the 163 surcharge cases** | The comparator now holds income COMPOSITION fixed: special-rate income stays at its actual amount and only the slab part is reduced to land on the boundary, with the lower band's rate applied at the boundary itself |
+| **F** | **No s.80G(4) qualifying limit.** The "with qualifying limit" categories are deductible only up to 10% of adjusted GTI | **0 cases** — latent. The generator emits only PM Cares Fund (353, 100% without limit) and the PM's Drought Relief Fund (216, 50% without limit) | Implemented with both limited-category sets empty, so adding such a scheme cannot silently over-deduct |
+
+| Follow-on | Detail |
+|---|---|
+| `test22` corrected | It expected **21,875** — (2,00,000 − 25,000) at 12.5% — and was titled *"G-Secs LTCG + shared 1.25L exemption"*, so both the assertion and the name presented defect A as the rule. Now expects **25,000** and is retitled to state that the relief is s.112A-only. |
+| **Third instance of the same meta-failure** | `test3b` asserted the grandfathering bug and spelled the wrong formula in its description; `test22` asserted the spill and named it a feature; `test7` was the only government-employer test and asserted nothing beyond `Section 16(ii)`, which is how the employer-NPS defect survived. The tests were written by reading the implementation, so they verified self-consistency rather than correctness — the oracle problem this benchmark studies, in its own harness. Hand-computing four cases against the statute found seven defects that 32 passing tests had not. |
+| `test31`, `test32` (new) | Senior (age 65, slab tax 20,000 against the old 22,500) and super senior (age 82, slab tax 10,000). Suite now **34 passed, 0 failed**. |
+| Ground truth regenerated | **208 of 569 cases moved.** Net tax payable, cess and total liability on 183; tax before/after rebate on 135; tax on non-equity LTCG on 94; surcharge on 82; slab tax on 48; Total Taxable Income and Total Deductions on 30. |
+| Score effect — **mostly downward, which is the expected direction** | nemotron zero-shot 62.77% → **62.64%**, gemma-4-31b 50.70% → **50.49%**, llama-3.3-70b 37.51% → **37.24%**, gpt-oss-120b 52.49% → **52.27%**, gemma4-12b zero-shot 38.76% → **38.54%**, hy3 54.22% → **54.22%**, gpt-oss-20b 39.51% → **39.35%**, nemotron-nano 37.08% → **37.08%**, deepseek 47.08% → **47.14%**, nemotron `script` 63.47% → **63.72%**. Four of the six defects *undertaxed*, so the corrected key demands larger numbers and the models were sharing the engine's leniency. |
+| Invariant re-checked | "GTI = sum of the reported heads": **0 violations in 569** |
+| Verified correct, no change needed | New and old slab rates; 87A thresholds and the new-regime marginal relief (validated against the ITD estimator); standard deductions; LTCG 12.5%, STCG 111A 20%, cess 4%; surcharge bands including the new-regime 25% cap; MF classification (equity 12-month, debt s.50AA, ELSS lock-in); loss set-off asymmetry and the 8-year window (`current_ay_start` is mislabelled as an AY but the arithmetic yields FY ≥ 2017, which `test20` confirms); HRA three-condition minimum; LTA; s.16(ia)/(ii)/(iii); 80CCE ₹1.5L with proportional scaling; 80CCD(1)/(1B); 80TTA savings-only and 80TTB; the new regime disallowing everything but 80CCD(2); s.80A(2). |
+
+#### Metric validity: two degenerate scored fields removed, and the score decomposed
+
+| Change | Detail | Consequence |
+|---|---|---|
+| **`tax_stcg_other` and `tax_ltcg_other` dropped from scoring (37 → 35 fields)** | Both were **0 in all 569 cases**, so neither could discriminate between models: emitting a constant 0 scored 100% while reasoning about them was punished. STCG on non-equity assets is charged at slab rates and folded into "Tax at Slab Rates" — a convention `system_prompt.txt` never stated — so **26% to 86% of each model's answers were marked wrong for reporting the attributable tax instead**, defensibly the more informative answer (gemma-4-31b 86%, gpt-oss-20b 79%, hy3 75%, nemotron 26%) | Documenting the convention would only have converted a trap into free marks, since a field constant across the dataset carries no signal either way. Both remain in the required output schema; they are simply not scored. |
+| Hardcoded `/ 37` denominators replaced | `total_pct` and the per-case log line now derive the count from `len(scores)` | A future field change cannot silently mis-scale every reported accuracy. |
+| **All scores fall by roughly 4 points**, which is the inflation those two fields were supplying | 35-field figures: nemotron `script` **62.34%**, nemotron zero-shot **61.37%**, hy3 **53.26%**, gpt-oss-120b **49.94%**, gemma-4-31b **49.94%**, deepseek **45.77%**, gpt-oss-20b **37.37%**, gemma4-12b zero-shot **36.69%**, llama-3.3-70b **35.43%**, nemotron-nano **35.14%** | Models were being credited for two fields that required no tax reasoning at all. |
+| **Report now decomposes the score into derived and copied fields** | Four scored fields are the input value verbatim in all 569 cases (`savings_bank_interest`, `deposit_interest`, `epf_taxable_interest`, `tds`) — transcription, not tax computation. Reported separately rather than dropped: losing them is a real mistake, just not a tax mistake | The gap is large and uniform, and the derived figure discriminates better (spread 27.2–57.7 against 35.1–62.3 overall): nemotron `script` 62.3% → **57.7% derived** / 98.5% copied; nemotron zero-shot 61.4% → **57.4%** / 92.5%; hy3 53.3% → **48.6%** / 89.5%; gpt-oss-120b 49.9% → **43.9%** / 97.0%; gemma-4-31b 49.9% → **44.3%** / 93.5%; deepseek 45.8% → **39.5%** / 94.0%; gpt-oss-20b 37.4% → **30.1%** / 94.0%; gemma4-12b 36.7% → **28.6%** / 99.5%; llama 35.4% → **29.4%** / 82.5%; nemotron-nano 35.1% → **27.2%** / 97.0%. gemma4-12b is the extreme: **99.5% copying against 28.6% computing**. |
+
+#### Coverage audit: rules the engine implements, unit-tests, and the dataset never exercises
+
+Twelve input fields never vary across the 569 cases. The s.112A grandfathering
+gap was not an isolated oversight but one instance of this, so the whole input
+space was swept. **None of these is a bug in the engine** — each rule is
+implemented and has a passing unit test. They are gaps in what the benchmark
+*asks*, and claiming coverage of them would be false.
+
+| Rule / dimension | Cases exercising it | Note |
+|---|---|---|
+| s.112A grandfathering (FMV 31-Jan-2018) | **0** | No stock acquired before the cutoff; earliest purchase date anywhere is 2024-04-01 |
+| Debentures | **0** | `Sale`, `Purchase` and holding all constant 0, yet `STCG (Other).Debentures` and `LTCG (Non-Equity).Debentures` are reported output fields. Covered by `test24` only |
+| NSC | **0** | Three of the 80C instruments are never used; only PPF (516), ELSS (516) and EPF-deducted (152) appear |
+| SCSS | **0** | |
+| Sukanya Samriddhi Yojana | **0** | |
+| Voluntary EPF (VPF) | **0** | `EPF/Employee Contribution/Voluntary` constant 0 |
+| EPF employer contribution | **0** | constant 0 |
+| s.80D(4A) multi-year premium spreading | **0** | `Health Insurance[].Number of Years Paid` is always 1, so the division by years never changes anything. `test13` covers it |
+| Super senior (80+) basic exemption | **0** | Every old-regime senior case is exactly age 72. `test32` now covers it |
+| s.80G(4) qualifying-limit categories | **0** | Only PM Cares (353) and PM's Drought Relief (216), both "without limit" |
+| STCL 8-year expiry | **0** | `Short Term Capital Loss[].Financial Year` is always `2023-24`. LTCL expiry **is** exercised — 102 cases carry `2015-16`, which is out of window |
+| Stock sale date variation | **0** | `Sale Date` constant `2025-10-15`; only the purchase date moves |
+
+| Latent defect found, never triggered | Detail |
+|---|---|
+| `compute_80d` credits every preventive-health-checkup to the **self** bucket regardless of beneficiary | s.80D counts a parents' checkup against the parents' limit. All 62 checkup entries in the dataset are `self`, so the misallocation never changes an answer. Left unfixed and recorded; fixing it blind with no case to verify against risks introducing an error rather than removing one. |
+
+| Verified correct in this sweep, no change | `compute_80d` limits (25k/50k, senior detection, cash exclusion, group-policy exclusion, ₹5,000 checkup cap applied within the overall limit); MF classification across all six fund types (equity 12-month, ELSS lock-in, debt s.50AA, gold-ETF 12-month, gold-MF and international 24-month); EPF employee contribution feeding 80C; bonds/debentures/G-Secs 12-month threshold (correct for **listed** securities — the input never says listed or unlisted, so that assumption is forced and should be stated in the prompt). |
+
+**Everything in the coverage table is a `generate_test_cases.py` change**, so it
+alters the inputs and invalidates all collected runs. It belongs with the two
+items already deferred to v2 and should land in one pass.
+
+#### Nemotron script arm complete at 50/50 under the final prompt and answer key
+
+The arm resumed from the 33-case checkpoint (the Oct 4 run stopped on a 429
+daily-quota exhaustion at `input_0363`, which correctly left no checkpoint
+record and so re-entered the queue). `system_prompt.txt` was last modified
+2026-10-02, before that run began, so all 50 cases are prompt-matched; the
+scoring and ground-truth changes since are retroactive and were applied by
+re-grade.
+
+| | |
+|---|---|
+| Overall accuracy | **60.7%** (50 cases, 35 fields) |
+| Failed to parse | 0 |
+| Mean rounds | 1.2 |
+| Retried at all | 7 of 50 |
+| Mean latency | 369.0 s/case |
+| Mean tokens | 24,478 (4,601 prompt + 19,877 completion) |
+| Total tokens | 1,223,918 |
+| Cost | $0.00 (free tier) |
+
+Per-section, and the derived/copied split:
+
+| Section | Accuracy |
+|---|---|
+| Other Sources (3 fields) | 100.0% |
+| Deductions (9 fields) | 82.2% |
+| Salary (7 fields) | 75.1% |
+| Capital Gains (2 fields) | 43.0% |
+| Tax Computation (12 fields) | 38.3% |
+| Aggregates (2 fields) | **6.0%** |
+| Derived (31 fields, computed) | 55.8% |
+| Copied (4 fields, from input) | 98.5% |
+
+**The 6.0% on Aggregates is real, not a scoring defect.** Diagnosed after the
+run: `gross_salary` is wrong in 34 of 50 cases and in **all 34 the error is
+exactly the Tier-1 employer NPS contribution** — the v1.4.4 ground-truth
+correction (employer NPS is taxable salary, s.17(1)(viii)) reproduced on this
+arm. `TOLERANCE = 0.01`, so Gross Total Income and Total Taxable Income are
+accumulators that inherit that single omission and fail. Median GTI error is
+only 1.92% and 35 of 47 wrong values sit within 5%. The ground-truth invariant
+`GTI = sum of heads` holds in **0 violations of 50**, confirming the answer key
+is self-consistent.
+
+Salary scoring 75.1% while Aggregates scores 6.0% — one wrong field out of
+seven versus one wrong accumulator out of two — is the dataset's clearest
+argument for per-field scoring over a single bottom-line number.
+
+Retry causes across all 50 are genuine Python faults, never format
+negotiation, confirming the code-fence fix holds: `NameError` 3,
+`IndentationError` 2, `SyntaxError` 1, `ValueError` 1. All 7 transcripts
+stored, confirming the two-gate fix. The worst case, `input_0076`, spent 3
+rounds and 57,775 tokens on two indentation faults to reach 49%.
+
+Accuracy by archetype (n is small per cell; reported for shape, not as a
+result): P06 94.3% (n=1), P01 74.3% (n=2), P03 74.3% (n=3), P07 70.0% (n=4),
+P04 63.3% (n=7), P09 62.9% (n=2), P08 56.2% (n=3), P05 54.8% (n=6), P10 54.8%
+(n=6), P02 51.4% (n=5). By regime: new 63.3% (n=14), old 60.5% (n=25) over the
+first 39 cases. **The draft's P06 archetype claim rests on a single case and
+must either be dropped or restated as anecdote.**
+
+Deferred to v2: the 0.01 tolerance makes every accumulator all-or-nothing. A
+tolerance-sensitivity check (exact / ₹1 / 0.5% / 1%) would show how much of the
+Aggregates and Tax Computation collapse is near-miss arithmetic rather than
+misapplied statute. That is a rescore, not a re-run, so it is free.

@@ -1,0 +1,37 @@
+Method: script | Models: 1 | Cases: 50 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=50, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 44 done, 6 remaining
+[gemma4-12b-ctx16k] [45/50] input_0022.json OK score=23/37 (62%) rounds=3 latency=1836.9s tokens=24539 cost=$0.0000
+[gemma4-12b-ctx16k] [46/50] input_0076.json OK score=9/37 (24%) rounds=3 latency=2216.3s tokens=26042 cost=$0.0000
+[gemma4-12b-ctx16k] [47/50] input_0512.json OK score=24/37 (65%) rounds=3 latency=4438.8s tokens=42387 cost=$0.0000
+[gemma4-12b-ctx16k] [48/50] input_0439.json OK score=22/37 (59%) rounds=5 latency=4827.9s tokens=54698 cost=$0.0000
+[gemma4-12b-ctx16k] [49/50] input_0075.json OK score=11/37 (30%) rounds=6 latency=7352.0s tokens=83980 cost=$0.0000
+[gemma4-12b-ctx16k] [50/50] input_0442.json OK score=17/37 (46%) rounds=5 latency=4793.9s tokens=55686 cost=$0.0000
+
+=== Evaluation Report: ollama/gemma4-12b-ctx16k [script] ===
+Overall accuracy:    44.8% (50 cases)
+Failed to parse:     1 cases (scored as 0)
+Mean rounds:         2.9 per case
+
+Per-section accuracy:
+  Salary (7 fields):            42.0%
+  Capital Gains (2 fields):     18.0%
+  Other Sources (3 fields):     84.7%
+  Aggregates (2 fields):        1.0%
+  Deductions (9 fields):        60.9%
+  Tax Computation (14 fields):  37.3%
+
+Cost / efficiency:
+  Mean latency:          3100.9 sec/case
+  Mean tokens:           30,961 total (16,542 prompt + 14,419 completion)
+  Total tokens (all):    1,548,068
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx16k] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx16k__script_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/script_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20260930_211603.log
