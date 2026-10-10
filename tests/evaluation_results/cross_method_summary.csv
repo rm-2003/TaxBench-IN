@@ -4,7 +4,7 @@ google/gemma-4-31b-it:free,0.4994,3317.0,58.64,,,,,,
 meta-llama/llama-3.3-70b-instruct,0.3543,3109.0,38.53,,,,,,
 nvidia/nemotron-3-ultra-550b-a55b:free,0.6137,17594.0,866.43,0.6069,24478.0,368.98,,,
 nvidia/nemotron-nano-9b-v2:free,0.3514,7057.0,176.4,,,,,,
-ollama/gemma4-12b-ctx16k,,,,0.4573,30961.0,3100.95,,,
+ollama/gemma4-12b-ctx16k,,,,0.1857,22601.0,1420.99,,,
 ollama/gemma4-12b-ctx8k,0.3669,3261.0,197.91,,,,0.2476,48001.0,281.1
 openai/gpt-oss-120b,0.4994,7051.0,122.1,,,,,,
 openai/gpt-oss-120b:free,0.0972,3406.0,52.1,,,,,,

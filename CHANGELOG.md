@@ -632,3 +632,59 @@ Deferred to v2: the 0.01 tolerance makes every accumulator all-or-nothing. A
 tolerance-sensitivity check (exact / ₹1 / 0.5% / 1%) would show how much of the
 Aggregates and Tax Computation collapse is near-miss arithmetic rather than
 misapplied statute. That is a rescore, not a re-run, so it is free.
+
+#### Two script-harness defects found while running the gemma script arm
+
+Both were found by reading the stored transcript of a case that scored 0, and
+both are artefacts of the harness rather than anything the model got wrong.
+
+**1. The retry loop is a fixed point at temperature 0.** The retry-history trim
+sends only `[system, user, last script, last error]`, which makes a repair
+round a deterministic function of its input. So once a repair fails, the next
+round receives byte-identical input and returns a byte-identical script,
+forever. gemma's `input_0255` regenerated the same 7,843-char script five times
+(rounds 3-7, identical sha256), spending ~45,000 tokens and ~75 minutes on
+rounds that could not possibly have succeeded.
+
+The trim is not the mistake -- it lifted the nemotron script arm 31.0% ->
+46.3% and stays. The fix hashes every script tried and, on a repeat, injects
+one escalated message that quotes the error and forbids a verbatim repeat.
+That breaks the determinism through the *context* rather than by raising
+temperature, so temperature stays 0 and the arm remains reproducible. A second
+repeat means the model is genuinely stuck and the remaining retries are
+forfeit. A set of hashes rather than just the previous script, so a two-round
+cycle is caught as well as a stuck repeat.
+
+Measured on `input_0255`, same model, same case:
+
+| | before | after |
+|---|---|---|
+| rounds | 7 | **4** |
+| latency | 6,553 s | **2,146 s** |
+| tokens | 64,047 | **37,300** |
+| score | 0/35 | 0/35 |
+
+The score is unchanged by design: an identical script reproduces an identical
+error, so no round this removes could ever have succeeded. gemma repeated
+itself even after the escalation, so 0/35 is the honest outcome -- it now costs
+36 minutes to establish instead of 109.
+
+**2. `extract_code` took the first fenced block, not the longest.** A model
+that opens with a short illustrative snippet before the real script had the
+snippet executed. nemotron's `input_0411` emitted a 358-char stub followed by
+the real 13,499-char script, and the stub was what ran. That case recovered at
+rounds=2 and scored 21/35, so the completed arm's **accuracy is unaffected**,
+but one round was spent on an extraction artefact and its rounds/token figures
+are correspondingly inflated. Now takes `max(blocks, key=len)`.
+
+Checked and deliberately not changed: `run_tool_call` sends full history with
+no trim, so it cannot form a fixed point; and `extract_code`'s prose fallback
+(7 unfenced assistant messages across the stored transcripts) is recoverable
+with no case showing it mis-fires, so it is recorded rather than fixed blind --
+the same reasoning as the `compute_80d` checkup bucket.
+
+Worth stating in the paper as a finding, not just a bug: **in a script-repair
+loop, trimming the context for room and fixing temperature for reproducibility
+combine to make the loop deterministic, so a model that fails a repair cannot
+escape it.** Any agentic benchmark with a bounded retry budget and a trimmed
+transcript has this failure mode.

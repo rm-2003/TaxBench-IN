@@ -14,6 +14,7 @@ Usage:
 import argparse
 import csv
 import glob
+import hashlib
 import itertools
 import json
 import os
@@ -652,9 +653,16 @@ def extract_json(text):
 
 
 def extract_code(text):
-    fenced = re.search(r"```(?:python)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
+    # Take the LONGEST fenced block, not the first. A model that opens with a
+    # short illustrative snippet before the real script would otherwise have the
+    # snippet executed: nemotron's input_0411 round 1 emitted a 358-char stub
+    # followed by the real 13,499-char script, and the stub was what ran. That
+    # case recovered at rounds=2 and scored 21/35, so the arm's accuracy stands,
+    # but a round was spent on an artefact of extraction rather than on anything
+    # the model got wrong.
+    fenced = re.findall(r"```(?:python)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
     if fenced:
-        return fenced.group(1)
+        return max(fenced, key=len)
     # Unterminated fence: the response was cut off mid-script, so there is an
     # opening ``` but no closing one. Without this branch the fallback below
     # returned the fence line as part of the code and every such case died with
@@ -875,6 +883,8 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
     tracker = TokenTracker()
     messages = build_messages("script", system_prompt, input_json)
     rounds = 0
+    seen_codes = set()     # hashes of every script tried, for fixed-point detection
+    escalated = False      # whether the "you repeated yourself" nudge has been spent
 
     for attempt in range(1 + max_retries):
         # Send only the most recent script and its error, never the whole retry
@@ -937,6 +947,47 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
         if not code:
             messages.append({"role": "user", "content": "Error: Could not find Python code in your response. Please provide the complete script."})
             continue
+
+        # The trimmed context plus temperature=0 makes a retry round a
+        # deterministic function of [system, user, last script, last error]. So
+        # once a repair round fails, the NEXT round receives byte-identical
+        # input and returns a byte-identical script, forever. gemma's
+        # input_0255 regenerated the same 7,843-char script five times (rounds
+        # 3-7, identical sha256), burning ~45,000 tokens and ~75 minutes on
+        # rounds that could not possibly have succeeded, and scored 0.
+        #
+        # Re-running an identical script would reproduce an identical error, so
+        # there is nothing to learn from executing it. Instead, break the
+        # determinism by changing the input: one escalated message quoting the
+        # error and forbidding a verbatim repeat. Temperature stays at 0
+        # throughout -- escaping the fixed point by sampling would buy the same
+        # effect at the cost of reproducibility. If the model repeats itself
+        # even after the escalation, it is genuinely stuck and the remaining
+        # retries are forfeit rather than spent.
+        # A set rather than just the previous script, so a two-round cycle is
+        # caught as well as a stuck repeat -- any script already tried will fail
+        # the same way whenever it reappears.
+        code_hash = hashlib.sha256(code.encode()).hexdigest()
+        if code_hash in seen_codes:
+            if escalated:
+                print("      Identical script after escalation — abandoning retries")
+                break
+            escalated = True
+            prev_err = ""
+            for m in reversed(messages[:-1]):
+                if m["role"] == "user":
+                    prev_err = m["content"]
+                    break
+            messages.append({"role": "user", "content": (
+                "You returned a script byte-identical to your previous attempt, so it "
+                "fails in exactly the same way. Do not repeat it again.\n\n"
+                f"{prev_err}\n\n"
+                "Locate the specific line named in that error and change it. If a name "
+                "is undefined, either define it before use or correct it to the name "
+                "that is actually defined. Return the COMPLETE corrected script."
+            )})
+            continue
+        seen_codes.add(code_hash)
 
         sandbox = tempfile.mkdtemp()
         try:
