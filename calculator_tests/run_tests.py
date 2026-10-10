@@ -49,6 +49,28 @@ TESTS = [
         ],
     },
     {
+        "name": "Test 3c — LTCG, acquired AFTER 1-Feb-2018: no grandfathering",
+        "input": "test3c_ltcg_no_grandfathering_post_2018.json",
+        "checks": [
+            # Same figures as 3b but bought in 2020, so the FMV of 200 must be
+            # ignored and the actual cost of 100 used: (300-100)*10 - 50 = 1950.
+            # Before the date test was added this returned 950 -- a 2018
+            # provision applied to a 2020 purchase, which understated LTCG on
+            # 166 transactions across 29% of the generated benchmark.
+            ("Capital Gains.LTCG (Section 112A)", 1950),
+        ],
+    },
+    {
+        "name": "Test 3d — grandfathering step-up capped at sale consideration",
+        "input": "test3d_ltcg_grandfather_clamped_at_sale.json",
+        "checks": [
+            # FMV 500 above the sale price of 300: cost = max(100, min(500,300))
+            # = 300, so the gain is 0. The old max(cost_price, fmv) would have
+            # taken 500 and invented a 2,000 loss from a break-even sale.
+            ("Capital Gains.LTCG (Section 112A)", 0),
+        ],
+    },
+    {
         "name": "Test 4 — 80C cap at 1.5L",
         "input": "test4_80c_cap.json",
         "checks": [
@@ -192,13 +214,26 @@ TESTS = [
         ],
     },
     {
-        "name": "Test 22 — G-Secs LTCG + shared 1.25L exemption",
+        "name": "Test 22 — the 1.25L exemption is s.112A-only; it does NOT reach non-equity LTCG",
         "input": "test22_gsecs_ltcg.json",
         "checks": [
             ("Capital Gains.LTCG (Section 112A)", 100000),
             ("Capital Gains.LTCG (Non-Equity).G-Secs", 200000),
+            # 1,00,000 of equity LTCG sits entirely inside the 1,25,000 relief,
+            # so s.112A tax is nil.
             ("Tax Computation.Tax on LTCG (Section 112A)", 0),
-            ("Tax Computation.Tax on LTCG (Non-Equity)", 21875),
+            # The 25,000 of UNUSED relief must not spill onto the G-Secs gain:
+            # that is charged under s.112, which has no such allowance. So the
+            # whole 2,00,000 is taxed at 12.5% = 25,000.
+            #
+            # This test previously expected 21,875 -- i.e. (2,00,000 - 25,000)
+            # at 12.5% -- and was named "shared 1.25L exemption", so the
+            # assertion and the title both presented the defect as the rule.
+            # It undertaxed non-equity LTCG on 94 of the 569 generated cases
+            # and taxed it at zero on 44. Third instance in this codebase of a
+            # test written from the implementation rather than the statute; see
+            # test3b (grandfathering) and test28 (employer NPS).
+            ("Tax Computation.Tax on LTCG (Non-Equity)", 25000),
         ],
     },
     {
@@ -246,6 +281,59 @@ TESTS = [
             # The whole point of the deduction: the taxpayer ends up exactly
             # where they would have been with no NPS arrangement at all.
             ("Total Taxable Income", 1240000),
+        ],
+    },
+    {
+        "name": "Test 29 — Other Interest is a reportable sibling of EPF Taxable Interest",
+        "input": "test29_other_interest_reportable.json",
+        "checks": [
+            # The input's Other Interest used to enter Gross Total Income with
+            # nowhere to be reported, because the output nested EPF Taxable
+            # Interest inside a key of the same name. "GTI = sum of the reported
+            # heads" failed on 336 of 569 cases for exactly that reason.
+            ("Income from Other Sources.Other Interest", 3000),
+            ("Income from Other Sources.EPF Taxable Interest", 2000),
+            ("Gross Total Income", 20000),
+            # The invariant, stated as an assertion: every rupee of income in
+            # GTI is visible in a reported head.
+            (lambda out: sum(out["Income from Other Sources"].values()),
+             lambda out: out["Gross Total Income"]),
+        ],
+    },
+    {
+        "name": "Test 30 — no 14% imputation for a government employee",
+        "input": "test30_no_govt_nps_imputation.json",
+        "checks": [
+            # Basic 5,00,000 + DA 1,00,000 and 0 declared. The old code imputed
+            # 14% = 84,000, added it to salary and deducted it again, so the
+            # ground truth for all 212 government cases depended on a figure
+            # absent from the input and from the prompt.
+            ("Under Head Salaries.Gross Salary", 600000),
+            ("Deductions.80CCD(2)", 0),
+            ("Under Head Salaries.Net Salary", 550000),
+            ("Gross Total Income", 550000),
+        ],
+    },
+    {
+        "name": "Test 31 — old regime, senior citizen (60-79): 3,00,000 basic exemption",
+        "input": "test31_old_regime_senior_exemption.json",
+        "checks": [
+            # Taxable 5,50,000 at age 65: (5,00,000-3,00,000) at 5% = 10,000
+            # plus (5,50,000-5,00,000) at 20% = 10,000. The single 2,50,000
+            # table gave 22,500, overtaxing 48 generated cases by 2,500 each.
+            ("Total Taxable Income", 550000),
+            ("Tax Computation.Tax at Slab Rates", 20000),
+        ],
+    },
+    {
+        "name": "Test 32 — old regime, super senior (80+): 5,00,000 basic exemption",
+        "input": "test32_old_regime_super_senior_exemption.json",
+        "checks": [
+            # The 5% band vanishes: the exemption already reaches its top.
+            # (5,50,000 - 5,00,000) at 20% = 10,000. No generated case is 80+,
+            # so this path had no coverage whatsoever.
+            ("Total Taxable Income", 550000),
+            ("Tax Computation.Tax at Slab Rates", 10000),
         ],
     },
 ]

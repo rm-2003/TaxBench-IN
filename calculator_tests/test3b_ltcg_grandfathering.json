@@ -1,33 +1,68 @@
 {
-    "_description": "LTCG with grandfathering — buy 2020-01-01, sell 2024-06-01. effective_cost = max(100, 200)=200, gain = (300-200)*10 - 50 = 950. Expected LTCG (Section 112A) = 950",
-    "Age": 35,
-    "Employment Type": "private",
-    "Tax Regime": "new",
-    "City": "metro",
-    "Gross Salary": {
-        "Basic Salary": 0, "Dearness Allowance": 0, "HRA": 0,
-        "Conveyance Allowance": 0, "Medical Allowance": 0,
-        "Bonuses and Incentives": 0, "Overtime Pay": 0, "LTA": 0,
-        "Special Allowance": 0, "Entertainment Allowance": 0
+  "_description": "LTCG WITH grandfathering, genuinely eligible. s.55(2)(ac) applies only to equity shares acquired BEFORE 1 Feb 2018, so the purchase date is 2017-06-01. This test previously used 2020-01-01 -- six years inside the cutoff -- and asserted the step-up anyway, which is how the missing date test in tax_calculator.py survived: the only test covering grandfathering encoded the bug, and its description stated the wrong formula ('effective_cost = max(100, 200)=200') as if it were the rule. Correct rule: cost = HIGHER of actual cost and the LOWER of FMV and sale consideration = max(100, min(200, 300)) = 200. Gain = (300 - 200) * 10 - 50 brokerage = 950. The expected value is unchanged; only the date makes it legitimate.",
+  "Age": 35,
+  "Employment Type": "private",
+  "Tax Regime": "new",
+  "City": "metro",
+  "Gross Salary": {
+    "Basic Salary": 0,
+    "Dearness Allowance": 0,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 0,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [
+    {
+      "Sale Price": 300,
+      "Cost Price": 100,
+      "Quantity": 10,
+      "Brokerage": 50,
+      "STT": 30,
+      "Purchase Date": "2017-06-01",
+      "Sale Date": "2024-06-01",
+      "FMV as of 31 Jan 2018": 200
+    }
+  ],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Savings Bank Interest": 0,
+  "Deposit Interest": 0,
+  "Other Interest": 0,
+  "EPF Taxable Interest": 0,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
     },
-    "Actual Rent Paid": 0, "LTA Travel Expenses Claimed": 0, "Professional Tax": 0,
-    "Stock Sale Transactions": [
-        {
-            "Sale Price": 300, "Cost Price": 100, "Quantity": 10,
-            "Brokerage": 50, "STT": 30,
-            "Purchase Date": "2020-01-01", "Sale Date": "2024-06-01",
-            "FMV as of 31 Jan 2018": 200
-        }
-    ],
-    "Long Term Capital Loss": [], "Short Term Capital Loss": [],
-    "Savings Bank Interest": 0, "Deposit Interest": 0, "Other Interest": 0, "EPF Taxable Interest": 0,
-    "PPF": 0,
-    "EPF": {"Employee Contribution": {"Deducted from Salary": 0, "Voluntary": 0}, "Employer Contribution": 0},
-    "ELSS": 0, "NSC": 0, "Sukanya Samriddhi Yojana": 0, "SCSS": 0,
-    "Pension Scheme Premium": {"Amount": 0, "Number of Years Paid": 0},
-    "NPS": {"Tier-1 Self Contribution": 0, "Tier-1 Employer Contribution": 0, "Tier-2": 0},
-    "Education Loan Interest": {"Interest Paid": 0, "Year of Repayment": 0},
-    "Health Insurance": [],
-    "Donations": [],
-    "TDS": 0
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 0
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 0,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
 }

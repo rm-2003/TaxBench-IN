@@ -1,0 +1,78 @@
+{
+  "_description": "A government employee's DECLARED employer NPS contribution is taken at face value; nothing is imputed. Regression test for a defect in which the calculator raised the contribution to the statutory 14% of Basic+DA whenever the input declared less. That is true of the real world but wrong for this benchmark: the amount appeared nowhere in the input JSON and the rule nowhere in the system prompt, so the ground truth depended on a figure no model could derive. It affected all 212 government cases, a median of 90,000 and up to 272,000 of salary invented from nothing, with 48 declaring exactly 0, and cost every model 1-2 points (nemotron zero-shot 60.6% -> 62.5% once removed). It hid for so long because it cancelled out of Total Taxable Income: the 80CCD(2) deduction equalled the imputed amount exactly in all 212 cases, so the tax chain stayed right while Gross Salary, Net Salary, GTI, Total Deductions and 80CCD(2) were all wrong. Basic 5,00,000 + DA 1,00,000 with 0 declared: the old code would have added 14% = 84,000 to salary and deducted it again. Gross Salary must be the 6,00,000 of components alone and 80CCD(2) must be 0.",
+  "Age": 35,
+  "Employment Type": "government",
+  "Tax Regime": "old",
+  "City": "non-metro",
+  "Gross Salary": {
+    "Basic Salary": 500000,
+    "Dearness Allowance": 100000,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 0,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Mutual Fund Transactions": [],
+  "Privately Owned Vehicle": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Bonds": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Debentures": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "G-Secs": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Savings Bank Interest": 0,
+  "Deposit Interest": 0,
+  "Other Interest": 0,
+  "EPF Taxable Interest": 0,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
+    },
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 1
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 0,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
+}

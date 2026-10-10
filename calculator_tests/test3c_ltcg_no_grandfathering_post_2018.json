@@ -1,0 +1,68 @@
+{
+  "_description": "LTCG with NO grandfathering because the share was acquired AFTER 1 Feb 2018. Identical to test3b except the purchase date is 2020-01-01, so the 'FMV as of 31 Jan 2018' of 200 must be IGNORED and the actual cost of 100 used. Gain = (300 - 100) * 10 - 50 = 1950. Before the fix this returned 950, applying a 2018 provision to a 2020 purchase -- the defect that understated LTCG on 166 transactions across 29% of the generated benchmark.",
+  "Age": 35,
+  "Employment Type": "private",
+  "Tax Regime": "new",
+  "City": "metro",
+  "Gross Salary": {
+    "Basic Salary": 0,
+    "Dearness Allowance": 0,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 0,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [
+    {
+      "Sale Price": 300,
+      "Cost Price": 100,
+      "Quantity": 10,
+      "Brokerage": 50,
+      "STT": 30,
+      "Purchase Date": "2020-01-01",
+      "Sale Date": "2024-06-01",
+      "FMV as of 31 Jan 2018": 200
+    }
+  ],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Savings Bank Interest": 0,
+  "Deposit Interest": 0,
+  "Other Interest": 0,
+  "EPF Taxable Interest": 0,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
+    },
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 0
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 0,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
+}

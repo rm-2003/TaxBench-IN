@@ -33,6 +33,33 @@ OLD_REGIME_SLABS = [
     (float("inf"),  0.30),
 ]
 
+# The old regime's basic exemption is age-dependent: 2,50,000 below 60,
+# 3,00,000 for a senior citizen (60-79) and 5,00,000 for a super senior (80+).
+# A single 2,50,000 table was used for every age, overtaxing 48 of the 569
+# generated cases (all exactly age 72) by 2,500 each. The 80+ table loses the
+# 5% band entirely, since the exemption already reaches the top of it.
+OLD_REGIME_SLABS_SENIOR = [
+    (300_000,       0.00),
+    (500_000,       0.05),
+    (1_000_000,     0.20),
+    (float("inf"),  0.30),
+]
+
+OLD_REGIME_SLABS_SUPER_SENIOR = [
+    (500_000,       0.00),
+    (1_000_000,     0.20),
+    (float("inf"),  0.30),
+]
+
+
+def old_regime_slabs_for_age(age: int) -> list:
+    if age >= 80:
+        return OLD_REGIME_SLABS_SUPER_SENIOR
+    if age >= 60:
+        return OLD_REGIME_SLABS_SENIOR
+    return OLD_REGIME_SLABS
+
+
 OLD_REGIME_REBATE_87A_THRESHOLD = 500_000
 OLD_REGIME_REBATE_87A_MAX       = 12_500
 
@@ -63,6 +90,12 @@ NEW_REGIME_SURCHARGE_RATES = [
 ]
 
 SURCHARGE_BOUNDARIES = [5_000_000, 10_000_000, 20_000_000, 50_000_000]
+
+# Surcharge on income taxed under s.111A, s.112A and s.112 is capped at 15%
+# however high total income goes. Applying the headline 25%/37% rate to the
+# whole liability overstated surcharge on 48 cases that clear 2 crore while
+# holding capital gains.
+SURCHARGE_CAP_SPECIAL = 0.15
 
 DEBT_PRE_2023_CUTOFF = date(2023, 4, 1)
 EQUITY_LIKE_TYPES    = {"equity", "hybrid-equity", "elss"}
@@ -158,8 +191,42 @@ def compute_80d(entries, age):
     return self_80d + parents_80d
 
 
-def compute_surcharge_with_relief(total_taxable, tax_after_rebate, surcharge_rate, slabs, surcharge_table):
-    if surcharge_rate == 0.0:
+def _surcharge_rate_for(total_taxable, surcharge_table):
+    for upper, rate in surcharge_table:
+        if total_taxable <= upper:
+            return rate
+    return 0.0
+
+
+def _surcharge_amount(tax_normal, tax_special, rate):
+    """Surcharge with the statutory 15% ceiling on special-rate tax.
+
+    s.111A/112A/112 income bears at most 15% surcharge regardless of how high
+    total income is, so the two components are charged at different rates.
+    """
+    return tax_normal * rate + tax_special * min(rate, SURCHARGE_CAP_SPECIAL)
+
+
+def compute_surcharge_with_relief(total_taxable, tax_normal, tax_special,
+                                  special_income, slabs, surcharge_table):
+    """Surcharge, with the 15% special-rate cap and marginal relief.
+
+    Two faults in the previous version:
+
+    1. It charged the whole of `tax_after_rebate` at the headline rate, ignoring
+       the 15% ceiling on s.111A/112A/112 income (48 cases above 2 crore).
+
+    2. Marginal relief compared against `compute_slab_tax(boundary)` -- the tax
+       on the boundary as though every rupee of it were slab income. For the 129
+       of 163 surcharge cases that hold capital gains that is the wrong
+       comparator: it overstates the boundary tax (slab rates reach 30% against
+       12.5% on LTCG) and so understates relief. The comparison must hold the
+       income COMPOSITION fixed, varying only the slab-rate part, which is what
+       marginal relief means -- the taxpayer should never pay more extra tax
+       than the extra rupee of income that crossed the threshold.
+    """
+    rate = _surcharge_rate_for(total_taxable, surcharge_table)
+    if rate == 0.0:
         return 0.0
     crossed_boundary = None
     for b in SURCHARGE_BOUNDARIES:
@@ -167,12 +234,23 @@ def compute_surcharge_with_relief(total_taxable, tax_after_rebate, surcharge_rat
             crossed_boundary = b
     if crossed_boundary is None:
         return 0.0
-    surcharge_raw    = tax_after_rebate * surcharge_rate
-    tax_at_boundary  = compute_slab_tax(crossed_boundary, slabs)
-    tax_with_surcharge = tax_after_rebate + surcharge_raw
-    excess_income    = total_taxable - crossed_boundary
-    excess_tax       = tax_with_surcharge - tax_at_boundary
-    relief           = max(0.0, excess_tax - excess_income)
+
+    surcharge_raw = _surcharge_amount(tax_normal, tax_special, rate)
+
+    # Tax at exactly the boundary, same composition: special-rate income is held
+    # at its actual amount and the slab-rate part is reduced so the total lands
+    # on the boundary. At the boundary itself the LOWER band's rate applies
+    # (nil at 50 lakh, 10% at 1 crore, and so on).
+    normal_at_boundary = max(0.0, crossed_boundary - special_income)
+    tax_normal_at_boundary = compute_slab_tax(normal_at_boundary, slabs)
+    rate_at_boundary = _surcharge_rate_for(crossed_boundary, surcharge_table)
+    tax_at_boundary = (tax_normal_at_boundary + tax_special
+                       + _surcharge_amount(tax_normal_at_boundary, tax_special,
+                                           rate_at_boundary))
+
+    excess_income = total_taxable - crossed_boundary
+    excess_tax    = (tax_normal + tax_special + surcharge_raw) - tax_at_boundary
+    relief        = max(0.0, excess_tax - excess_income)
     return max(0.0, surcharge_raw - relief)
 
 
@@ -185,6 +263,20 @@ FULL_EXEMPT_SCHEMES = {
 HALF_EXEMPT_SCHEMES = {
     "Prime Minister's Drought Relief Fund",
 }
+
+# s.80G splits donations four ways: 100% or 50% deductible, each either WITH or
+# WITHOUT a qualifying limit. The two sets above are the "without limit"
+# categories. Schemes in the sets below are subject to s.80G(4): the aggregate
+# qualifies only up to 10% of adjusted gross total income (GTI less Chapter VI-A
+# deductions other than 80G, and less income charged at special rates).
+#
+# Both sets are EMPTY because the generator only ever emits PM Cares Fund (353
+# cases, 100% without limit) and the Prime Minister's Drought Relief Fund (216,
+# 50% without limit), so the limit is inactive on all 569 cases. The mechanism
+# is implemented anyway: the omission was a latent fault, and a scheme in either
+# category would otherwise be silently over-deducted.
+FULL_EXEMPT_LIMITED_SCHEMES = set()   # 100%, capped at 10% of adjusted GTI
+HALF_EXEMPT_LIMITED_SCHEMES = set()   # 50%,  capped at 10% of adjusted GTI
 
 
 # ---------------------------------------------------------------------------
@@ -256,10 +348,22 @@ def calculate(inp: dict) -> dict:
     nps          = inp.get("NPS", {})
     nps_employer = g(nps, "Tier-1 Employer Contribution")
     c80ccd2_pct  = 0.14 if (regime == "new" or employment == "government") else 0.10
-    if employment == "government":
-        # Government employers contribute 14% of Basic+DA compulsorily, so treat a
-        # missing or short declaration as that statutory minimum.
-        nps_employer = max(nps_employer, c80ccd2_pct * basic_da)
+    # NO imputation for government employees. An earlier version raised the
+    # employer contribution to the statutory 14% of Basic+DA whenever the input
+    # declared less, on the grounds that government employers contribute that
+    # much compulsorily. That is true of the real world but wrong for this
+    # benchmark: the amount appears nowhere in the input JSON and the rule is
+    # stated nowhere in the system prompt, so the ground truth depended on a
+    # figure no model could derive. It affected all 212 government cases -- a
+    # median of 90,000 and up to 272,000 of salary invented out of nothing, with
+    # 48 cases declaring exactly 0 -- and silently cost every model 1-2 points
+    # (nemotron zero-shot 60.6% -> 62.5% once removed). The declared figure is
+    # now taken at face value: a benchmark may only ask what its inputs support.
+    #
+    # The imputation cancelled out of Total Taxable Income (the 80CCD(2)
+    # deduction equalled it exactly in all 212 cases), which is why this hid for
+    # so long -- the tax chain was right while Gross Salary, Net Salary, Gross
+    # Total Income, Total Deductions and 80CCD(2) were all wrong.
 
     # ------------------------------------------------------------------
     # Under Head Salaries
@@ -341,7 +445,41 @@ def calculate(inp: dict) -> dict:
         is_long_term = days_held > 365
 
         if is_long_term:
-            effective_cost_per_share = max(cost_price, fmv)
+            # s.55(2)(ac) grandfathering, with the two conditions the previous
+            # `max(cost_price, fmv)` left out.
+            #
+            # 1. It applies ONLY to equity shares acquired BEFORE 1 Feb 2018.
+            #    Without the date test every long-term holding got the step-up,
+            #    including shares bought in 2024 whose "FMV as of 31 Jan 2018"
+            #    is a meaningless number. That inflated the cost basis on 166
+            #    transactions across 166 cases (29% of the benchmark) and
+            #    understated LTCG by 1,32,80,000 in total.
+            #
+            # 2. The step-up is capped at the sale consideration: cost is the
+            #    HIGHER of actual cost and the LOWER of FMV and sale price.
+            #    Without the inner min() an FMV above the sale price would
+            #    manufacture a loss. No case in the current dataset trips this
+            #    (0 of 777 transactions have fmv > sale_price), so it is a
+            #    latent fault rather than an observed one -- fixed because the
+            #    generator is expected to produce such a case eventually.
+            #
+            # NOTE: no stock transaction in the current dataset is acquired
+            # before the cutoff -- the earliest purchase date anywhere is
+            # 2024-04-01 -- so after this fix the FMV field is DEAD: carried in
+            # every transaction, described in the system prompt, and never
+            # load-bearing. The `ltcg_fmv_benefit` variant in
+            # generate_test_cases.py sets FMV 180 with a 2024-04-01 purchase
+            # date, so it was never eligible; the missing date test above is the
+            # only reason it appeared to do anything. Two complementary errors
+            # that cancelled into a plausible result, which is why 28 calculator
+            # tests and four ITD-estimator checks all passed over it. Giving the
+            # provision real coverage needs pre-2018 purchase dates in the
+            # generator, which changes the inputs and so invalidates collected
+            # model outputs -- deferred, see CHANGELOG.
+            if purchase_dt < date(2018, 2, 1):
+                effective_cost_per_share = max(cost_price, min(fmv, sale_price))
+            else:
+                effective_cost_per_share = cost_price
             gain = (sale_price - effective_cost_per_share) * quantity - brokerage
             ltcg_raw += gain
         else:
@@ -525,6 +663,7 @@ def calculate(inp: dict) -> dict:
 
     # 80G — Donations
     c80g = 0.0
+    c80g_limited = 0.0          # the part subject to the 10%-of-adjusted-GTI cap
     for donation in inp.get("Donations", []):
         amount = g(donation, "Amount")
         mode   = donation.get("Mode", "").lower()
@@ -535,6 +674,10 @@ def calculate(inp: dict) -> dict:
             c80g += amount
         elif scheme in HALF_EXEMPT_SCHEMES:
             c80g += amount * 0.50
+        elif scheme in FULL_EXEMPT_LIMITED_SCHEMES:
+            c80g_limited += amount
+        elif scheme in HALF_EXEMPT_LIMITED_SCHEMES:
+            c80g_limited += amount * 0.50
 
     age = inp.get("Age", 30)
 
@@ -567,6 +710,18 @@ def calculate(inp: dict) -> dict:
         c80tta = 0.0
         c80ttb = 0.0
 
+    # s.80G(4): the "with qualifying limit" categories are deductible only up to
+    # 10% of ADJUSTED gross total income -- GTI less the other Chapter VI-A
+    # deductions and less income charged at special rates. Inactive on all 569
+    # current cases (both schemes the generator emits are "without limit"), so
+    # c80g_limited is always 0 and this adds nothing; present so that adding a
+    # limited-category scheme does not silently over-deduct.
+    adjusted_gti = max(0.0, gross_total
+                       - (stcg_111A + ltcg_112A + ltcg_noneq_12)
+                       - (c80cce_total + c80ccd1b + c80ccd2
+                          + c80d + c80e + c80tta + c80ttb))
+    c80g += min(c80g_limited, 0.10 * adjusted_gti)
+
     total_deductions = sum([
         c80cce_total,
         c80ccd1b,
@@ -582,6 +737,17 @@ def calculate(inp: dict) -> dict:
     # correctly answered zero was scored wrong.
     total_deductions = min(total_deductions, gross_total)
 
+    # s.112A(6) and s.111A(2): where gross total income includes gains charged
+    # under those sections, Chapter VI-A deductions are allowed from GTI "as
+    # reduced by" them. Capping at gross_total alone let deductions shelter
+    # capital-gains income on 25 cases, 16,16,500 in total. The tax barely
+    # moves -- the gains are charged at special rates from their own gross
+    # amounts and the slab-rate part was already clamped at zero -- but the
+    # REPORTED Total Deductions and Total Taxable Income were both wrong, and
+    # both are scored fields.
+    special_gains = stcg_111A + ltcg_112A + ltcg_noneq_12
+    total_deductions = min(total_deductions, max(0.0, gross_total - special_gains))
+
     # ------------------------------------------------------------------
     # Total Taxable Income
     # ------------------------------------------------------------------
@@ -595,7 +761,8 @@ def calculate(inp: dict) -> dict:
     special_income = stcg_111A + ltcg_112A + ltcg_noneq_12
     normal_income  = max(0.0, total_taxable - special_income)
 
-    slab_rates     = NEW_REGIME_SLABS if regime == "new" else OLD_REGIME_SLABS
+    slab_rates     = (NEW_REGIME_SLABS if regime == "new"
+                      else old_regime_slabs_for_age(age))
     rebate_threshold = NEW_REGIME_REBATE_87A_THRESHOLD if regime == "new" else OLD_REGIME_REBATE_87A_THRESHOLD
     rebate_max       = NEW_REGIME_REBATE_87A_MAX if regime == "new" else OLD_REGIME_REBATE_87A_MAX
 
@@ -603,8 +770,17 @@ def calculate(inp: dict) -> dict:
     tax_stcg_111A  = stcg_111A * STCG_111A_RATE
     tax_stcg_other = 0.0
     tax_ltcg_112A  = max(0.0, ltcg_112A - LTCG_112A_EXEMPT) * LTCG_112A_RATE
-    ltcg_exempt_remaining = max(0.0, LTCG_112A_EXEMPT - ltcg_112A)
-    tax_ltcg_noneq_12 = max(0.0, ltcg_noneq_12 - ltcg_exempt_remaining) * LTCG_112A_RATE
+    # The 1,25,000 relief in s.112A(2) attaches to "such long-term capital
+    # gains" -- the s.112A(1) ones, i.e. equity shares and equity-oriented units
+    # with STT paid. LTCG on bonds, debentures, G-Secs and debt funds is charged
+    # under s.112, which carries no equivalent allowance, so an unused remainder
+    # must NOT be spilled onto it. The previous code did exactly that:
+    #     ltcg_exempt_remaining = max(0, LTCG_112A_EXEMPT - ltcg_112A)
+    #     tax = max(0, ltcg_noneq_12 - ltcg_exempt_remaining) * RATE
+    # which undertaxed non-equity LTCG on 94 of the 569 cases and taxed it at
+    # ZERO on 44 of them -- 5,36,625 of tax before cess. Test 22 asserted the
+    # behaviour and its name ("shared 1.25L exemption") read it as a rule.
+    tax_ltcg_noneq_12 = ltcg_noneq_12 * LTCG_112A_RATE
     tax_ltcg_other_20  = 0.0
 
     total_before_rebate = tax_slab + tax_stcg_111A + tax_ltcg_112A + tax_ltcg_noneq_12
@@ -624,14 +800,14 @@ def calculate(inp: dict) -> dict:
 
     # Surcharge
     surcharge_table = NEW_REGIME_SURCHARGE_RATES if regime == "new" else OLD_REGIME_SURCHARGE_RATES
-    slab_table      = slab_rates
-    surcharge_rate  = 0.0
-    for upper, rate in surcharge_table:
-        if total_taxable <= upper:
-            surcharge_rate = rate
-            break
+    # Split the liability so the 15% ceiling can be applied to the special-rate
+    # part. The 87A rebate reduces only slab tax, so it belongs to the normal
+    # component.
+    tax_normal_after_rebate = max(0.0, tax_slab - rebate_87A)
+    tax_special             = tax_stcg_111A + tax_ltcg_112A + tax_ltcg_noneq_12
     surcharge = compute_surcharge_with_relief(
-        total_taxable, tax_after_rebate, surcharge_rate, slab_table, surcharge_table
+        total_taxable, tax_normal_after_rebate, tax_special,
+        special_income, slab_rates, surcharge_table
     )
     cess               = (tax_after_rebate + surcharge) * CESS_RATE
     total_tax_liability = tax_after_rebate + surcharge + cess
@@ -670,9 +846,21 @@ def calculate(inp: dict) -> dict:
         "Income from Other Sources": {
             "Savings Bank Interest": round2(savings_bank_interest),
             "Deposit Interest":      round2(deposit_interest),
-            "Other Interest": {
-                "EPF Taxable Interest": round2(epf_taxable_interest),
-            },
+            # `Other Interest` is a REPORTABLE AMOUNT here, matching the input,
+            # and `EPF Taxable Interest` is its sibling rather than its child.
+            # It used to be a container holding only the EPF figure, so the
+            # input's Other Interest amount entered Gross Total Income (see
+            # gross_total above) with nowhere to be reported -- which is why
+            # "GTI = sum of the heads" failed on exactly the 336 cases that
+            # carry a non-zero value. The old shape also invited models writing
+            # scripts to read the INPUT the same way, as
+            # data["Other Interest"]["EPF Taxable Interest"], which raises
+            # TypeError on an int; both retry transcripts in the project do
+            # exactly that, and gemma's script arm conflated the two meanings on
+            # 6 of 49 cases (63.3% correct on this field against 100.0% for the
+            # same model in zero-shot).
+            "Other Interest":        round2(other_interest),
+            "EPF Taxable Interest":  round2(epf_taxable_interest),
         },
         "Gross Total Income": round2(gross_total),
         "Deductions": {

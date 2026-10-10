@@ -1,0 +1,78 @@
+{
+  "_description": "Other Interest is a REPORTABLE AMOUNT in the output, a sibling of EPF Taxable Interest rather than its container. Regression test for a schema defect in which the output nested EPF Taxable Interest inside a key named Other Interest while the input used Other Interest as a separate flat amount. The input's Other Interest therefore entered Gross Total Income with nowhere to be reported, and 'GTI = sum of the reported heads' failed on exactly the 336 of 569 cases carrying a non-zero value. The collision also invited models writing scripts to read the INPUT as data['Other Interest']['EPF Taxable Interest'], which raises TypeError on an int: both retry transcripts in the project do this, and gemma's script arm scored 63.3% on this field against 100.0% for the same model in zero-shot. No salary here, so GTI is purely other sources: 5,000 + 10,000 + 3,000 + 2,000 = 20,000, which must equal the sum of the reported leaves.",
+  "Age": 35,
+  "Employment Type": "private",
+  "Tax Regime": "new",
+  "City": "non-metro",
+  "Gross Salary": {
+    "Basic Salary": 0,
+    "Dearness Allowance": 0,
+    "HRA": 0,
+    "Conveyance Allowance": 0,
+    "Medical Allowance": 0,
+    "Bonuses and Incentives": 0,
+    "Overtime Pay": 0,
+    "LTA": 0,
+    "Special Allowance": 0,
+    "Entertainment Allowance": 0
+  },
+  "Actual Rent Paid": 0,
+  "LTA Travel Expenses Claimed": 0,
+  "Professional Tax": 0,
+  "Stock Sale Transactions": [],
+  "Long Term Capital Loss": [],
+  "Short Term Capital Loss": [],
+  "Mutual Fund Transactions": [],
+  "Privately Owned Vehicle": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Bonds": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Debentures": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "G-Secs": {
+    "Sale Amount": 0,
+    "Purchase Amount": 0,
+    "Held for duration in years": 0
+  },
+  "Savings Bank Interest": 5000,
+  "Deposit Interest": 10000,
+  "Other Interest": 3000,
+  "EPF Taxable Interest": 2000,
+  "PPF": 0,
+  "EPF": {
+    "Employee Contribution": {
+      "Deducted from Salary": 0,
+      "Voluntary": 0
+    },
+    "Employer Contribution": 0
+  },
+  "ELSS": 0,
+  "NSC": 0,
+  "Sukanya Samriddhi Yojana": 0,
+  "SCSS": 0,
+  "Pension Scheme Premium": {
+    "Amount": 0,
+    "Number of Years Paid": 1
+  },
+  "NPS": {
+    "Tier-1 Self Contribution": 0,
+    "Tier-1 Employer Contribution": 0,
+    "Tier-2": 0
+  },
+  "Education Loan Interest": {
+    "Interest Paid": 0,
+    "Year of Repayment": 0
+  },
+  "Health Insurance": [],
+  "Donations": [],
+  "TDS": 0
+}
