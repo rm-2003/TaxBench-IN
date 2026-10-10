@@ -177,8 +177,21 @@ SALARY_FIELDS = [
 OTHER_SOURCES_FIELDS = [
     ("savings_bank_interest", ("Income from Other Sources", "Savings Bank Interest")),
     ("deposit_interest", ("Income from Other Sources", "Deposit Interest")),
-    ("epf_taxable_interest", ("Income from Other Sources", "Other Interest", "EPF Taxable Interest")),
+    # Flat now, a sibling of "Other Interest" rather than its child. The old
+    # nesting is kept as a fallback read below so the 816 zero-shot answers
+    # collected under it stay scorable without re-running a single case.
+    ("epf_taxable_interest", ("Income from Other Sources", "EPF Taxable Interest")),
 ]
+
+# Where a field used to live, consulted only when the current path finds nothing
+# in a model's ANSWER. Expected values always use the current path, so this never
+# changes what counts as correct -- it only lets answers written against an older
+# output schema still be read. "Other Interest" was a container holding the EPF
+# figure until it became a reportable amount in its own right; without this,
+# flattening it would have invalidated every zero-shot run ever collected.
+LEGACY_FIELD_PATHS = {
+    "epf_taxable_interest": ("Income from Other Sources", "Other Interest", "EPF Taxable Interest"),
+}
 
 AGGREGATE_FIELDS = [
     ("gross_total_income", ("Gross Total Income",)),
@@ -196,13 +209,21 @@ DEDUCTION_LEAF_FIELDS = [
     ("total_deductions", ("Deductions", "Total Deductions")),
 ]
 
+# `tax_stcg_other` and `tax_ltcg_other` were REMOVED from scoring. Both were 0
+# in all 569 cases, so neither could discriminate between models: emitting a
+# constant 0 scored 100% while reasoning about them was punished. STCG on
+# non-equity assets is charged at slab rates and therefore folded into
+# "Tax at Slab Rates", a convention the system prompt never stated, so 26% to
+# 86% of every model's answers were marked wrong for reporting the attributable
+# tax instead -- defensibly the more informative answer. Documenting the
+# convention would only have converted a trap into free marks; a field constant
+# across the whole dataset carries no signal either way. The fields remain in
+# the required output schema, they are simply not scored.
 TAX_FIELDS = [
     ("tax_at_slab_rates", ("Tax Computation", "Tax at Slab Rates")),
     ("tax_stcg_111a", ("Tax Computation", "Tax on STCG (Section 111A)")),
-    ("tax_stcg_other", ("Tax Computation", "Tax on STCG (Other)")),
     ("tax_ltcg_112a", ("Tax Computation", "Tax on LTCG (Section 112A)")),
     ("tax_ltcg_non_equity", ("Tax Computation", "Tax on LTCG (Non-Equity)")),
-    ("tax_ltcg_other", ("Tax Computation", "Tax on LTCG (Other)")),
     ("total_tax_before_rebate", ("Tax Computation", "Total Tax Before Rebate")),
     ("rebate_87a", ("Tax Computation", "Less: Rebate under Section 87A")),
     ("tax_after_rebate", ("Tax Computation", "Tax After Rebate")),
@@ -224,6 +245,16 @@ ALL_FIELD_NAMES = (
     + [f[0] for f in DEDUCTION_LEAF_FIELDS]
     + [f[0] for f in TAX_FIELDS]
 )
+
+# Scored fields whose expected value is the input value verbatim in all 569
+# cases: they measure transcription, not tax computation. Nemotron answers these
+# at ~94% against ~57% on the rest, so pooling them overstates every model.
+TRIVIAL_FIELDS = [
+    "savings_bank_interest",
+    "deposit_interest",
+    "epf_taxable_interest",
+    "tds",
+]
 
 SECTION_MAP = {
     "salary": [f[0] for f in SALARY_FIELDS],
@@ -480,11 +511,28 @@ def load_system_prompt():
 def build_messages(method, system_prompt, input_json):
     user_content = "Here is the taxpayer input:\n" + json.dumps(input_json, indent=2)
     if method == "script":
+        # The override is not decoration. The shared system prompt ends with
+        # "No explanation, no preamble, no markdown code fences, no text before
+        # or after the JSON", which is right for zero-shot and tool-call but
+        # directly forbids what extract_code() needs here: it looks for a
+        # ```python fence first, so a model that OBEYS the system prompt in
+        # script mode emits bare JSON, no code is found, and the round is spent
+        # on "Could not find Python code in your response". nemotron did exactly
+        # this on the first v2 case and said so in its own words -- "tag must be
+        # only the JSON object." That suggests I should not output a script' --
+        # and gemma's input_0552 burned all 7 rounds and 98 minutes on repeated
+        # instances of that same error, which was previously read as the model
+        # anchoring on its own bad format rather than as it following orders.
         user_content += (
             "\n\nWrite a Python script that reads the input JSON from the file "
             "'input.json' in the current working directory, computes the tax output, "
             "and prints ONLY the output JSON to stdout. "
             "You have access to the Python standard library only."
+            "\n\nIMPORTANT -- this overrides the output-format instruction in the "
+            "system prompt above. For this task do NOT reply with the tax JSON "
+            "itself. Reply with the Python script, wrapped in a ```python code "
+            "fence. The JSON schema in the system prompt describes what your "
+            "script must PRINT, not what you should reply with."
         )
     elif method == "tool-call":
         # Batching is mandatory, not optional. With one calculate call per round a
@@ -635,6 +683,44 @@ def execute_calculate(operation, operands):
     return round(result, 10)
 
 
+class ProviderError(Exception):
+    """An upstream provider failure that OpenRouter returned inside a 200 body.
+
+    Carries `status_code` so api_call_with_retry's existing classification --
+    which reads that attribute off the exception -- treats it exactly like the
+    same status arriving as a real HTTP error.
+    """
+
+    def __init__(self, message, status_code=None):
+        super().__init__(message)
+        self.status_code = status_code
+
+
+def _upstream_error(resp):
+    """Return a ProviderError if `resp` carries a provider failure, else None.
+
+    Two shapes count. An explicit `error` object is authoritative. Failing
+    that, a response with no usable `choices` cannot be a completion: there is
+    nothing for the caller to read, and every observed instance has been an
+    upstream fault. A model that declines to answer still returns a choice
+    with empty content, which this deliberately leaves alone so the
+    empty-completion retries keep handling it.
+    """
+    err = getattr(resp, "error", None)
+    if err is None and hasattr(resp, "model_extra"):
+        err = (resp.model_extra or {}).get("error")
+    if err:
+        if isinstance(err, dict):
+            msg, status = err.get("message") or str(err), err.get("code")
+        else:
+            msg, status = getattr(err, "message", None) or str(err), getattr(err, "code", None)
+        return ProviderError(f"upstream error: {msg}",
+                             status_code=status if isinstance(status, int) else None)
+    if not getattr(resp, "choices", None):
+        return ProviderError("upstream returned no choices", status_code=503)
+    return None
+
+
 class RateLimitExhausted(Exception):
     """All retries exhausted due to rate limiting (429)."""
     pass
@@ -683,6 +769,23 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
 
         try:
             resp = client.chat.completions.create(**call_kwargs)
+
+            # OpenRouter delivers upstream provider failures as an `error`
+            # object inside an HTTP 200 body with no `choices`, so the SDK does
+            # not raise and the 500/502/503 branch below never fires. Left
+            # undetected the call looks like a successful completion of zero
+            # tokens: on 1 Oct the Nvidia endpoint answered every request with
+            # "Service temporarily overloaded" (503) and the script arm recorded
+            # four cases as PARSE_FAIL 0/37 at rounds=1 in 45 seconds before it
+            # was stopped. An upstream outage must never be scored as a model
+            # failure, so translate it into the exception the classification
+            # below already knows how to handle; if the retries are exhausted it
+            # propagates and the case is SKIPped rather than checkpointed as a
+            # zero, which is what makes it recoverable by a later run.
+            upstream = _upstream_error(resp)
+            if upstream is not None:
+                raise upstream
+
             model_delay_state["consecutive_429"] = 0
             return resp
         except Exception as e:
@@ -794,12 +897,35 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
         # record of what the model actually tried on a failed case. Only the
         # copy sent to the model is trimmed.
         sent = messages if len(messages) <= 4 else messages[:2] + messages[-2:]
-        resp = api_call_with_retry(client, mds, rate_limiter, model=model, messages=sent, temperature=0)
-        tracker.add(resp)
+        # Re-request an empty completion instead of ending the case on it, the
+        # way run_zero_shot already does. A 200 OK carrying no text is an
+        # infrastructure event, not an answer, and this round is the model's
+        # only chance to produce a script: the old code returned on the first
+        # one, burning every remaining retry and recording PARSE_FAIL 0/37 at
+        # rounds=1. `rounds` counts script attempts, so it is incremented once
+        # however many times the completion had to be re-requested.
+        raw = ""
+        for empty_attempt in range(1 + EMPTY_COMPLETION_RETRIES):
+            resp = api_call_with_retry(client, mds, rate_limiter, model=model,
+                                       messages=sent, temperature=0)
+            tracker.add(resp)
+            msg = resp.choices[0].message if resp.choices else None
+            raw = get_response_text(msg) if msg else ""
+            if raw.strip():
+                break
+            if empty_attempt < EMPTY_COMPLETION_RETRIES:
+                print(f"      Empty completion (200 OK, 0 tokens) — retry "
+                      f"{empty_attempt + 1}/{EMPTY_COMPLETION_RETRIES}")
         rounds += 1
-        if not resp.choices or not resp.choices[0].message:
-            return None, rounds, tracker, messages
-        raw = get_response_text(resp.choices[0].message)
+        if not raw.strip():
+            # Still nothing after every retry. Raise rather than return None:
+            # a return is checkpointed as a scored zero and permanently
+            # contaminates the results, whereas an exception makes the case a
+            # SKIP that a later run picks up, and CONSECUTIVE_SKIP_LIMIT then
+            # aborts the run if the provider is down rather than grinding
+            # through all 50 cases writing zeros.
+            raise ProviderError(
+                f"empty completion after {EMPTY_COMPLETION_RETRIES} retries")
         # Append the response in full, exactly once per round. Truncating it to 500
         # chars left the model looking at a fragment of its own script cut off
         # mid-expression, right beside a "'{' was never closed" error it was asked
@@ -828,7 +954,15 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
             if result.returncode == 0:
                 output = extract_json(result.stdout)
                 if output is not None:
-                    return output, rounds, tracker, None
+                    # Keep the transcript whenever it took more than one round.
+                    # Returning None here discarded the retry history of every
+                    # case that eventually succeeded, which is most of them --
+                    # 14 of nemotron's 15 and 35 of gemma's 50 -- so the only
+                    # stored transcripts were total failures and there was no
+                    # way to ask why the mean is 2.7 rounds rather than 1. A
+                    # first-round success has no history worth keeping, hence
+                    # the condition rather than always returning `messages`.
+                    return output, rounds, tracker, (messages if rounds > 1 else None)
                 # Exit code 0 but nothing parseable on stdout. The usual cause is a
                 # script that defines its entrypoint and never calls it (no __main__
                 # guard), so Python executes the definitions and exits cleanly having
@@ -935,6 +1069,11 @@ def score_case(expected, actual):
     def leaf(name, *keys):
         ev = get_nested(expected, *keys)
         av = get_nested(actual, *keys) if actual else None
+        # An answer written against an older output schema is read at its old
+        # location. Only the answer is ever looked up this way; `expected` is
+        # regenerated and always uses the current path.
+        if av is None and actual and name in LEGACY_FIELD_PATHS:
+            av = get_nested(actual, *LEGACY_FIELD_PATHS[name])
         if ev is None or av is None:
             scores[name] = 0
             pct_errors[name] = 1.0 if ev is not None else 0.0
@@ -1129,7 +1268,15 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
     scores, pct_errors = score_case(case["expected"], output)
     total = sum(scores.values())
 
-    store_transcript = not parsed or total < 19
+    # Keep the transcript for any case that needed more than one round, not
+    # just the ones that scored badly. A case can retry three times and still
+    # finish at 27/37, and the retry history is the only record of WHY the mean
+    # is 2.7 rounds -- whether the model is tripping over harness-side problems
+    # we could fix (no __main__ call, stdout noise, the 20s timeout) or making
+    # genuine mistakes. run_script already returns `messages` when rounds > 1;
+    # this gate used to discard them again, so 17 of 17 nemotron cases stored
+    # nothing despite 16 of them retrying.
+    store_transcript = not parsed or total < 19 or rounds > 1
 
     return CaseResult(
         case_file=case["file"],
@@ -1143,7 +1290,7 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
         scores=scores,
         pct_errors=pct_errors,
         total_score=total,
-        total_pct=round(total / 37, 4),
+        total_pct=round(total / len(scores), 4) if scores else 0.0,
         latency_sec=latency,
         prompt_tokens=tracker.prompt_tokens,
         completion_tokens=tracker.completion_tokens,
@@ -1171,7 +1318,7 @@ def result_from_checkpoint_entry(entry, model, method, case_by_file=None):
         scores=entry["scores"],
         pct_errors=entry.get("pct_errors", {}),
         total_score=entry["total_score"],
-        total_pct=round(entry["total_score"] / 37, 4),
+        total_pct=round(entry["total_score"] / max(1, len(entry["scores"])), 4),
         latency_sec=entry.get("latency_sec", 0),
         prompt_tokens=entry.get("prompt_tokens", 0),
         completion_tokens=entry.get("completion_tokens", 0),
@@ -1349,12 +1496,24 @@ def print_console_summary(model, method, results):
     print(f"Failed to parse:     {fail_count} cases (scored as 0)")
     print(f"Mean rounds:         {mean_rounds:.1f} per case")
     print(f"\nPer-section accuracy:")
-    print(f"  Salary (7 fields):            {section_acc(SECTION_MAP['salary']):.1f}%")
-    print(f"  Capital Gains (2 fields):     {section_acc(SECTION_MAP['capital_gains']):.1f}%")
-    print(f"  Other Sources (3 fields):     {section_acc(SECTION_MAP['other_sources']):.1f}%")
-    print(f"  Aggregates (2 fields):        {section_acc(SECTION_MAP['aggregates']):.1f}%")
-    print(f"  Deductions (9 fields):        {section_acc(SECTION_MAP['deductions']):.1f}%")
-    print(f"  Tax Computation (14 fields):  {section_acc(SECTION_MAP['tax_computation']):.1f}%")
+    for label, key in (("Salary", "salary"), ("Capital Gains", "capital_gains"),
+                       ("Other Sources", "other_sources"), ("Aggregates", "aggregates"),
+                       ("Deductions", "deductions"), ("Tax Computation", "tax_computation")):
+        flds = SECTION_MAP[key]
+        print(f"  {label + f' ({len(flds)} fields)':<30}{section_acc(flds):.1f}%")
+
+    # Four of the scored fields are copied verbatim from the input in all 569
+    # cases, so they test transcription rather than tax computation and inflate
+    # the headline figure. Reported separately rather than dropped: a model that
+    # loses them has made a real mistake, it is just not a tax mistake. The two
+    # fields that were CONSTANT across the dataset (tax_stcg_other,
+    # tax_ltcg_other) were dropped outright -- see the note on TAX_FIELDS.
+    scored  = list(results[0].scores.keys())
+    trivial = [f for f in scored if f in TRIVIAL_FIELDS]
+    derived = [f for f in scored if f not in TRIVIAL_FIELDS]
+    print(f"\nWhat the score is made of:")
+    print(f"  Derived ({len(derived)} fields, computed):   {section_acc(derived):.1f}%")
+    print(f"  Copied  ({len(trivial)} fields, from input): {section_acc(trivial):.1f}%")
     print(f"\nCost / efficiency:")
     print(f"  Mean latency:          {mean_latency:.1f} sec/case")
     print(f"  Mean tokens:           {mean_total:,.0f} total ({mean_prompt:,.0f} prompt + {mean_completion:,.0f} completion)")
@@ -1453,7 +1612,7 @@ def run_model(client, model, method, cases, args):
                         status = "OK" if result.parsed else "PARSE_FAIL"
                         with _print_lock:
                             print(f"[{tag}] [{count}/{total_count}] {case['file']} "
-                                  f"{status} score={result.total_score}/37 "
+                                  f"{status} score={result.total_score}/{len(result.scores)} "
                                   f"({result.total_pct*100:.0f}%) "
                                   f"rounds={result.rounds_used} "
                                   f"latency={result.latency_sec:.1f}s "

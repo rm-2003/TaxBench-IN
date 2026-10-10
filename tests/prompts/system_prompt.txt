@@ -2,6 +2,45 @@ You are an Indian income tax calculator for FY 2025-26 (Assessment Year 2026-27)
 
 You will be given a taxpayer's financial details as a JSON object. Compute the complete tax output and return ONLY a valid JSON object matching the schema below. No explanation, no preamble, no markdown code fences, no text before or after the JSON.
 
+## Input JSON structure
+
+The input is FLAT except where shown nested below. Note in particular that
+"Other Interest" and "EPF Taxable Interest" are two separate top-level numbers:
+"Other Interest" is NOT an object and does NOT contain "EPF Taxable Interest".
+
+- "Age": number
+- "Employment Type": string          ("private" | "government")
+- "Tax Regime": string               ("old" | "new") -- USE THE REGIME GIVEN; do not pick the cheaper one
+- "City": string                     ("metro" | "non-metro")
+- "Gross Salary": { "Basic Salary", "Dearness Allowance", "HRA", "Conveyance Allowance",
+                    "Medical Allowance", "Bonuses and Incentives", "Overtime Pay",
+                    "LTA", "Special Allowance", "Entertainment Allowance" }  -- all numbers
+- "Actual Rent Paid", "LTA Travel Expenses Claimed", "Professional Tax": numbers
+- "Stock Sale Transactions": [ { "Sale Price", "Cost Price", "Quantity", "Brokerage", "STT",
+                                 "Purchase Date", "Sale Date", "FMV as of 31 Jan 2018" } ]
+- "Long Term Capital Loss", "Short Term Capital Loss": [ { "Financial Year", "Loss Amount" } ]
+- "Mutual Fund Transactions": [ { "Type", "Purchase Date", "Sale Date",
+                                  "Purchase Value", "Sale Value" } ]
+- "Privately Owned Vehicle", "Bonds", "Debentures", "G-Secs":
+      each { "Sale Amount", "Purchase Amount", "Held for duration in years" }
+- "Savings Bank Interest": number
+- "Deposit Interest": number
+- "Other Interest": number           <-- a plain amount, not a container
+- "EPF Taxable Interest": number     <-- a sibling of the above, not nested inside it
+- "PPF", "ELSS", "NSC", "Sukanya Samriddhi Yojana", "SCSS": numbers
+- "EPF": { "Employee Contribution": { "Deducted from Salary", "Voluntary" },
+           "Employer Contribution" }
+- "Pension Scheme Premium": { "Amount", "Number of Years Paid" }
+- "NPS": { "Tier-1 Self Contribution", "Tier-1 Employer Contribution", "Tier-2" }
+- "Education Loan Interest": { "Interest Paid", "Year of Repayment" }
+- "Health Insurance": [ { "Payment Purpose", "Number of Years Paid", "Beneficiary",
+                          "Beneficiary Age", "Paid By", "Payment Mode", "Amount" } ]
+- "Donations": [ { "Scheme Name", "Amount", "Mode" } ]
+- "TDS": number
+
+Use the values exactly as given. Do not substitute a statutory default for a
+declared figure, even when the declared figure is 0.
+
 ## Input field interpretation
 
 These clarify the semantics of certain input fields — they are NOT tax rules:
@@ -54,9 +93,8 @@ Your response must be a single JSON object with exactly this structure and these
     "Income from Other Sources": {
         "Savings Bank Interest": 0,
         "Deposit Interest": 0,
-        "Other Interest": {
-            "EPF Taxable Interest": 0
-        }
+        "Other Interest": 0,
+        "EPF Taxable Interest": 0
     },
     "Gross Total Income": 0,
     "Deductions": {
