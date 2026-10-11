@@ -291,7 +291,7 @@ all 50 cases are prompt-matched.
 |---|---|---|---|---|---|---|
 | nemotron-3-ultra-550b | 60.7% | 0 | 1.2 | 369 s | 24,478 | $0.0000 |
 
-The same model's zero-shot arm scores 61.4%% at 866 s/case, so the script method
+The same model's zero-shot arm scores 61.4% at 866 s/case, so the script method
 is near-identical on accuracy at **2.3x less wall time**.
 
 ### Per-section accuracy
