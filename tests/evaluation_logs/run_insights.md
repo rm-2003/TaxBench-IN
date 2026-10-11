@@ -263,3 +263,82 @@ Rankings stabilised compared to 20 cases:
 #### 7. hy3-preview rpm/concurrency bump
 
 hy3-preview was bumped from `rpm=12, concurrency=4` to `rpm=20, concurrency=8` mid-run. The remaining 12 cases completed without rate-limit issues, confirming the higher config is viable for this model.
+
+---
+
+## Run 4 — First complete script arm | seed=42 | 50 cases | script
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-10-10 |
+| Seed | 42 |
+| Cases | 50 |
+| Method | script |
+| Models | 1 (nvidia/nemotron-3-ultra-550b-a55b:free) |
+| Scored fields | 35 (was 37 through Run 3) |
+| Budget | $17.00 |
+| Total spent | $0.0000 |
+| Log file | `nemotron_script_v2.out`, `run_script_20261010_060735.log` |
+
+First arm run end-to-end under the final prompt and the corrected answer key.
+Resumed from a 33-case checkpoint after the 4 Oct attempt hit a 429 daily cap at
+`input_0363`; that case correctly left no record and so re-entered the queue, so
+all 50 cases are prompt-matched.
+
+### Per-model results
+
+| Model | Accuracy | Parse fail | Mean rounds | Mean latency | Mean tokens | Cost |
+|---|---|---|---|---|---|---|
+| nemotron-3-ultra-550b | 60.7% | 0 | 1.2 | 369 s | 24,478 | $0.0000 |
+
+The same model's zero-shot arm scores 61.4%% at 866 s/case, so the script method
+is near-identical on accuracy at **2.3x less wall time**.
+
+### Per-section accuracy
+
+| Section | Fields | Accuracy |
+|---|---|---|
+| Salary | 7 | 75.1% |
+| Capital Gains | 2 | 43.0% |
+| Other Sources | 3 | 100.0% |
+| Aggregates | 2 | 6.0% |
+| Deductions | 9 | 82.2% |
+| Tax Computation | 12 | 38.3% |
+
+Derived (31 fields, computed) 55.8% vs copied (4 fields, from input) 98.5%.
+
+### Issues found
+
+#### 1. Aggregates at 6.0% is the employer-NPS correction, not a scoring defect
+
+`gross_salary` is wrong in 34 of 50 cases and in **all 34 the error is exactly the
+Tier-1 employer NPS contribution** — the v1.4.4 ground-truth fix (s.17(1)(viii))
+reproduced as a measurement. With `TOLERANCE = 0.01`, Gross Total Income and Total
+Taxable Income are accumulators that inherit that one omission and fail. Median GTI
+error is 1.92%; 35 of 47 misses sit within 5%. The invariant `GTI = sum of heads`
+holds with 0 violations in 50, so the answer key is self-consistent.
+
+Salary scoring 75.1% beside Aggregates at 6.0% — one wrong field of seven versus
+one wrong accumulator of two — is the clearest argument in the dataset for
+per-field scoring over a single bottom-line number.
+
+#### 2. Retry causes are genuine Python faults, not format negotiation
+
+Across all 50 cases: `NameError` 3, `IndentationError` 2, `SyntaxError` 1, `ValueError` 1.
+Confirms the code-fence override holds. 7 of 50 cases retried at all and all 7
+transcripts stored. Worst case `input_0076` spent 3 rounds and 57,775 tokens on
+two indentation faults to reach 49%.
+
+#### 3. Two harness defects found after this run — present in these numbers
+
+- `extract_code()` returned the **first** fenced block. `input_0411` sent a
+  358-char stub ahead of the real 13,499-char script and the stub ran. The case
+  recovered at rounds=2 and scored 21/35, so **this arm's accuracy stands**, but its
+  mean rounds (1.2) and mean tokens (24,478) are slightly inflated.
+- The retry-history trim plus `temperature=0` makes a repair round deterministic,
+  so a failed repair regenerates byte-identical output forever. Nemotron peaked at
+  3 rounds and never entered the loop, so this arm is unaffected; gemma's
+  `input_0255` burned 5 identical rounds for 0/35.
+
+Re-running this arm under the fixed harness costs ~50 free requests and would make
+the efficiency columns strictly comparable with later arms.
