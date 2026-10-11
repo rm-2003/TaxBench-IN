@@ -130,14 +130,14 @@
   "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=stcg_loss|stock_ltcg=ltcg_above_exempt|capital_loss_carryforward=none|other_assets=gsecs_long_term|equity_mf=elss_matured|non_equity_mf=international_ltcg|deductions_80c_cce=partial_under_cap|nps=none|health_insurance_80d=preventive_checkup_cap|education_loan_80e=within_8yr_window|donations_80g=half_exempt_50pct|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 0,
+      "Gross Salary": 0.0,
       "Exemptions": {
         "Section 10(13A)": 0.0,
-        "Section 10(5)": 0
+        "Section 10(5)": 0.0
       },
-      "Section 16(ia)": 0,
+      "Section 16(ia)": 0.0,
       "Section 16(ii)": 0.0,
-      "Section 16(iii)": 0,
+      "Section 16(iii)": 0.0,
       "Net Salary": 0.0
     },
     "Capital Gains": {
@@ -149,21 +149,21 @@
         "Mutual Funds": 0.0,
         "Total": 0.0
       },
-      "LTCG (Section 112A)": 349000.0,
+      "LTCG (Section 112A)": 399500.0,
       "LTCG (Non-Equity)": {
         "Bonds": 0.0,
         "Debentures": 0.0,
-        "G-Secs": 50000.0,
-        "Mutual Funds": 50000.0,
-        "Total": 100000.0
+        "G-Secs": 24750.0,
+        "Mutual Funds": 24750.0,
+        "Total": 49500.0
       },
       "LTCG (Other)": 0.0
     },
     "Income from Other Sources": {
-      "Savings Bank Interest": 25000,
-      "Deposit Interest": 30000,
+      "Savings Bank Interest": 25000.0,
+      "Deposit Interest": 30000.0,
       "Other Interest": {
-        "EPF Taxable Interest": 8000
+        "EPF Taxable Interest": 8000.0
       }
     },
     "Gross Total Income": 517000.0,
@@ -172,30 +172,30 @@
       "80CCC": 0.0,
       "80CCD(1)": 0.0,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 0,
+      "80CCD(2)": 0.0,
       "80D": 5000.0,
-      "80E": 80000,
+      "80E": 80000.0,
       "80G": 5000.0,
-      "80TTA": 10000,
+      "80TTA": 10000.0,
       "80TTB": 0.0,
-      "Total Deductions": 180000.0
+      "Total Deductions": 68000.0
     },
-    "Total Taxable Income": 337000.0,
+    "Total Taxable Income": 449000.0,
     "Tax Computation": {
       "Tax at Slab Rates": 0.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
-      "Tax on LTCG (Section 112A)": 28000.0,
-      "Tax on LTCG (Non-Equity)": 12500.0,
+      "Tax on LTCG (Section 112A)": 9250.0,
+      "Tax on LTCG (Non-Equity)": 0.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 40500.0,
+      "Total Tax Before Rebate": 9250.0,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 40500.0,
+      "Tax After Rebate": 9250.0,
       "Surcharge": 0.0,
-      "Health and Education Cess": 1620.0,
-      "Total Tax Liability": 42120.0,
+      "Health and Education Cess": 370.0,
+      "Total Tax Liability": 9620.0,
       "Less: TDS": 54756.0,
-      "Net Tax Payable / Refund": -12636.0
+      "Net Tax Payable / Refund": -45136.0
     }
   }
 }

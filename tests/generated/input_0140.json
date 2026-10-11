@@ -143,14 +143,14 @@
   "_description": "salary_level=low_below_rebate|hra_city=none|lta=claim_less_than_salary_lta|employment_type=private|entertainment_allowance=none|stock_stcg=stcg_gain|stock_ltcg=ltcg_above_exempt|capital_loss_carryforward=stcl_offsets_stcg|other_assets=gsecs_long_term|equity_mf=elss_matured|non_equity_mf=none|deductions_80c_cce=components_sum_exactly_1_5L|nps=tier2_only_trap|health_insurance_80d=senior_parent_50k_limit|education_loan_80e=beyond_8yr_trap|donations_80g=mixed_100_and_50_pct|age_and_interest=senior_above_limit|tax_regime=old|tds=partial",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 1000000,
+      "Gross Salary": 1000000.0,
       "Exemptions": {
         "Section 10(13A)": 0.0,
-        "Section 10(5)": 10000
+        "Section 10(5)": 10000.0
       },
-      "Section 16(ia)": 50000,
+      "Section 16(ia)": 50000.0,
       "Section 16(ii)": 0.0,
-      "Section 16(iii)": 2400,
+      "Section 16(iii)": 2400.0,
       "Net Salary": 937600.0
     },
     "Capital Gains": {
@@ -173,10 +173,10 @@
       "LTCG (Other)": 0.0
     },
     "Income from Other Sources": {
-      "Savings Bank Interest": 30000,
-      "Deposit Interest": 40000,
+      "Savings Bank Interest": 30000.0,
+      "Deposit Interest": 40000.0,
       "Other Interest": {
-        "EPF Taxable Interest": 5000
+        "EPF Taxable Interest": 5000.0
       }
     },
     "Gross Total Income": 1494600.0,
@@ -185,30 +185,30 @@
       "80CCC": 0.0,
       "80CCD(1)": 0.0,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 0,
+      "80CCD(2)": 0.0,
       "80D": 65000.0,
       "80E": 0.0,
       "80G": 14000.0,
       "80TTA": 0.0,
-      "80TTB": 50000,
+      "80TTB": 50000.0,
       "Total Deductions": 279000.0
     },
     "Total Taxable Income": 1215600.0,
     "Tax Computation": {
-      "Tax at Slab Rates": 59820.0,
+      "Tax at Slab Rates": 57320.0,
       "Tax on STCG (Section 111A)": 5900.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 34312.5,
       "Tax on LTCG (Non-Equity)": 6250.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 106282.5,
+      "Total Tax Before Rebate": 103782.5,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 106282.5,
+      "Tax After Rebate": 103782.5,
       "Surcharge": 0.0,
-      "Health and Education Cess": 4251.3,
-      "Total Tax Liability": 110533.8,
+      "Health and Education Cess": 4151.3,
+      "Total Tax Liability": 107930.0,
       "Less: TDS": 66320.28,
-      "Net Tax Payable / Refund": 44213.52
+      "Net Tax Payable / Refund": 41609.72
     }
   }
 }

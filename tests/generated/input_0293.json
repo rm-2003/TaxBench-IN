@@ -79,14 +79,14 @@
   "_description": "salary_level=zero|hra_city=none|lta=none|employment_type=private|entertainment_allowance=none|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=none|other_assets=none|equity_mf=none|non_equity_mf=none|deductions_80c_cce=none|nps=none|health_insurance_80d=none|education_loan_80e=none|donations_80g=none|age_and_interest=young_high_interest|tax_regime=old|tds=excess_refund",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 0,
+      "Gross Salary": 0.0,
       "Exemptions": {
         "Section 10(13A)": 0.0,
-        "Section 10(5)": 0
+        "Section 10(5)": 0.0
       },
-      "Section 16(ia)": 0,
+      "Section 16(ia)": 0.0,
       "Section 16(ii)": 0.0,
-      "Section 16(iii)": 0,
+      "Section 16(iii)": 0.0,
       "Net Salary": 0.0
     },
     "Capital Gains": {
@@ -109,10 +109,10 @@
       "LTCG (Other)": 0.0
     },
     "Income from Other Sources": {
-      "Savings Bank Interest": 25000,
-      "Deposit Interest": 30000,
+      "Savings Bank Interest": 25000.0,
+      "Deposit Interest": 30000.0,
       "Other Interest": {
-        "EPF Taxable Interest": 8000
+        "EPF Taxable Interest": 8000.0
       }
     },
     "Gross Total Income": 68000.0,
@@ -121,11 +121,11 @@
       "80CCC": 0.0,
       "80CCD(1)": 0.0,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 0,
+      "80CCD(2)": 0.0,
       "80D": 0.0,
       "80E": 0.0,
       "80G": 0.0,
-      "80TTA": 10000,
+      "80TTA": 10000.0,
       "80TTB": 0.0,
       "Total Deductions": 10000.0
     },
@@ -143,7 +143,7 @@
       "Surcharge": 0.0,
       "Health and Education Cess": 0.0,
       "Total Tax Liability": 0.0,
-      "Less: TDS": 10000,
+      "Less: TDS": 10000.0,
       "Net Tax Payable / Refund": -10000.0
     }
   }

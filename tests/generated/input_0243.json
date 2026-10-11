@@ -124,15 +124,15 @@
   "_description": "salary_level=just_above_1Cr|hra_city=metro_hra_received_binding|lta=claim_exceeds_salary_lta|employment_type=private|entertainment_allowance=low_amount_binding|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=stcl_spills_to_ltcg|other_assets=bonds_short_term|equity_mf=elss_matured|non_equity_mf=debt_pre2023_jan_mar|deductions_80c_cce=over_cap_proportional|nps=with_employer|health_insurance_80d=senior_parent_50k_limit|education_loan_80e=beyond_8yr_trap|donations_80g=half_exempt_50pct|age_and_interest=young_high_interest|tax_regime=old|tds=partial",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 10303000,
+      "Gross Salary": 10353000.0,
       "Exemptions": {
-        "Section 10(13A)": 800000,
-        "Section 10(5)": 100000
+        "Section 10(13A)": 800000.0,
+        "Section 10(5)": 100000.0
       },
-      "Section 16(ia)": 50000,
+      "Section 16(ia)": 50000.0,
       "Section 16(ii)": 0.0,
-      "Section 16(iii)": 2500,
-      "Net Salary": 9350500.0
+      "Section 16(iii)": 2500.0,
+      "Net Salary": 9400500.0
     },
     "Capital Gains": {
       "STCG (Section 111A)": 0.0,
@@ -154,25 +154,25 @@
       "LTCG (Other)": 0.0
     },
     "Income from Other Sources": {
-      "Savings Bank Interest": 25000,
-      "Deposit Interest": 30000,
+      "Savings Bank Interest": 25000.0,
+      "Deposit Interest": 30000.0,
       "Other Interest": {
-        "EPF Taxable Interest": 8000
+        "EPF Taxable Interest": 8000.0
       }
     },
-    "Gross Total Income": 9418500.0,
+    "Gross Total Income": 9468500.0,
     "Deductions": {
-      "80C": 102272.73,
-      "80CCC": 13636.36,
-      "80CCD(1)": 34090.91,
-      "80CCD(1B)": 0.0,
-      "80CCD(2)": 50000,
+      "80C": 150000.0,
+      "80CCC": 0.0,
+      "80CCD(1)": 0.0,
+      "80CCD(1B)": 50000.0,
+      "80CCD(2)": 50000.0,
       "80D": 65000.0,
       "80E": 0.0,
       "80G": 5000.0,
-      "80TTA": 10000,
+      "80TTA": 10000.0,
       "80TTB": 0.0,
-      "Total Deductions": 280000.0
+      "Total Deductions": 330000.0
     },
     "Total Taxable Income": 9138500.0,
     "Tax Computation": {
@@ -187,9 +187,9 @@
       "Tax After Rebate": 2554050.0,
       "Surcharge": 255405.0,
       "Health and Education Cess": 112378.2,
-      "Total Tax Liability": 2921833.2,
+      "Total Tax Liability": 2921830.0,
       "Less: TDS": 1753099.92,
-      "Net Tax Payable / Refund": 1168733.28
+      "Net Tax Payable / Refund": 1168730.08
     }
   }
 }

@@ -1,0 +1,2 @@
+model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,parse_fail_count,total_cases
+qwen3:4b,0.6721,0.8812,0.5677,1.0,0.1608,0.7668,0.5242,0,569

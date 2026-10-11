@@ -115,12 +115,12 @@
   "_description": "salary_level=just_above_12L_marginal|hra_city=metro_rent_10pct_binding|lta=claim_exceeds_salary_lta|employment_type=private|entertainment_allowance=none|stock_stcg=none|stock_ltcg=none|capital_loss_carryforward=stcl_spills_to_ltcg|other_assets=bonds_short_term|equity_mf=elss_matured|non_equity_mf=debt_pre2023_jan_mar|deductions_80c_cce=partial_under_cap|nps=tier2_only_trap|health_insurance_80d=invalid_beneficiary_sibling|education_loan_80e=within_8yr_window|donations_80g=full_exempt_100pct|age_and_interest=young_low_interest|tax_regime=new|tds=none",
   "_expected": {
     "Under Head Salaries": {
-      "Gross Salary": 1300000,
+      "Gross Salary": 1300000.0,
       "Exemptions": {
         "Section 10(13A)": 0.0,
         "Section 10(5)": 0.0
       },
-      "Section 16(ia)": 75000,
+      "Section 16(ia)": 75000.0,
       "Section 16(ii)": 0.0,
       "Section 16(iii)": 0.0,
       "Net Salary": 1225000.0
@@ -145,10 +145,10 @@
       "LTCG (Other)": 0.0
     },
     "Income from Other Sources": {
-      "Savings Bank Interest": 5000,
-      "Deposit Interest": 10000,
+      "Savings Bank Interest": 5000.0,
+      "Deposit Interest": 10000.0,
       "Other Interest": {
-        "EPF Taxable Interest": 0
+        "EPF Taxable Interest": 0.0
       }
     },
     "Gross Total Income": 1240000.0,
@@ -157,7 +157,7 @@
       "80CCC": 0.0,
       "80CCD(1)": 0.0,
       "80CCD(1B)": 0.0,
-      "80CCD(2)": 0,
+      "80CCD(2)": 0.0,
       "80D": 0.0,
       "80E": 0.0,
       "80G": 0.0,
@@ -179,7 +179,7 @@
       "Surcharge": 0.0,
       "Health and Education Cess": 1600.0,
       "Total Tax Liability": 41600.0,
-      "Less: TDS": 0,
+      "Less: TDS": 0.0,
       "Net Tax Payable / Refund": 41600.0
     }
   }
