@@ -729,13 +729,22 @@ input leaves are:
 | `Stock Sale Transactions[]/Quantity` | 1000 | |
 | `Stock Sale Transactions[]/Sale Date` | `2025-10-15` | see holding period below |
 
-**s.55(2)(ac) grandfathering is confirmed unexercised, and more completely than
-previously recorded.** Purchase dates take exactly two values across all 569
-cases -- `2024-04-01` (394 transactions) and `2025-04-01` (383) -- so 0
-transactions fall before 01-Feb-2018. `FMV as on 31-Jan-2018` is `None` in all
-777 transactions, meaning the field was never populated rather than merely
-unused. The grandfathering branch is therefore unreachable on this dataset and
-cannot have altered any stored answer.
+**s.55(2)(ac) grandfathering is confirmed unexercised.** Purchase dates take
+exactly two values across all 569 cases -- `2024-04-01` (394 transactions) and
+`2025-04-01` (383) -- so 0 transactions fall before 01-Feb-2018, and the
+grandfathering branch is unreachable on this dataset. It cannot have altered
+any stored answer.
+
+CORRECTION to an earlier statement in this entry: the FMV field is **not**
+unpopulated. The key is `FMV as of 31 Jan 2018` and it is present in all 777
+transactions; the `ltcg_fmv_benefit` factor sets it to 180. An earlier audit
+here searched for the wrong spelling (`FMV as on 31-Jan-2018`), found nothing,
+and wrongly concluded the field was never written. The field is populated and
+carried everywhere -- it is the post-2018 purchase date that makes it dead, not
+its absence. Consequently the `ltcg_fmv_benefit` factor, which Table 1 of the
+paper lists as a tested scenario, exercises no grandfathering at all: it is a
+large-gain LTCG case carrying an unreachable FMV. Either relabel it or footnote
+it until the v2 pre-2018 dates land.
 
 **New gap found by this audit: the holding-period threshold is never tested near
 its boundary.** Two purchase dates against a constant sale date gives every
