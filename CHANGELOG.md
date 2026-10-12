@@ -758,3 +758,38 @@ FMV; holding periods at 11 and 13 months; non-zero Debentures, VPF, EPF employer
 contribution, NSC, SCSS and Sukanya Samriddhi; `Number of Years Paid` > 1; an
 STCL financial year outside the 8-year window; and the `Other Interest` input
 rename.
+
+#### Gemma 4 12B script arm complete at 50/50 under the final prompt and fixed harness
+
+Run with `ollama/gemma4-12b-ctx16k` (num_ctx 16384), 10-12 Oct, including the
+fixed-point and `extract_code` fixes. Cases 1-2 were run during validation of
+those fixes; `input_0255` was re-run under the fixed harness, so all 50 cases are
+harness-matched.
+
+| | |
+|---|---|
+| Overall accuracy | **45.2%** (50 cases, 35 fields) |
+| Parse failures | 1 (`input_0255`, identical-script abandonment) |
+| Strict accuracy | 0/50 |
+| Mean rounds | 2.28 (distribution 1:24, 2:11, 3:3, 4:3, 5:7, 6:2) |
+| Mean tokens | 25,565 |
+| Mean latency | 2,794 s/case; 38.8 h total |
+
+Per-section: Salary 45.4%, Capital Gains 16.0%, Other Sources 98.0%,
+Aggregates 4.0%, Deductions 65.8%, Tax Computation 28.2%. Derived 38.5%,
+copied 97.5%.
+
+**Against the archived pre-fix run, re-scored on the identical 35-field metric
+(n=50, same cases):** new prompt 45.20% vs old 43.49% (**+1.71 points**), better
+27, worse 12, same 11; tokens -17%, mean rounds 2.28 vs 2.88, total time 38.8 h
+vs 43.1 h. Earlier interim figures of -5 to -6 points (reported at n=9-10) were
+an artefact of comparing 35-field against 37-field percentages and are
+withdrawn.
+
+**Truncation misdiagnosis dominates the cost.** 10 of 50 cases contain at least
+one truncated response (an over-long script cut off at the context limit, which
+then exits 0 having printed nothing and is told to "call your function"). Those
+10 cases consumed **23.9 h of the 38.8 h total (62%)** and scored 43.4% on
+average. Fixing the feedback for truncated responses is the highest-value
+harness change outstanding; it was deliberately not applied mid-arm, to keep the
+arm internally consistent.

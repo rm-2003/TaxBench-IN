@@ -342,3 +342,52 @@ two indentation faults to reach 49%.
 
 Re-running this arm under the fixed harness costs ~50 free requests and would make
 the efficiency columns strictly comparable with later arms.
+
+---
+
+## Run 5 — Gemma 4 12B script arm | seed=42 | 50 cases | script
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-10-10 to 2026-10-12 |
+| Seed | 42 |
+| Cases | 50 |
+| Method | script |
+| Models | 1 (ollama/gemma4-12b-ctx16k, local, num_ctx 16384) |
+| Scored fields | 35 |
+| Total spent | $0.0000 |
+| Log file | `gemma_script_v3.out`, `run_script_20261010_113242.log` |
+
+### Per-model results
+
+| Model | Accuracy | Parse fail | Mean rounds | Mean latency | Mean tokens | Strict |
+|---|---|---|---|---|---|---|
+| gemma4-12b (ctx16k) | 45.2% | 1 | 2.28 | 2,794 s | 25,565 | 0/50 |
+
+### Per-section accuracy
+
+| Section | Fields | Accuracy |
+|---|---|---|
+| Salary | 7 | 45.4% |
+| Capital Gains | 2 | 16.0% |
+| Other Sources | 3 | 98.0% |
+| Aggregates | 2 | 4.0% |
+| Deductions | 9 | 65.8% |
+| Tax Computation | 12 | 28.2% |
+
+### Issues found
+
+#### 1. Prompt fix: small accuracy gain, moderate cost saving
+Paired against the archived pre-fix run on the same 50 cases and the same
+35-field metric: +1.71 points (45.20% vs 43.49%), better 27 / worse 12 /
+same 11, tokens -17%, rounds 2.28 vs 2.88.
+
+#### 2. Truncation misdiagnosis consumes 62% of runtime
+10 of 50 cases contain a truncated response; they took 23.9 h of 38.8 h. The
+harness reports "printed nothing — call your function" for a script that was
+simply cut off. Not fixed mid-arm; highest-priority harness change for the next
+run.
+
+#### 3. Zero-shot comparison is context-confounded
+Gemma zero-shot ran at num_ctx 8192 and script at 16384, so the 36.7% vs 45.2%
+gap mixes method and context size.
