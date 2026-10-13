@@ -793,3 +793,19 @@ then exits 0 having printed nothing and is told to "call your function"). Those
 average. Fixing the feedback for truncated responses is the highest-value
 harness change outstanding; it was deliberately not applied mid-arm, to keep the
 arm internally consistent.
+
+#### Merged `main` (repository clean-up) into v1.4.4
+
+`main` had a clean-up (13 and 27 Sep) that removed old-research artefacts. Merged
+it into this branch so `main` can fast-forward to the v1.4.4 state:
+
+- **Accepted main's deletions:** results and checkpoints for the old-research models
+  (DeepSeek, Llama 3.3 70B, GPT-OSS 20B/120B, Hy3, Gemma 4 31B, Nemotron Nano,
+  Gemini 3.8 Flash), `.claude/`, `CLAUDE.md`, `__pycache__/`, old run logs,
+  prompt-tuning artefacts, `extract_text.py`, `tools/rename_json_keys.py`.
+- **Kept from this branch:** `CHANGELOG.md`, `tests/evaluation_logs/run_insights.md`,
+  and the method summaries.
+- **Rebuilt** `zero-shot_summary.csv`, `script_summary.csv`, `tool-call_summary.csv`
+  and `cross_method_summary.csv` from the remaining checkpoints with
+  `tests/rescore.py`, so they list only the models in the paper. Scores
+  unchanged (rescore delta 0.0000 for every arm); calculator suite 34/34.

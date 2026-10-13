@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Interactive prompt tuning tool for the LLM tax benchmark.
 
-Runs a small sample of test cases against one model from each tier (weak, mid,
-strong) and reports JSON parse success, key-name mismatches, and field-by-field
-scores.  The user edits tests/prompts/system_prompt.txt between runs and
-re-executes until all tiers reliably produce parseable JSON.
+Runs a small sample of test cases against one model and reports JSON parse success, key-name mismatches, and field-by-field scores.
 
 Usage:
     python3 tests/tune_prompt.py                          # default: zero-shot, 5 cases
@@ -38,19 +35,12 @@ from openai import OpenAI
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 GENERATED_DIR = SCRIPT_DIR / "generated"
-PROMPT_FILE = SCRIPT_DIR / "prompts" / "system_prompt.txt"
 TUNING_LOG = SCRIPT_DIR / "prompts" / "tuning_log.jsonl"
 
 # ---------------------------------------------------------------------------
-# Tuning models — one per tier
+# Tuning models
 # ---------------------------------------------------------------------------
-TUNING_MODELS = {
-    "weak_1":   "qwen/qwen3.5-9b",
-}
-
-FREE_FALLBACKS = {
-    "google/gemma-4-31b-it:free": "google/gemma-4-31b-it",
-}
+TUNING_MODELS = ["nvidia/nemotron-3-ultra-550b-a55b:free",]
 
 # ---------------------------------------------------------------------------
 # Constants (mirror evaluate_llm.py)
@@ -141,18 +131,7 @@ def get_client():
         sys.exit(1)
     return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
-
-# ---------------------------------------------------------------------------
-# Prompt loading
-# ---------------------------------------------------------------------------
-def load_system_prompt():
-    if not PROMPT_FILE.exists():
-        print(f"ERROR: Prompt file not found: {PROMPT_FILE}")
-        sys.exit(1)
-    return PROMPT_FILE.read_text().strip()
-
-
-def build_messages(method, system_prompt, input_json):
+def build_messages(method, input_json):
     user_content = "Here is the taxpayer input:\n" + json.dumps(input_json, indent=2)
     if method == "script":
         user_content += (
@@ -168,7 +147,6 @@ def build_messages(method, system_prompt, input_json):
             "calculations are independent."
         )
     return [
-        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_content},
     ]
 
@@ -226,22 +204,6 @@ _SCHEMA_KEYS = [
 _KEY_LOOKUP = {k.replace(" ", "").lower(): k for k in _SCHEMA_KEYS}
 
 
-def _normalize_keys(obj):
-    """Recursively fix tokenizer-mangled key names.
-
-    Matches keys by stripping spaces and comparing case-insensitively
-    against the expected schema. "Under HeadSalaries" → "Under Head Salaries".
-    """
-    if not isinstance(obj, dict):
-        return obj
-    normalized = {}
-    for k, v in obj.items():
-        stripped = k.replace(" ", "").lower()
-        correct_key = _KEY_LOOKUP.get(stripped, k)
-        normalized[correct_key] = _normalize_keys(v)
-    return normalized
-
-
 def extract_json(text):
     """Extract the largest valid non-empty JSON object from text.
 
@@ -252,7 +214,7 @@ def extract_json(text):
     try:
         result = _valid_output(json.loads(text))
         if result is not None:
-            return _normalize_keys(result)
+            return result
     except (json.JSONDecodeError, TypeError):
         pass
     if not text:
@@ -262,7 +224,7 @@ def extract_json(text):
     try:
         result = _valid_output(json.loads(cleaned))
         if result is not None:
-            return _normalize_keys(result)
+            return result
     except (json.JSONDecodeError, TypeError):
         pass
     # Try stripping markdown fences
@@ -271,7 +233,7 @@ def extract_json(text):
         try:
             result = _valid_output(json.loads(fenced.group(1)))
             if result is not None:
-                return _normalize_keys(result)
+                return result
         except json.JSONDecodeError:
             pass
     # Find the largest valid non-empty JSON object via brace matching
@@ -301,7 +263,7 @@ def extract_json(text):
         else:
             break
     if best is not None:
-        return _normalize_keys(best)
+        return best
     return None
 
 
@@ -333,47 +295,9 @@ def get_response_text(message):
             text = reasoning
     return text
 
-
-# ---------------------------------------------------------------------------
-# Cost guard
-# ---------------------------------------------------------------------------
-TUNING_BUDGET = 5.00  # USD — max spend for tuning runs
-
-
-class CostGuard:
-    """Tracks cumulative and per-model cost. Halts if budget exceeded."""
-
-    def __init__(self, budget=TUNING_BUDGET):
-        self.budget = budget
-        self.cumulative_cost = 0.0
-        self.per_model_cost = {}  # model -> float
-        self._lock = threading.Lock()
-
-    def check(self, response, model=None):
-        usage = getattr(response, "usage", None)
-        if usage is None:
-            return 0.0
-        cost = getattr(usage, "cost", None)
-        if cost is None and isinstance(usage, dict):
-            cost = usage.get("cost")
-        call_cost = float(cost) if cost is not None else 0.0
-        if call_cost > 0:
-            with self._lock:
-                self.cumulative_cost += call_cost
-                if model:
-                    self.per_model_cost[model] = self.per_model_cost.get(model, 0.0) + call_cost
-                if self.cumulative_cost > self.budget:
-                    raise RuntimeError(
-                        f"BUDGET EXCEEDED: ${self.cumulative_cost:.4f} spent "
-                        f"(budget: ${self.budget:.2f}). Halting."
-                    )
-        return call_cost
-
-
 # ---------------------------------------------------------------------------
 # Method runners
 # ---------------------------------------------------------------------------
-_cost_guard = CostGuard()
 
 # Per-model tracking of whether response_format=json_object is supported
 _json_format_support = {}  # model -> bool
@@ -395,7 +319,6 @@ def _create_completion(client, model, *, tools=None, **kwargs):
     for attempt in range(3):
         try:
             resp = client.chat.completions.create(**call_kwargs)
-            _cost_guard.check(resp, model=model)
 
             # Check for empty choices (some models return empty when
             # response_format is unsupported but don't raise an error)
@@ -428,12 +351,6 @@ def _create_completion(client, model, *, tools=None, **kwargs):
 
             # 429 rate limit — wait and retry, or fall back to paid variant
             if status == 429 or "429" in err_str or "rate" in err_str:
-                fallback = FREE_FALLBACKS.get(model)
-                if attempt >= 1 and fallback:
-                    print(f"      429 persists — switching {model} → {fallback}")
-                    model = fallback
-                    call_kwargs["model"] = fallback
-                    continue
                 wait = [15, 60][min(attempt, 1)]
                 print(f"      429 rate limit — waiting {wait}s (attempt {attempt+1}/2)")
                 time.sleep(wait)
@@ -443,8 +360,8 @@ def _create_completion(client, model, *, tools=None, **kwargs):
     raise Exception(f"All retries exhausted for {model}")
 
 
-def run_zero_shot(client, model, system_prompt, input_json):
-    messages = build_messages("zero-shot", system_prompt, input_json)
+def run_zero_shot(client, model, input_json):
+    messages = build_messages("zero-shot", input_json)
     resp = _create_completion(client, model, messages=messages, temperature=0)
     msg = resp.choices[0].message
     raw = get_response_text(msg)
@@ -453,8 +370,8 @@ def run_zero_shot(client, model, system_prompt, input_json):
     return extract_json(raw), raw
 
 
-def run_script(client, model, system_prompt, input_json):
-    messages = build_messages("script", system_prompt, input_json)
+def run_script(client, model, input_json):
+    messages = build_messages("script", input_json)
     raw_responses = []
 
     for attempt in range(1 + MAX_SCRIPT_RETRIES):
@@ -499,8 +416,8 @@ def run_script(client, model, system_prompt, input_json):
     return None, "\n---ATTEMPT---\n".join(raw_responses)
 
 
-def run_tool_call(client, model, system_prompt, input_json):
-    messages = build_messages("tool-call", system_prompt, input_json)
+def run_tool_call(client, model, input_json):
+    messages = build_messages("tool-call", input_json)
     all_raw = []
 
     for _round in range(MAX_TOOL_ROUNDS):
@@ -707,16 +624,16 @@ _tune_rate_limiter = RateLimiter(TUNE_RPM)
 # ---------------------------------------------------------------------------
 # Single task: run one (model, case) pair
 # ---------------------------------------------------------------------------
-def _run_one(client, model, method, system_prompt, case):
-    """Run a single case for a model. Returns (tier, model, case_file, output, raw, error)."""
+def _run_one(client, model, method, case):
+    """Run a single case for a model. Returns (model, case_file, output, raw, error)."""
     _tune_rate_limiter.wait()
     try:
         if method == "zero-shot":
-            output, raw = run_zero_shot(client, model, system_prompt, case["input"])
+            output, raw = run_zero_shot(client, model, case["input"])
         elif method == "script":
-            output, raw = run_script(client, model, system_prompt, case["input"])
+            output, raw = run_script(client, model, case["input"])
         elif method == "tool-call":
-            output, raw = run_tool_call(client, model, system_prompt, case["input"])
+            output, raw = run_tool_call(client, model, case["input"])
         return model, case["file"], output, raw, None
     except Exception as e:
         return model, case["file"], None, "", e
@@ -739,8 +656,6 @@ def main():
     _tune_rate_limiter = RateLimiter(args.rpm)
 
     client = get_client()
-    system_prompt = load_system_prompt()
-    prompt_hash = hashlib.sha256(system_prompt.encode()).hexdigest()[:8]
 
     if args.case_files:
         selected = [str(GENERATED_DIR / f) for f in args.case_files]
@@ -769,13 +684,11 @@ def main():
     print(f"  Cases:       {len(cases)}")
     print(f"  Models:      {len(TUNING_MODELS)}")
     print(f"  Concurrency: {args.concurrency} | RPM: {args.rpm}")
-    print(f"  Prompt hash: {prompt_hash}")
     print(f"{'='*70}\n")
 
     log_entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "method": args.method,
-        "prompt_hash": prompt_hash,
         "cases_tested": len(cases),
         "case_files": [c["file"] for c in cases],
         "results": {},
@@ -784,15 +697,14 @@ def main():
 
     # Build all (model, case) tasks
     tasks = []
-    for tier, model in TUNING_MODELS.items():
+    for model in TUNING_MODELS:
         for case in cases:
-            tasks.append((tier, model, case))
+            tasks.append((model, case))
 
     # Per-model accumulators
     model_data = {}
-    for tier, model in TUNING_MODELS.items():
+    for model in TUNING_MODELS:
         model_data[model] = {
-            "tier": tier,
             "parse_ok": 0,
             "total_score": 0,
             "all_failures": [],
@@ -800,33 +712,23 @@ def main():
         }
 
     print_lock = threading.Lock()
-    aborted = False
 
     with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
         future_map = {}
-        for tier, model, case in tasks:
-            fut = executor.submit(_run_one, client, model, args.method, system_prompt, case)
-            future_map[fut] = (tier, model, case)
+        for model, case in tasks:
+            fut = executor.submit(_run_one, client, model, args.method, case)
+            future_map[fut] = (model, case)
 
         for fut in as_completed(future_map):
-            if aborted:
-                break
-
-            tier, model, case = future_map[fut]
+            model, case = future_map[fut]
             ret_model, case_file, output, raw, error = fut.result()
             md = model_data[model]
 
             with print_lock:
-                print(f"  [{md['tier'].upper()}] {model} | {case_file}")
+                print(f"  {model} | {case_file}")
 
                 if error is not None:
-                    if isinstance(error, RuntimeError) and "BUDGET" in str(error):
-                        print(f"    COST GUARD: {error}")
-                        print("    ABORTING — budget exceeded.")
-                        aborted = True
-                        break
                     print(f"    API ERROR: {error}")
-                    md["all_failures"].append("api_error")
                 elif output is not None:
                     md["parse_ok"] += 1
                     missing, extra = check_keys(output)
@@ -846,21 +748,13 @@ def main():
                     md["all_failures"].extend(pats if pats else ["unknown"])
                     print(f"    Raw preview: {raw[:200].replace(chr(10), '\\n')}")
 
-    if aborted:
-        print(f"\n{'='*70}")
-        print("RUN ABORTED — budget exceeded.")
-        print(f"{'='*70}")
-        sys.exit(1)
-
     # Print summaries
     n = len(cases)
     for model, md in model_data.items():
         mean_score = md["total_score"] / max(md["parse_ok"], 1)
-        model_cost = _cost_guard.per_model_cost.get(model, 0.0)
-        print(f"\n  --- {md['tier'].upper()} SUMMARY ({model}) ---")
+        print(f"--- SUMMARY ({model}) ---")
         print(f"  Parse rate:  {md['parse_ok']}/{n} ({md['parse_ok']/n*100:.0f}%)")
         print(f"  Mean score (parsed): {mean_score:.1f}/37 ({mean_score/37*100:.1f}%)")
-        print(f"  Cost: ${model_cost:.4f}")
         if md["all_failures"]:
             counts = Counter(md["all_failures"])
             print(f"  Failure patterns: {dict(counts)}")
@@ -869,19 +763,14 @@ def main():
             print(f"  Top missing keys: {top}")
 
         log_entry["results"][model] = {
-            "tier": md["tier"],
             "parse_rate": md["parse_ok"] / n,
             "mean_score_parsed": round(mean_score / 37, 4),
-            "cost": round(model_cost, 6),
             "failures": [f"{k}: {v}" for k, v in Counter(md["all_failures"]).items()] if md["all_failures"] else [],
         }
 
-    # Print total cost
-    print(f"\n  Total cost: ${_cost_guard.cumulative_cost:.4f} (budget: ${_cost_guard.budget:.2f})")
-
     # Write tuning log
     print(f"\n{'='*70}")
-    print("Run complete. Edit tests/prompts/system_prompt.txt and re-run.")
+    print("Run complete.")
     print(f"{'='*70}")
 
     try:

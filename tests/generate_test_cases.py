@@ -3,8 +3,8 @@ Generates synthetic benchmark test cases for the Indian Income Tax Calculator.
 
 Supports three modes:
 - pairwise: covering array across all 19 parameters (~200-400 cases)
-- ota: baseline + one variation each (~70 cases)
-- profiles: 10 taxpayer profiles x ~50 cases each = ~500 dense cases
+- ota: baseline + one variation each (63 cases)
+- profiles: 10 taxpayer profiles creating 569 dense cases
 
 Usage:
     python3 tests/generate_test_cases.py [pairwise|ota|profiles]
@@ -572,7 +572,7 @@ PROFILES = {
             "hra_city": "metro_pct_binding",
             "lta": "claim_less_than_salary_lta",
             "employment_type": "private",
-            "entertainment_allowance": "high_5k_cap_binding",
+            "entertainment_allowance": "none",
             "tax_regime": "new",
             "age_and_interest": "young_low_interest",
             "deductions_80c_cce": "partial_under_cap",
@@ -702,7 +702,7 @@ PROFILES = {
             "salary_level": "above_2Cr",
             "hra_city": "metro_pct_binding",
             "employment_type": "private",
-            "entertainment_allowance": "high_5k_cap_binding",
+            "entertainment_allowance": "none",
             "tax_regime": "new",
             "age_and_interest": "young_high_interest",
             "nps": "with_employer",
@@ -772,6 +772,9 @@ def deep_merge(base, overrides):
 
 def resolve_cross_dependencies(case, meta):
     """Fix values that depend on other parameters in the same case."""
+    employment_type = case.get("Employment Type", "private")
+    if employment_type != "government":
+        gs["Entertainment Allowance"] = 0
     age = case.get("Age", 35)
     gs = case.get("Gross Salary", {})
     basic_da = gs.get("Basic Salary", 0) + gs.get("Dearness Allowance", 0)
@@ -903,7 +906,7 @@ def generate_ota(param_names):
 
 
 def generate_profile_cases():
-    """Generate ~500 dense cases across 10 taxpayer profiles."""
+    """Generate 569 dense cases across 10 taxpayer profiles."""
     all_cases = []
     for profile_name, profile_def in PROFILES.items():
         fixed = profile_def["fixed"]
