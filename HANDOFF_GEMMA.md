@@ -3,6 +3,23 @@
 State as of 1 Nov 2026, branch `fix/v1.4.4-correctness-fixes` (= `main`).
 Everything below runs locally through Ollama; no API key is needed.
 
+## Do this (in order)
+
+1. Set up the Ollama model exactly as in "Rules" item 2 below, and check the
+   base model ID is `4eb23ef187e2`.
+2. Create a branch: `git checkout -b gemma-zeroshot-569`.
+3. Run the snippet under "How the harness knows which cases are done"; it must
+   print `496 done; 73 left`. If it prints anything else, stop and ask Pranav.
+4. Run the zero-shot command under "Commands". If it stops (sleep, crash), run
+   the same command again; it resumes. Repeat until it reports 569 cases.
+5. Commit as described under "When done" and push the branch
+   (`git push -u origin gemma-zeroshot-569`). Do **not** push to `main`;
+   Pranav is still committing other runs there and will merge this branch.
+6. Report the final accuracy and any parse failures to Pranav.
+7. **Stop there.** Do not start the script or tool-call runs: Pranav will
+   choose a case subset for those first (all 519 remaining script cases would
+   take about 17 days on a laptop).
+
 ## What is left
 
 Case order is fixed: `tests/evaluate_llm.py` loads all 569 files in
