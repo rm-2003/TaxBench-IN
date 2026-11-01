@@ -1,0 +1,42 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=1
+[nemotron-3-ultra-550b-a55b:free] Resuming: 77 done, 492 remaining
+[nemotron-3-ultra-550b-a55b:free] [78/569] input_0405.json OK score=20/35 (57%) rounds=12 latency=1370.9s tokens=126190 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [79/569] input_0091.json OK score=19/35 (54%) rounds=9 latency=259.6s tokens=81552 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [80/569] input_0436.json OK score=21/35 (60%) rounds=13 latency=413.7s tokens=199698 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [81/569] input_0009.json OK score=22/35 (63%) rounds=10 latency=225.1s tokens=83173 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [82/569] input_0372.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [tool-call] ===
+Overall accuracy:    57.2% (81 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         9.7 per case
+
+Per-section accuracy:
+  Salary (7 fields)             60.8%
+  Capital Gains (2 fields)      34.6%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         4.9%
+  Deductions (9 fields)         80.7%
+  Tax Computation (12 fields)   39.2%
+
+What the score is made of:
+  Derived (31 fields, computed):   51.7%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          331.1 sec/case
+  Mean tokens:           114,252 total (101,629 prompt + 12,623 completion)
+  Total tokens (all):    9,254,415
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__tool-call_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/tool-call_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261026_140638.log

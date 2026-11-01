@@ -809,3 +809,135 @@ it into this branch so `main` can fast-forward to the v1.4.4 state:
   and `cross_method_summary.csv` from the remaining checkpoints with
   `tests/rescore.py`, so they list only the models in the paper. Scores
   unchanged (rescore delta 0.0000 for every arm); calculator suite 34/34.
+
+#### `--max-transient-retries` option for the API retry budget
+
+`MAX_TRANSIENT_RETRIES` (3) was commented "overridable with CLI" but had no
+flag. Added `--max-transient-retries` (default 3, so every existing run behaves
+as before) and print it in the run's Constants line. Attempts after the third
+keep the 32 s wait.
+
+Why: a Nemotron tool-call trial on 17 Oct (3 cases, run twice) SKIPped every
+case within minutes. Nvidia's free endpoint was answering roughly two requests
+in three with 503 "Service temporarily overloaded", and tool-call makes about
+5-10 API calls per case, any one of which exhausting its 3 attempts discards the
+whole case. Zero-shot (one call per case) tolerates the same failure rate.
+
+Tool calling itself was verified working on the same day with direct probes:
+Nemotron emits well-formed `calculate` calls, batches several calls in one
+response when asked, and completes the round trip when its own message object
+(including `reasoning` / `reasoning_details`) is appended back exactly as
+`run_tool_call()` does.
+
+#### Nemotron tool-call: transcripts kept for parsed cases; 50-case arm started
+
+`run_tool_call()` returned its transcript only when the final answer failed to
+parse, so the 3-case trial on 22 Oct (0289/0199/0255: 18, 18, 19 of 35; 10-12
+rounds; ~105k tokens/case; 0 parse failures) recorded no tool usage at all. It
+now always returns the transcript; `evaluate_case()` already stores it whenever
+rounds > 1, which is every tool-call case. The stored transcript gives the
+number of `calculate` calls per round and every tool result, including errors.
+Model inputs are unchanged.
+
+The trial checkpoint was moved to
+`nvidia_nemotron-3-ultra-550b-a55b_free__tool-call.trial3.jsonl.bak` so that all
+50 cases of the arm are recorded the same way, and the 50-case arm was started
+with `--max-transient-retries 10`. The prompt's "37-field return" wording is left
+as is: it predates the 35-field metric, is shared with the earlier Gemma
+tool-call runs, and describes the workload rather than the schema.
+
+#### `--concurrency` option; free tier is 50 requests/day
+
+The 50-case tool-call arm stopped on its first request on 22 Oct: the free
+tier allows 50 requests per day (`X-RateLimit-Limit: 50`, reset 00:00 UTC), and
+that day's quota had gone on probes and the 3-case trial. At ~11 requests per
+case this is 4-5 tool-call cases per day. Added `--concurrency` (default: the
+per-model setting) because a daily-cap 429 discards every in-flight case: at the
+default 4, four cases of 12-13 rounds can exhaust 50 requests with none
+finished. The arm now runs with `--concurrency 1`.
+
+#### Tool-call: continue-nudge after a reply with neither tool calls nor JSON
+
+First day of the 50-case Nemotron tool-call arm (23 Oct, `--concurrency 1`): 4
+cases scored normally (0255 21, 0287 17, 0529 19, 0132 18 of 35; 9-14 rounds;
+28-53 `calculate` calls per case; one malformed call, missing `operands`, which
+the model recovered from), but two were recorded as PARSE_FAIL 0/35 after only
+2-3 rounds. In both, the model had paused mid-computation to write a note
+without calling the tool: "Now I have: ... HRA exemption = min(...) = 800,000
+... Standard deduction = 50" (input_0289) and "Let me continue with the"
+(input_0199, 495 completion tokens). `run_tool_call()` treated any reply without
+tool calls as the final answer.
+
+It now sends such a reply back with a continue prompt (`TOOL_NUDGE`), at most
+`MAX_TOOL_NUDGES` = 2 times per case; each nudge counts as a round, and the
+log records the reply's `finish_reason`. Behaviour is unchanged for every reply
+that has tool calls or parseable JSON, so the 4 completed cases stand. The two
+false zeros were removed from the checkpoint (pre-change copy kept as
+`...tool-call.jsonl.pre-nudge.bak`) so they re-run under the fix. Verified
+offline with mocked replies: note-then-JSON parses after one nudge; three
+replies without JSON end as PARSE_FAIL after two nudges; normal cases are
+unchanged.
+
+#### Nemotron tool-call arm complete at 50/50
+
+Run 23-26 Oct, `--concurrency 1 --max-transient-retries 10`, rotating across
+several OpenRouter free-tier keys (50 requests/day each). Same 50 cases (seed 42)
+as the other arms.
+
+| Nemotron, 50 cases | Overall | Salary | CapGains | Other | Aggregates | Deductions | TaxComp | Tokens/case |
+|---|---|---|---|---|---|---|---|---|
+| zero-shot | 61.1 | 73.4 | 53.0 | 90.7 | 9.0 | 84.9 | 38.7 | 18,617 |
+| script    | 60.7 | 75.1 | 43.0 | 100  | 6.0 | 82.2 | 38.3 | 24,478 |
+| tool-call | 57.1 | 60.0 | 36.0 | 100  | 6.0 | 79.8 | 39.8 | 121,207 |
+
+0 parse failures, 0 strict-correct cases, 0 continue-nudges used. 1,631
+`calculate` calls (32.6/case), 1 rejected (missing `operands`). Rounds: mean
+10.0, median 9, max 20 (one case, input_0248, used all 20 and still parsed).
+Paired bootstrap (10,000 resamples, seed 42): tool-call minus zero-shot -3.9
+points, 95% CI [-6.3, -1.7] (better 15 / worse 27 / same 8); minus script -3.5,
+[-5.7, -1.4].
+
+The loss is concentrated in fields that need no arithmetic: Section 16(ii)
+-15 cases and 16(iii) -17 vs zero-shot. In 15 cases the model put professional
+tax under 16(ii) (entertainment allowance) instead of 16(iii), and elsewhere it
+applied 16(iii) under the new regime where it is not deductible. STCG -11, LTCG
+-6; Tax Computation, the arithmetic-heavy section, is unchanged (+1.1).
+
+#### `nim/` route: Nemotron via NVIDIA's own API
+
+Added a third provider route next to OpenRouter and Ollama: model IDs prefixed
+`nim/` go to NVIDIA's OpenAI-compatible endpoint
+(`https://integrate.api.nvidia.com/v1`, key `NVIDIA_API_KEY`) with the prefix
+stripped from the request. `nim/nvidia/nemotron-3-ultra-550b-a55b` is the same
+model OpenRouter's `:free` route forwards to Nvidia; it has no daily request
+cap (rate-limited per minute instead; configured at 35 rpm, concurrency 4).
+It writes its own checkpoint (`nim_nvidia_nemotron-3-ultra-550b-a55b__*`), so
+OpenRouter results are untouched. The harness sends no OpenRouter-specific
+request fields, so the request body is identical on both routes. Tool-call
+round trip verified on 30 Oct. Before any NIM results are pooled with
+OpenRouter ones, a 10-case overlap run (the first 10 of the 50, all already
+done via OpenRouter) checks that the two routes score alike.
+
+#### Tool-call arm to 569: OpenRouter for 244 cases, NVIDIA (`nim/`) for the rest
+
+10-case overlap (first 10 of the 50, already done via OpenRouter), 30 Oct:
+OpenRouter 196/350 (56.0%), NIM 203/350 (58.0%); 9 of 10 cases within 0-3
+fields, one (input_0156) 25 vs 31; field-level agreement 92.9%, against 96.2%
+for two OpenRouter runs of the same 3 cases. 0 parse failures, 0 rate-limit or
+transient errors on NIM. Judged equivalent within run-to-run variation.
+
+The daily OpenRouter driver was stopped at 244 cases. The remaining 325 run on
+`nim/` at concurrency 6 with the new `--skip-done-by MODEL` option, which skips
+cases already in another model's checkpoint for the same method and leaves each
+route's checkpoint pure. The 569-case tool-call figure is therefore pooled:
+244 OpenRouter rows + 325 NIM rows (the 10 NIM overlap rows are excluded from
+the pool and kept only as the equivalence check). The 50-case paper table is
+entirely OpenRouter.
+
+#### Snapshot pushed for collaborators (1 Nov)
+
+Pushed the current state mid-run so the remaining Gemma 4 12B work can be
+picked up elsewhere: see `HANDOFF_GEMMA.md` (Gemma zero-shot ctx16k at 496/569,
+script ctx16k at 50/569). Nemotron arms are still running here and their
+checkpoints in this commit are partial: tool-call at 558/569 (244 OpenRouter +
+314 NIM, excluding the 10 NIM overlap rows) and script at 60/569.

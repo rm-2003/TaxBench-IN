@@ -1,0 +1,18 @@
+=== 2026-11-01 09:54 key 1 ===
+Method: script | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=2
+[nemotron-3-ultra-550b-a55b:free] Resuming: 50 done, 519 remaining
+[nemotron-3-ultra-550b-a55b:free] [51/569] input_0178.json OK score=23/35 (66%) rounds=1 latency=452.2s tokens=18863 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [52/569] input_0154.json OK score=22/35 (63%) rounds=1 latency=508.7s tokens=19665 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [53/569] input_0347.json OK score=32/35 (91%) rounds=1 latency=260.5s tokens=13817 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [54/569] input_0241.json OK score=20/35 (57%) rounds=1 latency=369.0s tokens=21627 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [55/569] input_0331.json OK score=25/35 (71%) rounds=1 latency=488.4s tokens=17097 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [56/569] input_0013.json OK score=19/35 (54%) rounds=1 latency=422.7s tokens=18505 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [57/569] input_0464.json OK score=16/35 (46%) rounds=2 latency=1125.3s tokens=54512 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [58/569] input_0456.json OK score=22/35 (63%) rounds=1 latency=159.7s tokens=15985 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [59/569] input_0414.json OK score=21/35 (60%) rounds=1 latency=471.3s tokens=27250 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [60/569] input_0377.json OK score=20/35 (57%) rounds=1 latency=356.2s tokens=23192 cost=$0.0000

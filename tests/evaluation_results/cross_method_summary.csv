@@ -1,4 +1,5 @@
 model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_accuracy,script_mean_tokens,script_mean_latency,tool-call_accuracy,tool-call_mean_tokens,tool-call_mean_latency
-nvidia/nemotron-3-ultra-550b-a55b:free,0.6137,17594.0,866.43,0.6069,24478.0,368.98,,,
-ollama/gemma4-12b-ctx16k,,,,0.452,25565.0,2794.47,,,
+nim/nvidia/nemotron-3-ultra-550b-a55b,,,,,,,0.584,99290.0,739.24
+nvidia/nemotron-3-ultra-550b-a55b:free,0.617,17584.0,834.4,0.6069,24478.0,368.98,0.5697,102315.0,417.45
+ollama/gemma4-12b-ctx16k,0.2857,3844.0,132.0,0.452,25565.0,2794.47,,,
 ollama/gemma4-12b-ctx8k,0.3669,3261.0,197.91,,,,0.2476,48001.0,281.1

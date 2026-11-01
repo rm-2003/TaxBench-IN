@@ -49,7 +49,7 @@ LOGS_DIR = SCRIPT_DIR / "evaluation_logs"
 # API & retry constants
 # ---------------------------------------------------------------------------
 MAX_OUTPUT_TOKENS = None
-MAX_TRANSIENT_RETRIES = 3 # overridable with CLI
+MAX_TRANSIENT_RETRIES = 3  # attempts per API call; overridable with --max-transient-retries
 COST_CHECK_INTERVAL = 5
 FREE_COOLDOWN_SECS = 120
 FREE_COOLDOWN_MAX_RETRIES = 2
@@ -87,6 +87,10 @@ EMPTY_COMPLETION_RETRIES = 4  # raised from 2 after 30 Sep: the provider went
 # Evaluation defaults (overridable via CLI)
 # ---------------------------------------------------------------------------
 MAX_TOOL_ROUNDS = 20
+MAX_TOOL_NUDGES = 2  # continue-prompts per tool-call case after a reply with no tool calls and no JSON
+TOOL_NUDGE = ("Your last reply contained neither calculate calls nor the final JSON. "
+              "Continue: use the calculate tool for any remaining arithmetic, then "
+              "reply with only the final JSON.")
 # Raised from 3 once run_script() stopped resending the whole retry history.
 # Under the old behaviour each extra round added a superseded script to the
 # prompt, so more retries made things strictly worse. With only the most recent
@@ -153,6 +157,10 @@ MODEL_CONFIG = {
     # script in full plus the traceback, which does not fit in 8192.
     "ollama/gemma4-12b-ctx16k":          {"rpm": 600, "concurrency": 1,
                                           "reasoning_effort": "none"},
+    # Same Nemotron weights via NVIDIA's own API (build.nvidia.com) instead of
+    # OpenRouter's :free route, which is itself served by Nvidia. No daily cap;
+    # the free tier is rate-limited per minute (~40 rpm), so stay under it.
+    "nim/nvidia/nemotron-3-ultra-550b-a55b": {"rpm": 35, "concurrency": 4},
 }
 
 FREE_FALLBACKS = {
@@ -360,9 +368,21 @@ def is_local_model(model):
     return bool(model) and model.startswith(LOCAL_PREFIX)
 
 
+NIM_PREFIX = "nim/"
+NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
+
+
+def is_nim_model(model):
+    return bool(model) and model.startswith(NIM_PREFIX)
+
+
 def api_model_name(model):
     """Strip the routing prefix so the request carries the provider's own ID."""
-    return model[len(LOCAL_PREFIX):] if is_local_model(model) else model
+    if is_local_model(model):
+        return model[len(LOCAL_PREFIX):]
+    if is_nim_model(model):
+        return model[len(NIM_PREFIX):]
+    return model
 
 
 # ---------------------------------------------------------------------------
@@ -375,6 +395,12 @@ def api_model_name(model):
 def get_client(model=None):
     if is_local_model(model):
         return OpenAI(base_url=LOCAL_BASE_URL, api_key="ollama", timeout=LOCAL_TIMEOUT_SECS)
+    if is_nim_model(model):
+        api_key = os.environ.get("NVIDIA_API_KEY")
+        if not api_key:
+            print("ERROR: Set NVIDIA_API_KEY environment variable.")
+            sys.exit(1)
+        return OpenAI(base_url=NIM_BASE_URL, api_key=api_key, timeout=API_TIMEOUT_SECS)
     if model and model.startswith("gemini-"):
         api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
@@ -1049,6 +1075,7 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rat
     tracker = TokenTracker()
     messages = build_messages("tool-call", system_prompt, input_json)
     rounds = 0
+    nudges = 0
 
     for _round in range(max_rounds):
         resp = api_call_with_retry(
@@ -1065,9 +1092,25 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rat
         if not msg.tool_calls:
             rounds += 1
             text = get_response_text(msg)
-            messages.append({"role": "assistant", "content": text[:500]})
             output = extract_json(text)
-            return output, rounds, tracker, (messages if output is None else None)
+            # A reply with no tool calls and no JSON is the model thinking aloud
+            # mid-computation, not a final answer: on 23 Oct nemotron stopped
+            # after 1-2 correct tool rounds with "Now I have: ... HRA exemption =
+            # 800,000 ..." (input_0289) and "Let me continue with the"
+            # (input_0199), and both were scored PARSE_FAIL 0/35. Send it back
+            # with a nudge, at most MAX_TOOL_NUDGES times per case.
+            if output is None and nudges < MAX_TOOL_NUDGES and rounds < max_rounds:
+                nudges += 1
+                print(f"      tool-call: reply had no tool calls and no JSON "
+                      f"(finish_reason={choice.finish_reason}) -- nudge {nudges}/{MAX_TOOL_NUDGES}")
+                messages.append({"role": "assistant", "content": text})
+                messages.append({"role": "user", "content": TOOL_NUDGE})
+                continue
+            messages.append({"role": "assistant", "content": text[:500]})
+            # Return the transcript even when the answer parses: it is the only
+            # record of how many calculate calls were made per round and whether
+            # any were rejected. evaluate_case() still decides whether to store it.
+            return output, rounds, tracker, messages
 
         messages.append(msg)
         for tc in msg.tool_calls:
@@ -1585,7 +1628,7 @@ def run_model(client, model, method, cases, args):
     tag = _model_tag(model)
     cfg = MODEL_CONFIG.get(model, DEFAULT_MODEL_CONFIG)
     rate_limiter = RateLimiter(cfg["rpm"])
-    concurrency = cfg["concurrency"]
+    concurrency = args.concurrency or cfg["concurrency"]
 
     with _print_lock:
         print(f"\n[{tag}] Starting — rpm={cfg['rpm']}, concurrency={concurrency}")
@@ -1595,6 +1638,15 @@ def run_model(client, model, method, cases, args):
     prior_results = [result_from_checkpoint_entry(e, model, method, case_by_file) for e in checkpoint_entries]
 
     pending_cases = [c for c in cases if c["file"] not in completed]
+    if args.skip_done_by:
+        # Cases another route already completed for this method (e.g. finishing
+        # an OpenRouter arm via nim/): skip them, but keep this checkpoint pure.
+        other_done, _ = load_checkpoint(args.skip_done_by, method)
+        before = len(pending_cases)
+        pending_cases = [c for c in pending_cases if c["file"] not in other_done]
+        with _print_lock:
+            print(f"[{tag}] Skipping {before - len(pending_cases)} cases already done by "
+                  f"{args.skip_done_by} [{method}]")
     if completed:
         with _print_lock:
             print(f"[{tag}] Resuming: {len(completed)} done, {len(pending_cases)} remaining")
@@ -1778,11 +1830,24 @@ class _Tee:
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    global _cost_guard, MAX_TRANSIENT_RETRIES
     parser = argparse.ArgumentParser(description="LLM benchmark evaluator for Indian tax calculator")
     parser.add_argument("--method", choices=["zero-shot", "script", "tool-call"], default="zero-shot")
     parser.add_argument("--model", type=str, default=None, help="OpenRouter model ID; if omitted runs all models")
     parser.add_argument("--max-rounds", type=int, default=MAX_TOOL_ROUNDS)
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
+    # Attempts per API call before a transient (500/502/503) failure SKIPs the
+    # case. Tool-call makes ~5-10 calls per case and one exhausted call discards
+    # the whole case, so an overloaded free endpoint needs a larger budget here
+    # than zero-shot does. Waits after the third attempt stay at 32s.
+    parser.add_argument("--max-transient-retries", type=int, default=MAX_TRANSIENT_RETRIES)
+    # Overrides the per-model concurrency. On the 50-request/day free tier a
+    # daily-cap 429 discards every in-flight case, so tool-call runs (~11
+    # requests per case) should use 1 to lose at most one partial case.
+    parser.add_argument("--concurrency", type=int, default=None)
+    # Model ID whose checkpoint (same method) lists cases to skip: lets one arm
+    # be finished on a second provider route without duplicating cases.
+    parser.add_argument("--skip-done-by", type=str, default=None)
     parser.add_argument("--script-timeout", type=int, default=SCRIPT_TIMEOUT)
     parser.add_argument("--delay", type=float, default=DELAY_BETWEEN_CASES)
     parser.add_argument("--max-cases", type=int, default=MAX_CASES, help="Max number of cases to evaluate (default 500)")
@@ -1804,12 +1869,13 @@ def main():
     cases = all_cases[:args.max_cases]
     models = [args.model] if args.model else MODELS
 
-    global _cost_guard
+    MAX_TRANSIENT_RETRIES = args.max_transient_retries
     _cost_guard = CostGuard(budget=args.budget)
 
     print(f"Method: {args.method} | Models: {len(models)} | Cases: {len(cases)} (seed={args.seed})")
     print(f"Constants: max_rounds={args.max_rounds}, max_script_retries={args.max_script_retries}, "
-          f"script_timeout={args.script_timeout}s, max_cases={args.max_cases}, budget=${args.budget:.2f}")
+          f"script_timeout={args.script_timeout}s, max_cases={args.max_cases}, budget=${args.budget:.2f}, "
+          f"max_transient_retries={MAX_TRANSIENT_RETRIES}")
     for m in models:
         cfg = MODEL_CONFIG.get(m, DEFAULT_MODEL_CONFIG)
         print(f"  {_model_tag(m):35s} rpm={cfg['rpm']:2d}  concurrency={cfg['concurrency']}")

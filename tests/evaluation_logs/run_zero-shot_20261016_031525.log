@@ -1,0 +1,40 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 568 done, 1 remaining
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [569/569] input_0224.json OK score=1/35 (3%) rounds=1 latency=278.4s tokens=9005 cost=$0.0000
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    61.7% (569 cases)
+Failed to parse:     5 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             73.7%
+  Capital Gains (2 fields)      53.1%
+  Other Sources (3 fields)      91.2%
+  Aggregates (2 fields)         7.7%
+  Deductions (9 fields)         85.5%
+  Tax Computation (12 fields)   39.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   57.7%
+  Copied  (4 fields, from input): 93.0%
+
+Cost / efficiency:
+  Mean latency:          834.4 sec/case
+  Mean tokens:           17,584 total (2,381 prompt + 15,203 completion)
+  Total tokens (all):    10,005,363
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261016_031525.log

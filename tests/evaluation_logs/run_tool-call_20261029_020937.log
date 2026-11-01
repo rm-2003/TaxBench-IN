@@ -1,0 +1,48 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=1
+[nemotron-3-ultra-550b-a55b:free] Resuming: 168 done, 401 remaining
+[nemotron-3-ultra-550b-a55b:free] [169/569] input_0191.json OK score=17/35 (49%) rounds=7 latency=200.2s tokens=55511 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [170/569] input_0070.json OK score=16/35 (46%) rounds=8 latency=328.1s tokens=104243 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [171/569] input_0040.json OK score=19/35 (54%) rounds=7 latency=199.0s tokens=50271 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [172/569] input_0180.json OK score=18/35 (51%) rounds=7 latency=220.4s tokens=54514 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [173/569] input_0386.json OK score=25/35 (71%) rounds=12 latency=2606.3s tokens=168215 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [174/569] input_0258.json OK score=18/35 (51%) rounds=13 latency=446.8s tokens=177749 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [175/569] input_0525.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [tool-call] ===
+Overall accuracy:    56.6% (174 cases)
+Failed to parse:     2 cases (scored as 0)
+Mean rounds:         9.3 per case
+
+Per-section accuracy:
+  Salary (7 fields)             58.6%
+  Capital Gains (2 fields)      36.5%
+  Other Sources (3 fields)      98.3%
+  Aggregates (2 fields)         4.0%
+  Deductions (9 fields)         81.8%
+  Tax Computation (12 fields)   38.3%
+
+What the score is made of:
+  Derived (31 fields, computed):   51.2%
+  Copied  (4 fields, from input): 98.3%
+
+Cost / efficiency:
+  Mean latency:          374.3 sec/case
+  Mean tokens:           103,696 total (91,589 prompt + 12,107 completion)
+  Total tokens (all):    18,043,119
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__tool-call_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/tool-call_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261029_020937.log

@@ -1,0 +1,35 @@
+Method: zero-shot | Models: 1 | Cases: 1 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=1, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] [1/1] input_0289.json OK score=10/35 (29%) rounds=1 latency=132.0s tokens=3844 cost=$0.0000
+
+=== Evaluation Report: ollama/gemma4-12b-ctx16k [zero-shot] ===
+Overall accuracy:    28.6% (1 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             14.3%
+  Capital Gains (2 fields)      0.0%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         0.0%
+  Deductions (9 fields)         44.4%
+  Tax Computation (12 fields)   16.7%
+
+What the score is made of:
+  Derived (31 fields, computed):   19.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          132.0 sec/case
+  Mean tokens:           3,844 total (2,995 prompt + 849 completion)
+  Total tokens (all):    3,844
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx16k] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx16k__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261014_054813.log

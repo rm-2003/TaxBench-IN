@@ -1,0 +1,47 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b          rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b] Starting — rpm=35, concurrency=4
+[nemotron-3-ultra-550b-a55b] Skipping 234 cases already done by nvidia/nemotron-3-ultra-550b-a55b:free [tool-call]
+[nemotron-3-ultra-550b-a55b] Resuming: 72 done, 263 remaining
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+[nemotron-3-ultra-550b-a55b] [73/569] input_0056.json OK score=20/35 (57%) rounds=7 latency=350.9s tokens=72547 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 5s (attempt 1)
+[nemotron-3-ultra-550b-a55b] [74/569] input_0358.json OK score=23/35 (66%) rounds=11 latency=481.9s tokens=151075 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+[nemotron-3-ultra-550b-a55b] [75/569] input_0427.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] [75/569] input_0511.json OK score=17/35 (49%) rounds=6 latency=310.2s tokens=52709 cost=$0.0000
+[nemotron-3-ultra-550b-a55b] [76/569] input_0495.json OK score=18/35 (51%) rounds=9 latency=716.8s tokens=79377 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+[nemotron-3-ultra-550b-a55b] [77/569] input_0050.json OK score=17/35 (49%) rounds=6 latency=231.9s tokens=43899 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 15s (attempt 2)
+[nemotron-3-ultra-550b-a55b] [78/569] input_0049.json OK score=21/35 (60%) rounds=5 latency=147.9s tokens=30498 cost=$0.0000
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+[nemotron-3-ultra-550b-a55b] [79/569] input_0541.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] [79/569] input_0125.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] [79/569] input_0243.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] [79/569] input_0296.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] [79/569] input_0293.json SKIP (APIConnectionError: Connection error.)
+[nemotron-3-ultra-550b-a55b] 5 consecutive failures — stopping model

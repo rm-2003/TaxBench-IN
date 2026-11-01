@@ -1,2 +1,4 @@
 model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
+nim/nvidia/nemotron-3-ultra-550b-a55b,0.584,0.6207,0.3731,0.9898,0.0609,0.837,0.3938,9.1,2,197,739.24,87016.0,12274.0,99290.0,17142097,2417960,0.0,0.0
+nvidia/nemotron-3-ultra-550b-a55b:free,0.5697,0.5984,0.3852,0.9795,0.0492,0.8183,0.3815,9.2,4,244,417.45,90266.0,12049.0,102315.0,22024927,2939877,0.0,0.0
 ollama/gemma4-12b-ctx8k,0.2476,0.1905,0.0,0.6667,0.0,0.3704,0.1667,15.0,1,3,281.1,46919.0,1082.0,48001.0,140758,3245,0.0,0.0

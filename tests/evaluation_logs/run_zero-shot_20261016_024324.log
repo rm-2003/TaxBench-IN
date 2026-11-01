@@ -1,0 +1,64 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 558 done, 11 remaining
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 32s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [559/569] input_0224.json SKIP (Exception: All 3 retries exhausted)
+[nemotron-3-ultra-550b-a55b:free] [559/569] input_0105.json OK score=22/35 (63%) rounds=1 latency=403.2s tokens=14740 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [560/569] input_0518.json OK score=23/35 (66%) rounds=1 latency=526.2s tokens=13783 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [561/569] input_0096.json OK score=18/35 (51%) rounds=1 latency=711.6s tokens=26946 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [562/569] input_0229.json OK score=23/35 (66%) rounds=1 latency=197.8s tokens=11920 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [563/569] input_0239.json OK score=19/35 (54%) rounds=1 latency=884.6s tokens=24602 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [564/569] input_0026.json OK score=35/35 (100%) rounds=1 latency=290.3s tokens=10340 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [565/569] input_0143.json OK score=18/35 (51%) rounds=1 latency=710.7s tokens=22856 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [566/569] input_0282.json OK score=19/35 (54%) rounds=1 latency=567.8s tokens=22072 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [567/569] input_0115.json OK score=19/35 (54%) rounds=1 latency=414.4s tokens=19776 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [568/569] input_0251.json OK score=19/35 (54%) rounds=1 latency=1180.4s tokens=28547 cost=$0.0000
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    61.8% (568 cases)
+Failed to parse:     5 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             73.8%
+  Capital Gains (2 fields)      53.2%
+  Other Sources (3 fields)      91.4%
+  Aggregates (2 fields)         7.7%
+  Deductions (9 fields)         85.7%
+  Tax Computation (12 fields)   40.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   57.8%
+  Copied  (4 fields, from input): 93.2%
+
+Cost / efficiency:
+  Mean latency:          835.4 sec/case
+  Mean tokens:           17,599 total (2,381 prompt + 15,219 completion)
+  Total tokens (all):    9,996,358
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261016_024324.log

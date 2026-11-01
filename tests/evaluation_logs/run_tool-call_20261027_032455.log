@@ -1,0 +1,45 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.2006, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=1
+[nemotron-3-ultra-550b-a55b:free] Resuming: 115 done, 454 remaining
+[nemotron-3-ultra-550b-a55b:free] [116/569] input_0565.json OK score=18/35 (51%) rounds=9 latency=2945.1s tokens=88402 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [117/569] input_0416.json OK score=17/35 (49%) rounds=14 latency=170.0s tokens=156589 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [118/569] input_0292.json OK score=18/35 (51%) rounds=9 latency=154.7s tokens=85346 cost=$0.0000
+      Transient error (504) — retry in 2s
+        detail: upstream error: Upstream idle timeout exceeded
+[nemotron-3-ultra-550b-a55b:free] [119/569] input_0483.json OK score=17/35 (49%) rounds=12 latency=303.6s tokens=138297 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [120/569] input_0557.json OK score=15/35 (43%) rounds=9 latency=135.5s tokens=92861 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [121/569] input_0419.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [tool-call] ===
+Overall accuracy:    56.2% (120 cases)
+Failed to parse:     2 cases (scored as 0)
+Mean rounds:         9.4 per case
+
+Per-section accuracy:
+  Salary (7 fields)             59.9%
+  Capital Gains (2 fields)      36.2%
+  Other Sources (3 fields)      97.5%
+  Aggregates (2 fields)         4.6%
+  Deductions (9 fields)         79.3%
+  Tax Computation (12 fields)   38.5%
+
+What the score is made of:
+  Derived (31 fields, computed):   50.9%
+  Copied  (4 fields, from input): 97.5%
+
+Cost / efficiency:
+  Mean latency:          309.6 sec/case
+  Mean tokens:           108,037 total (95,777 prompt + 12,260 completion)
+  Total tokens (all):    12,964,459
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__tool-call_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/tool-call_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261027_032455.log

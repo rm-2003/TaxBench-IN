@@ -1,0 +1,239 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 516 done, 53 remaining
+[nemotron-3-ultra-550b-a55b:free] [517/569] input_0150.json OK score=35/35 (100%) rounds=1 latency=316.4s tokens=12919 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [518/569] input_0399.json OK score=25/35 (71%) rounds=1 latency=419.4s tokens=15943 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [519/569] input_0299.json OK score=31/35 (89%) rounds=1 latency=448.0s tokens=18443 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [520/569] input_0504.json OK score=19/35 (54%) rounds=1 latency=567.2s tokens=19767 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [521/569] input_0206.json OK score=30/35 (86%) rounds=1 latency=248.1s tokens=12163 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [522/569] input_0017.json OK score=22/35 (63%) rounds=1 latency=276.7s tokens=12318 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [523/569] input_0413.json OK score=21/35 (60%) rounds=1 latency=509.3s tokens=17350 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [524/569] input_0109.json OK score=19/35 (54%) rounds=1 latency=808.9s tokens=25598 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [525/569] input_0029.json OK score=21/35 (60%) rounds=1 latency=306.2s tokens=12314 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [526/569] input_0118.json OK score=18/35 (51%) rounds=1 latency=673.5s tokens=21499 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [527/569] input_0351.json OK score=32/35 (91%) rounds=1 latency=297.9s tokens=10980 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [528/569] input_0432.json OK score=20/35 (57%) rounds=1 latency=731.7s tokens=25771 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [529/569] input_0081.json OK score=18/35 (51%) rounds=1 latency=798.6s tokens=24945 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [530/569] input_0388.json OK score=26/35 (74%) rounds=1 latency=626.9s tokens=20565 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [531/569] input_0128.json OK score=22/35 (63%) rounds=1 latency=678.2s tokens=21055 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [532/569] input_0045.json OK score=23/35 (66%) rounds=1 latency=503.2s tokens=15247 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [533/569] input_0353.json OK score=32/35 (91%) rounds=1 latency=284.3s tokens=11360 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [534/569] input_0271.json OK score=21/35 (60%) rounds=1 latency=346.2s tokens=16272 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [535/569] input_0390.json OK score=32/35 (91%) rounds=1 latency=365.2s tokens=13214 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [536/569] input_0100.json OK score=20/35 (57%) rounds=1 latency=464.3s tokens=18010 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [537/569] input_0368.json OK score=28/35 (80%) rounds=1 latency=597.0s tokens=17660 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [538/569] input_0095.json OK score=20/35 (57%) rounds=1 latency=512.2s tokens=19563 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [539/569] input_0345.json OK score=30/35 (86%) rounds=1 latency=255.0s tokens=9952 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [540/569] input_0563.json OK score=21/35 (60%) rounds=1 latency=601.4s tokens=18558 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [541/569] input_0221.json OK score=22/35 (63%) rounds=1 latency=526.3s tokens=13948 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [542/569] input_0349.json OK score=32/35 (91%) rounds=1 latency=211.8s tokens=7559 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [543/569] input_0548.json OK score=24/35 (69%) rounds=1 latency=656.1s tokens=17958 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [544/569] input_0007.json OK score=23/35 (66%) rounds=1 latency=335.6s tokens=15479 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [545/569] input_0160.json OK score=21/35 (60%) rounds=1 latency=1103.5s tokens=28422 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [546/569] input_0164.json OK score=19/35 (54%) rounds=1 latency=763.7s tokens=21284 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [547/569] input_0285.json OK score=20/35 (57%) rounds=1 latency=484.6s tokens=16706 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [548/569] input_0560.json OK score=21/35 (60%) rounds=1 latency=1174.5s tokens=27069 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [549/569] input_0460.json OK score=23/35 (66%) rounds=1 latency=720.1s tokens=23551 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [550/569] input_0204.json OK score=22/35 (63%) rounds=1 latency=392.6s tokens=14380 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [551/569] input_0430.json OK score=23/35 (66%) rounds=1 latency=455.5s tokens=14386 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [552/569] input_0028.json OK score=25/35 (71%) rounds=1 latency=245.8s tokens=10211 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [553/569] input_0226.json OK score=22/35 (63%) rounds=1 latency=682.4s tokens=20754 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 32s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 32s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 32s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [554/569] input_0096.json SKIP (Exception: All 3 retries exhausted)
+[nemotron-3-ultra-550b-a55b:free] [554/569] input_0224.json SKIP (Exception: All 3 retries exhausted)
+[nemotron-3-ultra-550b-a55b:free] [554/569] input_0518.json SKIP (Exception: All 3 retries exhausted)
+[nemotron-3-ultra-550b-a55b:free] [554/569] input_0033.json OK score=24/35 (69%) rounds=1 latency=213.9s tokens=11062 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [555/569] input_0433.json OK score=21/35 (60%) rounds=1 latency=461.2s tokens=14249 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [556/569] input_0031.json OK score=20/35 (57%) rounds=1 latency=498.8s tokens=14900 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [557/569] input_0090.json OK score=18/35 (51%) rounds=1 latency=579.1s tokens=22464 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [558/569] input_0559.json OK score=23/35 (66%) rounds=1 latency=385.0s tokens=16606 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [559/569] input_0239.json SKIP (RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-da)
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    61.8% (558 cases)
+Failed to parse:     5 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             73.8%
+  Capital Gains (2 fields)      53.3%
+  Other Sources (3 fields)      91.2%
+  Aggregates (2 fields)         7.7%
+  Deductions (9 fields)         85.7%
+  Tax Computation (12 fields)   39.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   57.8%
+  Copied  (4 fields, from input): 93.1%
+
+Cost / efficiency:
+  Mean latency:          839.8 sec/case
+  Mean tokens:           17,564 total (2,370 prompt + 15,194 completion)
+  Total tokens (all):    9,800,776
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261015_090631.log
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 558 done, 11 remaining
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 32s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [559/569] input_0224.json SKIP (Exception: All 3 retries exhausted)
+[nemotron-3-ultra-550b-a55b:free] [559/569] input_0105.json OK score=22/35 (63%) rounds=1 latency=403.2s tokens=14740 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [560/569] input_0518.json OK score=23/35 (66%) rounds=1 latency=526.2s tokens=13783 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [561/569] input_0096.json OK score=18/35 (51%) rounds=1 latency=711.6s tokens=26946 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [562/569] input_0229.json OK score=23/35 (66%) rounds=1 latency=197.8s tokens=11920 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [563/569] input_0239.json OK score=19/35 (54%) rounds=1 latency=884.6s tokens=24602 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [564/569] input_0026.json OK score=35/35 (100%) rounds=1 latency=290.3s tokens=10340 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+      Transient error (503) — retry in 8s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [565/569] input_0143.json OK score=18/35 (51%) rounds=1 latency=710.7s tokens=22856 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [566/569] input_0282.json OK score=19/35 (54%) rounds=1 latency=567.8s tokens=22072 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [567/569] input_0115.json OK score=19/35 (54%) rounds=1 latency=414.4s tokens=19776 cost=$0.0000
+[nemotron-3-ultra-550b-a55b:free] [568/569] input_0251.json OK score=19/35 (54%) rounds=1 latency=1180.4s tokens=28547 cost=$0.0000
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    61.8% (568 cases)
+Failed to parse:     5 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             73.8%
+  Capital Gains (2 fields)      53.2%
+  Other Sources (3 fields)      91.4%
+  Aggregates (2 fields)         7.7%
+  Deductions (9 fields)         85.7%
+  Tax Computation (12 fields)   40.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   57.8%
+  Copied  (4 fields, from input): 93.2%
+
+Cost / efficiency:
+  Mean latency:          835.4 sec/case
+  Mean tokens:           17,599 total (2,381 prompt + 15,219 completion)
+  Total tokens (all):    9,996,358
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261016_024324.log
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
+[nemotron-3-ultra-550b-a55b:free] Resuming: 568 done, 1 remaining
+      Transient error (503) — retry in 2s
+        detail: upstream error: Upstream error from Nvidia: Service temporarily overloaded
+[nemotron-3-ultra-550b-a55b:free] [569/569] input_0224.json OK score=1/35 (3%) rounds=1 latency=278.4s tokens=9005 cost=$0.0000
+
+=== Evaluation Report: nvidia/nemotron-3-ultra-550b-a55b:free [zero-shot] ===
+Overall accuracy:    61.7% (569 cases)
+Failed to parse:     5 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             73.7%
+  Capital Gains (2 fields)      53.1%
+  Other Sources (3 fields)      91.2%
+  Aggregates (2 fields)         7.7%
+  Deductions (9 fields)         85.5%
+  Tax Computation (12 fields)   39.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   57.7%
+  Copied  (4 fields, from input): 93.0%
+
+Cost / efficiency:
+  Mean latency:          834.4 sec/case
+  Mean tokens:           17,584 total (2,381 prompt + 15,203 completion)
+  Total tokens (all):    10,005,363
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b:free] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nvidia_nemotron-3-ultra-550b-a55b_free__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261016_031525.log

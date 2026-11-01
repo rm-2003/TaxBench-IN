@@ -1,0 +1,39 @@
+2026-10-26 15:47 key 3: 5 OK, 0 parse-fail, 0 nudges; total 55/569
+2026-10-26 16:04 key 4: 5 OK, 0 parse-fail, 0 nudges; total 60/569
+2026-10-26 16:23 key 5: 7 OK, 0 parse-fail, 1 nudges; total 67/569
+2026-10-26 17:55 key 6: 5 OK, 0 parse-fail, 0 nudges; total 72/569
+2026-10-26 18:40 key 7: 5 OK, 0 parse-fail, 0 nudges; total 77/569
+2026-10-26 18:40 all keys capped; waiting for 05:35 IST reset
+2026-10-27 07:08 key 1: 4 OK, 0 parse-fail, 0 nudges; total 85/569
+2026-10-27 07:35 key 2: 6 OK, 0 parse-fail, 0 nudges; total 91/569
+2026-10-27 07:51 key 3: 1 OK, 2 parse-fail, 0 nudges; total 94/569
+2026-10-27 08:12 key 4: 7 OK, 0 parse-fail, 0 nudges; total 101/569
+2026-10-27 08:34 key 5: 7 OK, 0 parse-fail, 0 nudges; total 108/569
+2026-10-27 08:54 key 6: 7 OK, 0 parse-fail, 0 nudges; total 115/569
+2026-10-27 09:56 key 7: 5 OK, 0 parse-fail, 0 nudges; total 120/569
+2026-10-27 13:52 key 8: 6 OK, 0 parse-fail, 0 nudges; total 126/569
+2026-10-27 13:52 all keys capped; waiting for 05:35 IST reset
+2026-10-28 06:12 key 1: 5 OK, 0 parse-fail, 0 nudges; total 131/569
+2026-10-28 06:33 key 2: 5 OK, 0 parse-fail, 0 nudges; total 136/569
+2026-10-28 06:57 key 3: 6 OK, 0 parse-fail, 0 nudges; total 142/569
+2026-10-28 07:16 key 4: 6 OK, 0 parse-fail, 0 nudges; total 148/569
+2026-10-28 07:39 key 5: 5 OK, 0 parse-fail, 0 nudges; total 153/569
+2026-10-28 08:18 key 6: 4 OK, 0 parse-fail, 0 nudges; total 157/569
+2026-10-28 08:35 key 7: 5 OK, 0 parse-fail, 0 nudges; total 162/569
+2026-10-28 08:58 key 8: 6 OK, 0 parse-fail, 0 nudges; total 168/569
+2026-10-28 08:58 all keys capped; waiting for 05:35 IST reset
+2026-10-29 08:46 key 1: 6 OK, 0 parse-fail, 0 nudges; total 174/569
+2026-10-29 09:19 key 2: 6 OK, 0 parse-fail, 0 nudges; total 180/569
+2026-10-29 11:13 key 3: 3 OK, 0 parse-fail, 0 nudges; total 183/569
+2026-10-29 11:47 key 4: 6 OK, 0 parse-fail, 0 nudges; total 189/569
+2026-10-29 12:34 key 5: 4 OK, 0 parse-fail, 0 nudges; total 193/569
+2026-10-29 13:46 key 6: 5 OK, 0 parse-fail, 0 nudges; total 198/569
+2026-10-29 15:20 key 7: 5 OK, 0 parse-fail, 0 nudges; total 203/569
+2026-10-29 17:57 key 8: 5 OK, 0 parse-fail, 0 nudges; total 208/569
+2026-10-29 17:57 all keys capped; waiting for 05:35 IST reset
+2026-10-30 11:23 key 1: 4 OK, 1 parse-fail, 0 nudges; total 213/569
+2026-10-30 11:44 key 2: 6 OK, 0 parse-fail, 0 nudges; total 219/569
+2026-10-30 12:02 key 3: 4 OK, 1 parse-fail, 0 nudges; total 224/569
+2026-10-30 12:27 key 4: 8 OK, 0 parse-fail, 0 nudges; total 232/569
+2026-10-30 13:06 key 5: 6 OK, 0 parse-fail, 0 nudges; total 238/569
+2026-10-30 13:26 key 6: 6 OK, 0 parse-fail, 0 nudges; total 244/569
