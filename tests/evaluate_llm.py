@@ -157,6 +157,10 @@ MODEL_CONFIG = {
     # script in full plus the traceback, which does not fit in 8192.
     "ollama/gemma4-12b-ctx16k":          {"rpm": 600, "concurrency": 1,
                                           "reasoning_effort": "none"},
+    # Local llama.cpp server. Keep one in-flight case: a single 120B model
+    # instance is already saturating the allocated GPUs, and concurrent
+    # benchmark cases would compete for the same decode resources.
+    "llamacpp/gpt-oss-120b":             {"rpm": 600, "concurrency": 1},
     # Same Nemotron weights via NVIDIA's own API (build.nvidia.com) instead of
     # OpenRouter's :free route, which is itself served by Nvidia. No daily cap;
     # the free tier is rate-limited per minute (~40 rpm), so stay under it.
@@ -358,14 +362,17 @@ class CaseResult:
 
 
 LOCAL_PREFIX = "ollama/"
+LLAMACPP_PREFIX = "llamacpp/"
 LOCAL_BASE_URL = "http://localhost:11434/v1"
-LOCAL_TIMEOUT_SECS = 3600  # a 12B on consumer hardware can spend >10 min on one
-                           # case; there is no provider-hang risk to guard against
-                           # locally, so the API_TIMEOUT_SECS ceiling is too tight
+LLAMACPP_BASE_URL = os.environ.get(
+    "LLAMACPP_BASE_URL", "http://localhost:8080/v1"
+)
+LOCAL_TIMEOUT_SECS = 3600  # Local generation can be slow; allow long requests.
 
 
 def is_local_model(model):
-    return bool(model) and model.startswith(LOCAL_PREFIX)
+    """Whether a model is served locally (and therefore has no API cost)."""
+    return bool(model) and model.startswith((LOCAL_PREFIX, LLAMACPP_PREFIX))
 
 
 NIM_PREFIX = "nim/"
@@ -377,11 +384,12 @@ def is_nim_model(model):
 
 
 def api_model_name(model):
-    """Strip the routing prefix so the request carries the provider's own ID."""
-    if is_local_model(model):
-        return model[len(LOCAL_PREFIX):]
-    if is_nim_model(model):
-        return model[len(NIM_PREFIX):]
+    """Strip a routing prefix so the request carries the server/provider model ID."""
+    if not model:
+        return model
+    for prefix in (LOCAL_PREFIX, LLAMACPP_PREFIX, NIM_PREFIX):
+        if model.startswith(prefix):
+            return model[len(prefix):]
     return model
 
 
@@ -389,12 +397,22 @@ def api_model_name(model):
 # Provider client — OpenRouter for most models, Gemini's own OpenAI-compatible
 # endpoint for "gemini-*" model IDs (these aren't available on OpenRouter's
 # free tier, so they're evaluated directly against Google's API instead), and a
-# local Ollama server for "ollama/*" IDs (no quota, no cost — used for the
-# high-request-count method comparison that the free-tier daily cap forbids).
+# local Ollama server for "ollama/*" IDs and llama.cpp for "llamacpp/*" IDs
+# (no quota, no cost — used for local evaluation).
 # ---------------------------------------------------------------------------
 def get_client(model=None):
-    if is_local_model(model):
-        return OpenAI(base_url=LOCAL_BASE_URL, api_key="ollama", timeout=LOCAL_TIMEOUT_SECS)
+    if model and model.startswith(LLAMACPP_PREFIX):
+        return OpenAI(
+            base_url=LLAMACPP_BASE_URL,
+            api_key="llamacpp",
+            timeout=LOCAL_TIMEOUT_SECS,
+        )
+    if model and model.startswith(LOCAL_PREFIX):
+        return OpenAI(
+            base_url=LOCAL_BASE_URL,
+            api_key="ollama",
+            timeout=LOCAL_TIMEOUT_SECS,
+        )
     if is_nim_model(model):
         api_key = os.environ.get("NVIDIA_API_KEY")
         if not api_key:
@@ -587,17 +605,19 @@ def build_messages(method, system_prompt, input_json):
 # Response helpers
 # ---------------------------------------------------------------------------
 def get_response_text(message):
-    """Extract text from a message, checking content then reasoning fields.
+    """Extract final text, with reasoning-field fallbacks for compatible servers.
 
-    Reasoning models (Nemotron, GPT-OSS) put chain-of-thought in `reasoning`
-    and the final answer in `content`. If `content` is empty/None, fall back
-    to `reasoning` (the model may have put everything there).
+    llama.cpp may expose a parsed reasoning block as `reasoning_content`;
+    other providers may use `reasoning`. Prefer `content`, which should contain
+    the final answer, and only fall back when it is empty.
     """
     text = message.content or ""
     if not text:
-        reasoning = getattr(message, "reasoning", None) or ""
-        if reasoning:
-            text = reasoning
+        text = (
+            getattr(message, "reasoning_content", None)
+            or getattr(message, "reasoning", None)
+            or ""
+        )
     return text
 
 
@@ -1833,7 +1853,7 @@ def main():
     global _cost_guard, MAX_TRANSIENT_RETRIES
     parser = argparse.ArgumentParser(description="LLM benchmark evaluator for Indian tax calculator")
     parser.add_argument("--method", choices=["zero-shot", "script", "tool-call"], default="zero-shot")
-    parser.add_argument("--model", type=str, default=None, help="OpenRouter model ID; if omitted runs all models")
+    parser.add_argument("--model", type=str, default=None, help="Provider/model ID (e.g. llamacpp/gpt-oss-120b); if omitted runs all models")
     parser.add_argument("--max-rounds", type=int, default=MAX_TOOL_ROUNDS)
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
     # Attempts per API call before a transient (500/502/503) failure SKIPs the
