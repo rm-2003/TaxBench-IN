@@ -15,6 +15,30 @@ Case order is fixed: `tests/evaluate_llm.py` loads all 569 files in
 | Script, ctx16k | `ollama_gemma4-12b-ctx16k__script.jsonl` | 50 | 519 | ~45 min (multi-round, long scripts) |
 | Tool-call | none for ctx16k | 0 | 569 | not measured |
 
+### How the harness knows which cases are done
+
+The checkpoint files are the record. Each line is one finished case and starts
+with its file name, e.g. `{"case_file": "input_0289.json", ...}`. On start-up
+the harness builds the seed-42 order, reads every `case_file` already in the
+checkpoint for that model and method, and runs only the others; it prints
+`Resuming: 496 done, 73 remaining`. So do not delete, rename or rewrite the
+checkpoint files, and do not change the case folder (adding or removing files
+changes the shuffle order). To list done and remaining cases:
+
+```
+python3 - <<'PY'
+import json, random, sys
+sys.path.insert(0, "tests")
+import evaluate_llm as E
+order = [c["file"] for c in E.load_cases()]
+random.Random(42).shuffle(order)
+ck = "tests/evaluation_checkpoints/ollama_gemma4-12b-ctx16k__zero-shot.jsonl"
+done = {json.loads(l)["case_file"] for l in open(ck) if l.strip()}
+left = [f for f in order if f not in done]
+print(len(done), "done;", len(left), "left; next:", left[:5])
+PY
+```
+
 Nemotron (OpenRouter / NVIDIA) arms are being run separately; do not touch
 their checkpoints (`nvidia_*`, `nim_*`).
 
