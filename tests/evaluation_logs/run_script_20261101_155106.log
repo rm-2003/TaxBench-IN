@@ -1,0 +1,208 @@
+Method: script | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gpt-oss-120b                        rpm=600  concurrency=1
+
+[gpt-oss-120b] Starting — rpm=600, concurrency=1
+[gpt-oss-120b] Resuming: 396 done, 173 remaining
+[gpt-oss-120b] [397/569] input_0153.json OK score=19/35 (54%) rounds=1 latency=61.0s tokens=10180 cost=$0.0000
+[gpt-oss-120b] [398/569] input_0321.json OK score=21/35 (60%) rounds=1 latency=54.1s tokens=9357 cost=$0.0000
+[gpt-oss-120b] [399/569] input_0055.json OK score=22/35 (63%) rounds=1 latency=63.2s tokens=10461 cost=$0.0000
+[gpt-oss-120b] [400/569] input_0260.json OK score=15/35 (43%) rounds=1 latency=57.4s tokens=9753 cost=$0.0000
+[gpt-oss-120b] [401/569] input_0092.json OK score=15/35 (43%) rounds=1 latency=77.4s tokens=12179 cost=$0.0000
+[gpt-oss-120b] [402/569] input_0391.json OK score=18/35 (51%) rounds=1 latency=61.3s tokens=10321 cost=$0.0000
+[gpt-oss-120b] [403/569] input_0257.json OK score=17/35 (49%) rounds=2 latency=116.3s tokens=20476 cost=$0.0000
+[gpt-oss-120b] [404/569] input_0463.json OK score=16/35 (46%) rounds=1 latency=59.5s tokens=10074 cost=$0.0000
+[gpt-oss-120b] [405/569] input_0369.json OK score=19/35 (54%) rounds=1 latency=59.3s tokens=10045 cost=$0.0000
+[gpt-oss-120b] [406/569] input_0506.json OK score=17/35 (49%) rounds=1 latency=66.8s tokens=10841 cost=$0.0000
+[gpt-oss-120b] [407/569] input_0002.json OK score=18/35 (51%) rounds=1 latency=50.0s tokens=8915 cost=$0.0000
+[gpt-oss-120b] [408/569] input_0233.json OK score=15/35 (43%) rounds=1 latency=63.8s tokens=10581 cost=$0.0000
+[gpt-oss-120b] [409/569] input_0528.json OK score=19/35 (54%) rounds=1 latency=67.1s tokens=11051 cost=$0.0000
+[gpt-oss-120b] [410/569] input_0223.json OK score=18/35 (51%) rounds=1 latency=49.6s tokens=8856 cost=$0.0000
+[gpt-oss-120b] [411/569] input_0151.json OK score=18/35 (51%) rounds=1 latency=58.7s tokens=9927 cost=$0.0000
+[gpt-oss-120b] [412/569] input_0058.json OK score=19/35 (54%) rounds=1 latency=51.4s tokens=9031 cost=$0.0000
+[gpt-oss-120b] [413/569] input_0175.json OK score=18/35 (51%) rounds=1 latency=46.1s tokens=8562 cost=$0.0000
+[gpt-oss-120b] [414/569] input_0329.json OK score=20/35 (57%) rounds=1 latency=49.7s tokens=8860 cost=$0.0000
+[gpt-oss-120b] [415/569] input_0484.json OK score=18/35 (51%) rounds=1 latency=56.1s tokens=9633 cost=$0.0000
+[gpt-oss-120b] [416/569] input_0508.json OK score=19/35 (54%) rounds=1 latency=68.4s tokens=11116 cost=$0.0000
+[gpt-oss-120b] [417/569] input_0385.json OK score=20/35 (57%) rounds=1 latency=60.4s tokens=10195 cost=$0.0000
+[gpt-oss-120b] [418/569] input_0275.json OK score=19/35 (54%) rounds=1 latency=66.8s tokens=10836 cost=$0.0000
+[gpt-oss-120b] [419/569] input_0505.json OK score=15/35 (43%) rounds=1 latency=70.9s tokens=11368 cost=$0.0000
+[gpt-oss-120b] [420/569] input_0059.json OK score=20/35 (57%) rounds=1 latency=46.2s tokens=8407 cost=$0.0000
+[gpt-oss-120b] [421/569] input_0370.json OK score=15/35 (43%) rounds=1 latency=54.6s tokens=9541 cost=$0.0000
+[gpt-oss-120b] [422/569] input_0434.json OK score=13/35 (37%) rounds=2 latency=93.8s tokens=17766 cost=$0.0000
+[gpt-oss-120b] [423/569] input_0006.json OK score=16/35 (46%) rounds=1 latency=58.0s tokens=9897 cost=$0.0000
+[gpt-oss-120b] [424/569] input_0284.json OK score=16/35 (46%) rounds=1 latency=63.5s tokens=10501 cost=$0.0000
+[gpt-oss-120b] [425/569] input_0129.json OK score=14/35 (40%) rounds=1 latency=66.4s tokens=10943 cost=$0.0000
+[gpt-oss-120b] [426/569] input_0533.json OK score=17/35 (49%) rounds=1 latency=66.5s tokens=10921 cost=$0.0000
+[gpt-oss-120b] [427/569] input_0240.json OK score=17/35 (49%) rounds=1 latency=79.1s tokens=12403 cost=$0.0000
+[gpt-oss-120b] [428/569] input_0485.json OK score=13/35 (37%) rounds=1 latency=61.5s tokens=10324 cost=$0.0000
+[gpt-oss-120b] [429/569] input_0196.json OK score=17/35 (49%) rounds=1 latency=69.9s tokens=11286 cost=$0.0000
+[gpt-oss-120b] [430/569] input_0198.json OK score=18/35 (51%) rounds=1 latency=60.6s tokens=10040 cost=$0.0000
+[gpt-oss-120b] [431/569] input_0562.json OK score=17/35 (49%) rounds=1 latency=59.4s tokens=10095 cost=$0.0000
+[gpt-oss-120b] [432/569] input_0306.json OK score=19/35 (54%) rounds=2 latency=88.9s tokens=17369 cost=$0.0000
+[gpt-oss-120b] [433/569] input_0217.json OK score=13/35 (37%) rounds=1 latency=64.5s tokens=10759 cost=$0.0000
+[gpt-oss-120b] [434/569] input_0544.json OK score=16/35 (46%) rounds=1 latency=62.8s tokens=10491 cost=$0.0000
+[gpt-oss-120b] [435/569] input_0406.json OK score=13/35 (37%) rounds=1 latency=62.6s tokens=10473 cost=$0.0000
+[gpt-oss-120b] [436/569] input_0520.json OK score=20/35 (57%) rounds=1 latency=58.1s tokens=9787 cost=$0.0000
+[gpt-oss-120b] [437/569] input_0322.json OK score=29/35 (83%) rounds=2 latency=80.5s tokens=15904 cost=$0.0000
+[gpt-oss-120b] [438/569] input_0079.json OK score=19/35 (54%) rounds=1 latency=72.1s tokens=11516 cost=$0.0000
+[gpt-oss-120b] [439/569] input_0057.json OK score=21/35 (60%) rounds=1 latency=58.3s tokens=9819 cost=$0.0000
+[gpt-oss-120b] [440/569] input_0025.json OK score=19/35 (54%) rounds=1 latency=49.6s tokens=8747 cost=$0.0000
+[gpt-oss-120b] [441/569] input_0387.json OK score=15/35 (43%) rounds=1 latency=63.0s tokens=10525 cost=$0.0000
+[gpt-oss-120b] [442/569] input_0523.json OK score=15/35 (43%) rounds=1 latency=65.0s tokens=10624 cost=$0.0000
+[gpt-oss-120b] [443/569] input_0253.json OK score=17/35 (49%) rounds=1 latency=61.1s tokens=10242 cost=$0.0000
+[gpt-oss-120b] [444/569] input_0261.json OK score=17/35 (49%) rounds=1 latency=69.6s tokens=11317 cost=$0.0000
+[gpt-oss-120b] [445/569] input_0071.json OK score=13/35 (37%) rounds=1 latency=71.1s tokens=11457 cost=$0.0000
+[gpt-oss-120b] [446/569] input_0488.json OK score=22/35 (63%) rounds=1 latency=45.6s tokens=8391 cost=$0.0000
+[gpt-oss-120b] [447/569] input_0186.json OK score=15/35 (43%) rounds=1 latency=60.5s tokens=10152 cost=$0.0000
+[gpt-oss-120b] [448/569] input_0205.json OK score=18/35 (51%) rounds=1 latency=52.4s tokens=9194 cost=$0.0000
+[gpt-oss-120b] [449/569] input_0299.json OK score=22/35 (63%) rounds=1 latency=63.6s tokens=10530 cost=$0.0000
+[gpt-oss-120b] [450/569] input_0220.json OK score=11/35 (31%) rounds=1 latency=64.4s tokens=10716 cost=$0.0000
+[gpt-oss-120b] [451/569] input_0300.json OK score=17/35 (49%) rounds=1 latency=59.1s tokens=9953 cost=$0.0000
+[gpt-oss-120b] [452/569] input_0383.json OK score=21/35 (60%) rounds=1 latency=62.5s tokens=10411 cost=$0.0000
+[gpt-oss-120b] [453/569] input_0135.json OK score=21/35 (60%) rounds=1 latency=54.0s tokens=9440 cost=$0.0000
+[gpt-oss-120b] [454/569] input_0276.json OK score=16/35 (46%) rounds=1 latency=61.1s tokens=10223 cost=$0.0000
+[gpt-oss-120b] [455/569] input_0288.json OK score=18/35 (51%) rounds=1 latency=58.4s tokens=9900 cost=$0.0000
+[gpt-oss-120b] [456/569] input_0382.json OK score=21/35 (60%) rounds=1 latency=69.2s tokens=11271 cost=$0.0000
+[gpt-oss-120b] [457/569] input_0127.json OK score=19/35 (54%) rounds=1 latency=54.3s tokens=9527 cost=$0.0000
+[gpt-oss-120b] [458/569] input_0524.json OK score=21/35 (60%) rounds=2 latency=73.4s tokens=14779 cost=$0.0000
+[gpt-oss-120b] [459/569] input_0136.json OK score=18/35 (51%) rounds=1 latency=66.1s tokens=10855 cost=$0.0000
+[gpt-oss-120b] [460/569] input_0074.json OK score=14/35 (40%) rounds=1 latency=69.2s tokens=11199 cost=$0.0000
+[gpt-oss-120b] [461/569] input_0235.json OK score=15/35 (43%) rounds=1 latency=67.0s tokens=10982 cost=$0.0000
+[gpt-oss-120b] [462/569] input_0330.json OK score=23/35 (66%) rounds=1 latency=47.6s tokens=8581 cost=$0.0000
+[gpt-oss-120b] [463/569] input_0453.json OK score=13/35 (37%) rounds=1 latency=66.5s tokens=10970 cost=$0.0000
+[gpt-oss-120b] [464/569] input_0203.json OK score=18/35 (51%) rounds=1 latency=40.4s tokens=7647 cost=$0.0000
+[gpt-oss-120b] [465/569] input_0256.json OK score=15/35 (43%) rounds=1 latency=64.7s tokens=10773 cost=$0.0000
+[gpt-oss-120b] [466/569] input_0336.json OK score=28/35 (80%) rounds=1 latency=52.2s tokens=9095 cost=$0.0000
+[gpt-oss-120b] [467/569] input_0473.json OK score=11/35 (31%) rounds=2 latency=101.1s tokens=21084 cost=$0.0000
+[gpt-oss-120b] [468/569] input_0477.json OK score=20/35 (57%) rounds=2 latency=85.2s tokens=16494 cost=$0.0000
+[gpt-oss-120b] [469/569] input_0535.json OK score=18/35 (51%) rounds=1 latency=60.2s tokens=10196 cost=$0.0000
+[gpt-oss-120b] [470/569] input_0449.json OK score=16/35 (46%) rounds=1 latency=71.7s tokens=11523 cost=$0.0000
+[gpt-oss-120b] [471/569] input_0291.json OK score=18/35 (51%) rounds=1 latency=62.3s tokens=10297 cost=$0.0000
+[gpt-oss-120b] [472/569] input_0468.json OK score=15/35 (43%) rounds=1 latency=71.5s tokens=11542 cost=$0.0000
+[gpt-oss-120b] [473/569] input_0109.json OK score=17/35 (49%) rounds=2 latency=106.8s tokens=22027 cost=$0.0000
+[gpt-oss-120b] [474/569] input_0034.json OK score=21/35 (60%) rounds=1 latency=49.9s tokens=8783 cost=$0.0000
+[gpt-oss-120b] [475/569] input_0138.json OK score=19/35 (54%) rounds=1 latency=70.5s tokens=11442 cost=$0.0000
+[gpt-oss-120b] [476/569] input_0206.json OK score=21/35 (60%) rounds=1 latency=48.3s tokens=8706 cost=$0.0000
+[gpt-oss-120b] [477/569] input_0162.json OK score=21/35 (60%) rounds=1 latency=64.5s tokens=10734 cost=$0.0000
+[gpt-oss-120b] [478/569] input_0413.json OK score=14/35 (40%) rounds=2 latency=90.5s tokens=19490 cost=$0.0000
+[gpt-oss-120b] [479/569] input_0017.json OK score=17/35 (49%) rounds=1 latency=53.1s tokens=9355 cost=$0.0000
+[gpt-oss-120b] [480/569] input_0421.json OK score=16/35 (46%) rounds=1 latency=60.4s tokens=10136 cost=$0.0000
+[gpt-oss-120b] [481/569] input_0118.json OK score=17/35 (49%) rounds=1 latency=75.3s tokens=11871 cost=$0.0000
+[gpt-oss-120b] [482/569] input_0029.json OK score=18/35 (51%) rounds=1 latency=60.2s tokens=10124 cost=$0.0000
+[gpt-oss-120b] [483/569] input_0398.json OK score=17/35 (49%) rounds=1 latency=66.1s tokens=10944 cost=$0.0000
+[gpt-oss-120b] [484/569] input_0394.json OK score=20/35 (57%) rounds=1 latency=66.4s tokens=11009 cost=$0.0000
+[gpt-oss-120b] [485/569] input_0432.json OK score=17/35 (49%) rounds=1 latency=55.4s tokens=9590 cost=$0.0000
+[gpt-oss-120b] [486/569] input_0513.json OK score=14/35 (40%) rounds=1 latency=58.5s tokens=9848 cost=$0.0000
+[gpt-oss-120b] [487/569] input_0351.json OK score=26/35 (74%) rounds=1 latency=51.8s tokens=8993 cost=$0.0000
+[gpt-oss-120b] [488/569] input_0113.json OK score=17/35 (49%) rounds=1 latency=68.2s tokens=11079 cost=$0.0000
+[gpt-oss-120b] [489/569] input_0286.json OK score=15/35 (43%) rounds=1 latency=63.2s tokens=10478 cost=$0.0000
+[gpt-oss-120b] [490/569] input_0534.json OK score=19/35 (54%) rounds=1 latency=70.6s tokens=11455 cost=$0.0000
+[gpt-oss-120b] [491/569] input_0328.json OK score=19/35 (54%) rounds=1 latency=56.4s tokens=9608 cost=$0.0000
+[gpt-oss-120b] [492/569] input_0474.json OK score=18/35 (51%) rounds=2 latency=99.3s tokens=20766 cost=$0.0000
+[gpt-oss-120b] [493/569] input_0139.json OK score=16/35 (46%) rounds=1 latency=62.2s tokens=10465 cost=$0.0000
+[gpt-oss-120b] [494/569] input_0195.json OK score=18/35 (51%) rounds=1 latency=55.7s tokens=9619 cost=$0.0000
+[gpt-oss-120b] [495/569] input_0237.json OK score=14/35 (40%) rounds=1 latency=75.4s tokens=12020 cost=$0.0000
+[gpt-oss-120b] [496/569] input_0084.json OK score=19/35 (54%) rounds=1 latency=64.1s tokens=10592 cost=$0.0000
+[gpt-oss-120b] [497/569] input_0126.json OK score=21/35 (60%) rounds=2 latency=92.9s tokens=20462 cost=$0.0000
+[gpt-oss-120b] [498/569] input_0514.json OK score=15/35 (43%) rounds=1 latency=78.0s tokens=12256 cost=$0.0000
+[gpt-oss-120b] [499/569] input_0274.json OK score=19/35 (54%) rounds=2 latency=92.8s tokens=19885 cost=$0.0000
+[gpt-oss-120b] [500/569] input_0088.json OK score=15/35 (43%) rounds=1 latency=70.7s tokens=11469 cost=$0.0000
+[gpt-oss-120b] [501/569] input_0326.json OK score=22/35 (63%) rounds=1 latency=54.0s tokens=9296 cost=$0.0000
+[gpt-oss-120b] [502/569] input_0312.json OK score=18/35 (51%) rounds=1 latency=68.2s tokens=11112 cost=$0.0000
+[gpt-oss-120b] [503/569] input_0037.json OK score=19/35 (54%) rounds=1 latency=52.4s tokens=9158 cost=$0.0000
+[gpt-oss-120b] [504/569] input_0332.json OK score=25/35 (71%) rounds=2 latency=67.8s tokens=14252 cost=$0.0000
+[gpt-oss-120b] [505/569] input_0350.json OK score=25/35 (71%) rounds=2 latency=72.8s tokens=14760 cost=$0.0000
+[gpt-oss-120b] [506/569] input_0480.json OK score=14/35 (40%) rounds=1 latency=66.9s tokens=10912 cost=$0.0000
+[gpt-oss-120b] [507/569] input_0360.json OK score=20/35 (57%) rounds=1 latency=68.4s tokens=11230 cost=$0.0000
+[gpt-oss-120b] [508/569] input_0137.json OK score=15/35 (43%) rounds=1 latency=74.1s tokens=11814 cost=$0.0000
+[gpt-oss-120b] [509/569] input_0344.json OK score=20/35 (57%) rounds=1 latency=49.7s tokens=8762 cost=$0.0000
+[gpt-oss-120b] [510/569] input_0108.json OK score=21/35 (60%) rounds=1 latency=68.9s tokens=11173 cost=$0.0000
+[gpt-oss-120b] [511/569] input_0182.json OK score=16/35 (46%) rounds=1 latency=61.3s tokens=10257 cost=$0.0000
+[gpt-oss-120b] [512/569] input_0380.json OK score=17/35 (49%) rounds=1 latency=52.6s tokens=9298 cost=$0.0000
+[gpt-oss-120b] [513/569] input_0167.json OK score=20/35 (57%) rounds=1 latency=63.8s tokens=10571 cost=$0.0000
+[gpt-oss-120b] [514/569] input_0374.json OK score=15/35 (43%) rounds=1 latency=60.3s tokens=10263 cost=$0.0000
+[gpt-oss-120b] [515/569] input_0465.json OK score=20/35 (57%) rounds=2 latency=80.6s tokens=15395 cost=$0.0000
+[gpt-oss-120b] [516/569] input_0543.json OK score=15/35 (43%) rounds=1 latency=76.1s tokens=12163 cost=$0.0000
+[gpt-oss-120b] [517/569] input_0537.json OK score=20/35 (57%) rounds=1 latency=64.0s tokens=10645 cost=$0.0000
+[gpt-oss-120b] [518/569] input_0104.json OK score=22/35 (63%) rounds=1 latency=71.9s tokens=11462 cost=$0.0000
+[gpt-oss-120b] [519/569] input_0555.json OK score=19/35 (54%) rounds=1 latency=62.6s tokens=10298 cost=$0.0000
+[gpt-oss-120b] [520/569] input_0082.json OK score=15/35 (43%) rounds=1 latency=68.7s tokens=11165 cost=$0.0000
+[gpt-oss-120b] [521/569] input_0297.json OK score=21/35 (60%) rounds=1 latency=66.7s tokens=10901 cost=$0.0000
+[gpt-oss-120b] [522/569] input_0234.json OK score=22/35 (63%) rounds=2 latency=69.7s tokens=14078 cost=$0.0000
+[gpt-oss-120b] [523/569] input_0047.json OK score=16/35 (46%) rounds=1 latency=62.0s tokens=10326 cost=$0.0000
+[gpt-oss-120b] [524/569] input_0072.json OK score=18/35 (51%) rounds=1 latency=65.5s tokens=10728 cost=$0.0000
+[gpt-oss-120b] [525/569] input_0197.json OK score=17/35 (49%) rounds=2 latency=96.0s tokens=17884 cost=$0.0000
+[gpt-oss-120b] [526/569] input_0371.json OK score=19/35 (54%) rounds=1 latency=59.7s tokens=10098 cost=$0.0000
+[gpt-oss-120b] [527/569] input_0301.json OK score=24/35 (69%) rounds=1 latency=53.0s tokens=9249 cost=$0.0000
+[gpt-oss-120b] [528/569] input_0081.json OK score=12/35 (34%) rounds=1 latency=63.0s tokens=10494 cost=$0.0000
+[gpt-oss-120b] [529/569] input_0388.json OK score=17/35 (49%) rounds=1 latency=61.0s tokens=10257 cost=$0.0000
+[gpt-oss-120b] [530/569] input_0128.json OK score=24/35 (69%) rounds=1 latency=59.3s tokens=10108 cost=$0.0000
+[gpt-oss-120b] [531/569] input_0471.json OK score=14/35 (40%) rounds=1 latency=56.3s tokens=9645 cost=$0.0000
+[gpt-oss-120b] [532/569] input_0045.json OK score=16/35 (46%) rounds=3 latency=116.7s tokens=23868 cost=$0.0000
+[gpt-oss-120b] [533/569] input_0271.json OK score=18/35 (51%) rounds=1 latency=59.4s tokens=9967 cost=$0.0000
+[gpt-oss-120b] [534/569] input_0353.json OK score=29/35 (83%) rounds=1 latency=43.9s tokens=8035 cost=$0.0000
+[gpt-oss-120b] [535/569] input_0368.json OK score=21/35 (60%) rounds=1 latency=52.4s tokens=9199 cost=$0.0000
+[gpt-oss-120b] [536/569] input_0100.json OK score=16/35 (46%) rounds=1 latency=68.3s tokens=11051 cost=$0.0000
+[gpt-oss-120b] [537/569] input_0390.json OK score=20/35 (57%) rounds=1 latency=61.6s tokens=10358 cost=$0.0000
+[gpt-oss-120b] [538/569] input_0095.json OK score=18/35 (51%) rounds=1 latency=68.1s tokens=10962 cost=$0.0000
+[gpt-oss-120b] [539/569] input_0563.json OK score=19/35 (54%) rounds=1 latency=57.3s tokens=9822 cost=$0.0000
+[gpt-oss-120b] [540/569] input_0345.json OK score=26/35 (74%) rounds=1 latency=46.8s tokens=8388 cost=$0.0000
+[gpt-oss-120b] [541/569] input_0221.json OK score=14/35 (40%) rounds=1 latency=64.9s tokens=10692 cost=$0.0000
+[gpt-oss-120b] [542/569] input_0160.json OK score=16/35 (46%) rounds=1 latency=60.6s tokens=10323 cost=$0.0000
+[gpt-oss-120b] [543/569] input_0548.json OK score=19/35 (54%) rounds=1 latency=55.3s tokens=9502 cost=$0.0000
+[gpt-oss-120b] [544/569] input_0349.json OK score=29/35 (83%) rounds=1 latency=34.4s tokens=6717 cost=$0.0000
+[gpt-oss-120b] [545/569] input_0560.json OK score=20/35 (57%) rounds=1 latency=61.5s tokens=10324 cost=$0.0000
+[gpt-oss-120b] [546/569] input_0164.json OK score=17/35 (49%) rounds=1 latency=67.4s tokens=11060 cost=$0.0000
+[gpt-oss-120b] [547/569] input_0007.json OK score=19/35 (54%) rounds=1 latency=57.5s tokens=9799 cost=$0.0000
+[gpt-oss-120b] [548/569] input_0285.json OK score=19/35 (54%) rounds=1 latency=67.9s tokens=10986 cost=$0.0000
+[gpt-oss-120b] [549/569] input_0460.json OK score=12/35 (34%) rounds=2 latency=110.0s tokens=19848 cost=$0.0000
+[gpt-oss-120b] [550/569] input_0226.json OK score=16/35 (46%) rounds=1 latency=48.5s tokens=8723 cost=$0.0000
+[gpt-oss-120b] [551/569] input_0430.json OK score=16/35 (46%) rounds=1 latency=68.2s tokens=11062 cost=$0.0000
+[gpt-oss-120b] [552/569] input_0204.json OK score=12/35 (34%) rounds=1 latency=53.6s tokens=9355 cost=$0.0000
+[gpt-oss-120b] [553/569] input_0028.json OK score=17/35 (49%) rounds=1 latency=43.9s tokens=8022 cost=$0.0000
+[gpt-oss-120b] [554/569] input_0518.json OK score=16/35 (46%) rounds=2 latency=94.8s tokens=17741 cost=$0.0000
+[gpt-oss-120b] [555/569] input_0239.json OK score=17/35 (49%) rounds=1 latency=72.1s tokens=11691 cost=$0.0000
+[gpt-oss-120b] [556/569] input_0224.json OK score=15/35 (43%) rounds=2 latency=82.3s tokens=16312 cost=$0.0000
+[gpt-oss-120b] [557/569] input_0096.json OK score=15/35 (43%) rounds=1 latency=69.7s tokens=11405 cost=$0.0000
+[gpt-oss-120b] [558/569] input_0031.json OK score=16/35 (46%) rounds=1 latency=59.8s tokens=10063 cost=$0.0000
+[gpt-oss-120b] [559/569] input_0033.json OK score=19/35 (54%) rounds=1 latency=40.4s tokens=7740 cost=$0.0000
+[gpt-oss-120b] [560/569] input_0433.json OK score=21/35 (60%) rounds=1 latency=47.7s tokens=8544 cost=$0.0000
+[gpt-oss-120b] [561/569] input_0090.json OK score=15/35 (43%) rounds=1 latency=69.3s tokens=11294 cost=$0.0000
+[gpt-oss-120b] [562/569] input_0559.json OK score=20/35 (57%) rounds=1 latency=54.9s tokens=9497 cost=$0.0000
+[gpt-oss-120b] [563/569] input_0105.json OK score=19/35 (54%) rounds=2 latency=124.5s tokens=21372 cost=$0.0000
+[gpt-oss-120b] [564/569] input_0143.json OK score=16/35 (46%) rounds=1 latency=60.4s tokens=10184 cost=$0.0000
+[gpt-oss-120b] [565/569] input_0229.json OK score=19/35 (54%) rounds=1 latency=49.1s tokens=8748 cost=$0.0000
+[gpt-oss-120b] [566/569] input_0251.json OK score=16/35 (46%) rounds=2 latency=98.0s tokens=20906 cost=$0.0000
+[gpt-oss-120b] [567/569] input_0282.json OK score=14/35 (40%) rounds=1 latency=66.3s tokens=10788 cost=$0.0000
+[gpt-oss-120b] [568/569] input_0026.json OK score=20/35 (57%) rounds=1 latency=53.3s tokens=9205 cost=$0.0000
+[gpt-oss-120b] [569/569] input_0115.json OK score=15/35 (43%) rounds=1 latency=77.5s tokens=12204 cost=$0.0000
+
+=== Evaluation Report: llamacpp/gpt-oss-120b [script] ===
+Overall accuracy:    50.5% (569 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.1 per case
+
+Per-section accuracy:
+  Salary (7 fields)             51.6%
+  Capital Gains (2 fields)      37.0%
+  Other Sources (3 fields)      99.7%
+  Aggregates (2 fields)         2.9%
+  Deductions (9 fields)         66.8%
+  Tax Computation (12 fields)   35.4%
+
+What the score is made of:
+  Derived (31 fields, computed):   44.2%
+  Copied  (4 fields, from input): 99.4%
+
+Cost / efficiency:
+  Mean latency:          64.7 sec/case
+  Mean tokens:           11,192 total (3,387 prompt + 7,805 completion)
+  Total tokens (all):    6,368,306
+  Total cost:            $0.0000 ($0.0000/case)
+[gpt-oss-120b] CSV: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/llamacpp_gpt-oss-120b__script_results.csv
+
+Method summary: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/script_summary.csv
+Cross-method pivot: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_logs/run_script_20261101_155106.log

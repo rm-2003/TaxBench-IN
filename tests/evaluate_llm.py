@@ -157,6 +157,9 @@ MODEL_CONFIG = {
     # instance is already saturating the allocated GPUs, and concurrent
     # benchmark cases would compete for the same decode resources.
     "llamacpp/gpt-oss-120b":             {"rpm": 600, "concurrency": 1},
+    "llamacpp/gemma-4-12b":              {"rpm": 600, "concurrency": 1},
+    "llamacpp/deepseek-r1-distill-70b":  {"rpm": 600, "concurrency": 1},
+    "llamacpp/llama-3.3-70b":            {"rpm": 600, "concurrency": 1},
 }
 
 FREE_FALLBACKS = {
