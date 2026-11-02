@@ -1,0 +1,35 @@
+Method: zero-shot | Models: 1 | Cases: 1 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=1, budget=$17.00
+  gpt-oss-120b                        rpm=600  concurrency=1
+
+[gpt-oss-120b] Starting — rpm=600, concurrency=1
+[gpt-oss-120b] [1/1] input_0289.json OK score=17/35 (49%) rounds=1 latency=45.9s tokens=7860 cost=$0.0000
+
+=== Evaluation Report: llamacpp/gpt-oss-120b [zero-shot] ===
+Overall accuracy:    48.6% (1 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             42.9%
+  Capital Gains (2 fields)      0.0%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         0.0%
+  Deductions (9 fields)         77.8%
+  Tax Computation (12 fields)   33.3%
+
+What the score is made of:
+  Derived (31 fields, computed):   41.9%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          45.9 sec/case
+  Mean tokens:           7,860 total (2,670 prompt + 5,190 completion)
+  Total tokens (all):    7,860
+  Total cost:            $0.0000 ($0.0000/case)
+[gpt-oss-120b] CSV: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/llamacpp_gpt-oss-120b__zero-shot_results.csv
+
+Method summary: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_logs/run_zero-shot_20261031_083715.log
