@@ -1,0 +1,21 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 206 done, 363 remaining
+[gemma4-12b-ctx16k] [207/569] input_0019.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0193.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0279.json SKIP (APIConnectionError: Connection error.)
+Traceback (most recent call last):
+  File "/nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluate_llm.py", line 1925, in <module>
+    main()
+  File "/nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluate_llm.py", line 1887, in main
+    results = run_model(client, models[0], args.method, cases, args)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluate_llm.py", line 1797, in run_model
+    batch_results, rate_limit_halted, remaining_cases = _run_batch(remaining_cases)
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluate_llm.py", line 1709, in _run_batch
+    time.sleep(0.1)
+KeyboardInterrupt
