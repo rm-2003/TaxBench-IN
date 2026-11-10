@@ -160,6 +160,7 @@ MODEL_CONFIG = {
     "llamacpp/gemma-4-12b":              {"rpm": 600, "concurrency": 1},
     "llamacpp/deepseek-r1-distill-70b":  {"rpm": 600, "concurrency": 1},
     "llamacpp/llama-3.3-70b":            {"rpm": 600, "concurrency": 1},
+    "ollama/deepseek-r1-70b": {"rpm": 600, "concurrency": 1,},
 }
 
 FREE_FALLBACKS = {
@@ -359,7 +360,10 @@ class CaseResult:
 
 LOCAL_PREFIX = "ollama/"
 LLAMACPP_PREFIX = "llamacpp/"
-LOCAL_BASE_URL = "http://localhost:11434/v1"
+LOCAL_BASE_URL = os.environ.get(
+    "OLLAMA_BASE_URL",
+    "http://localhost:11434/v1",
+)
 LLAMACPP_BASE_URL = os.environ.get(
     "LLAMACPP_BASE_URL", "http://localhost:8080/v1"
 )
@@ -397,10 +401,13 @@ def get_model_backend(model):
                 "GEMMA4_BACKEND must be either 'ollama' or 'llamacpp'"
             )
         return backend
+
     if model and model.startswith(LLAMACPP_PREFIX):
         return "llamacpp"
+
     if model and model.startswith(LOCAL_PREFIX):
         return "ollama"
+
     return "remote"
 
 
@@ -419,9 +426,24 @@ def get_client(model=None):
             timeout=LOCAL_TIMEOUT_SECS,
         )
     if model and model.startswith(LOCAL_PREFIX):
+        modal_key = os.environ.get("MODAL_KEY")
+        modal_secret = os.environ.get("MODAL_SECRET")
+
+        headers = {}
+        if modal_key and modal_secret:
+            headers = {
+                "Modal-Key": modal_key,
+                "Modal-Secret": modal_secret,
+            }
+        elif modal_key or modal_secret:
+            raise RuntimeError(
+                "Both MODAL_KEY and MODAL_SECRET must be set."
+            )
+
         return OpenAI(
             base_url=LOCAL_BASE_URL,
             api_key="ollama",
+            default_headers=headers,
             timeout=LOCAL_TIMEOUT_SECS,
         )
     if model and model.startswith("gemini-"):
