@@ -1,0 +1,39 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  nemotron-3-ultra-550b-a55b          rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[nemotron-3-ultra-550b-a55b] Starting — rpm=35, concurrency=4
+[nemotron-3-ultra-550b-a55b] Skipping 234 cases already done by nvidia/nemotron-3-ultra-550b-a55b:free [tool-call]
+[nemotron-3-ultra-550b-a55b] Resuming: 334 done, 1 remaining
+[nemotron-3-ultra-550b-a55b] [335/569] input_0559.json OK score=16/35 (46%) rounds=8 latency=92.8s tokens=55146 cost=$0.0000
+
+=== Evaluation Report: nim/nvidia/nemotron-3-ultra-550b-a55b [tool-call] ===
+Overall accuracy:    59.0% (335 cases)
+Failed to parse:     2 cases (scored as 0)
+Mean rounds:         9.1 per case
+
+Per-section accuracy:
+  Salary (7 fields)             62.9%
+  Capital Gains (2 fields)      38.8%
+  Other Sources (3 fields)      99.4%
+  Aggregates (2 fields)         5.1%
+  Deductions (9 fields)         83.1%
+  Tax Computation (12 fields)   40.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.8%
+  Copied  (4 fields, from input): 99.3%
+
+Cost / efficiency:
+  Mean latency:          679.8 sec/case
+  Mean tokens:           98,793 total (86,687 prompt + 12,107 completion)
+  Total tokens (all):    33,095,757
+  Total cost:            $0.0000 ($0.0000/case)
+[nemotron-3-ultra-550b-a55b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_nvidia_nemotron-3-ultra-550b-a55b__tool-call_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/tool-call_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261101_053748.log

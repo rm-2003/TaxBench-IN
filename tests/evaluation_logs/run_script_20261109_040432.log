@@ -1,0 +1,24 @@
+Method: script | Models: 1 | Cases: 190 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] [1/190] input_0060.json OK score=25/35 (71%) rounds=1 latency=1840.7s tokens=23290 cost=$0.0000
+[mistral-large-4-1t-a52b] [2/190] input_0194.json OK score=19/35 (54%) rounds=1 latency=2409.4s tokens=30569 cost=$0.0000
+[mistral-large-4-1t-a52b] [3/190] input_0411.json OK score=19/35 (54%) rounds=1 latency=2487.5s tokens=32866 cost=$0.0000
+[mistral-large-4-1t-a52b] [4/190] input_0552.json OK score=18/35 (51%) rounds=1 latency=2960.6s tokens=38369 cost=$0.0000
+[mistral-large-4-1t-a52b] [5/190] input_0212.json OK score=20/35 (57%) rounds=1 latency=3243.1s tokens=42798 cost=$0.0000
+[mistral-large-4-1t-a52b] [6/190] input_0313.json OK score=31/35 (89%) rounds=1 latency=3443.5s tokens=42220 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s

@@ -1,0 +1,8 @@
+2026-11-09 21:27 WATCHDOG: no new case in 180 min; killing 98453
+2026-11-09 21:27 script 1/6 (NVIDIA_API_KEY_2): exit 143, 14 OK, 0 parse-fail, 0 skip; total 14/72
+2026-11-09 21:27 restart 1/72 in 10 min
+        detail: Connection error.
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+2026-11-10 08:20 script 1/6 (NVIDIA_API_KEY_2): exit 0, 58 OK, 0 parse-fail, 0 skip; total 72/72
+script 1/6 COMPLETE

@@ -1,5 +1,7 @@
 model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_accuracy,script_mean_tokens,script_mean_latency,tool-call_accuracy,tool-call_mean_tokens,tool-call_mean_latency
-nim/nvidia/nemotron-3-ultra-550b-a55b,,,,,,,0.584,99290.0,739.24
-nvidia/nemotron-3-ultra-550b-a55b:free,0.617,17584.0,834.4,0.6069,24478.0,368.98,0.5697,102315.0,417.45
-ollama/gemma4-12b-ctx16k,0.2857,3844.0,132.0,0.452,25565.0,2794.47,,,
+nim/minimaxai/minimax-m3.1-flash,0.4943,28676.0,2030.38,,,,,,
+nim/mistralai/mistral-large-4-1t-a52b,0.5745,27317.0,1096.11,0.6019,41402.0,6504.83,0.5814,187439.0,6436.25
+nim/nvidia/nemotron-3-ultra-550b-a55b,,,,,,,0.5902,98793.0,679.82
+nvidia/nemotron-3-ultra-550b-a55b:free,0.617,17584.0,834.4,0.6338,22253.0,879.98,0.5697,102315.0,417.45
+ollama/gemma4-12b-ctx16k,0.4353,3879.0,196.49,0.452,25565.0,2794.47,,,
 ollama/gemma4-12b-ctx8k,0.3669,3261.0,197.91,,,,0.2476,48001.0,281.1

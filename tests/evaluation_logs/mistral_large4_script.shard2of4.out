@@ -1,0 +1,64 @@
+Method: script | Models: 1 | Cases: 142 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] [1/142] input_0515.json OK score=20/35 (57%) rounds=1 latency=2049.6s tokens=25211 cost=$0.0000
+[mistral-large-4-1t-a52b] [2/142] input_0107.json OK score=23/35 (66%) rounds=1 latency=2256.1s tokens=28176 cost=$0.0000
+[mistral-large-4-1t-a52b] [3/142] input_0439.json OK score=22/35 (63%) rounds=1 latency=2505.1s tokens=32983 cost=$0.0000
+[mistral-large-4-1t-a52b] [4/142] input_0347.json OK score=32/35 (91%) rounds=1 latency=2599.3s tokens=35149 cost=$0.0000
+[mistral-large-4-1t-a52b] [5/142] input_0255.json OK score=20/35 (57%) rounds=1 latency=2637.2s tokens=36099 cost=$0.0000
+[mistral-large-4-1t-a52b] [6/142] input_0132.json OK score=18/35 (51%) rounds=1 latency=2758.4s tokens=37563 cost=$0.0000
+[mistral-large-4-1t-a52b] [7/142] input_0119.json OK score=20/35 (57%) rounds=1 latency=2993.7s tokens=41336 cost=$0.0000
+[mistral-large-4-1t-a52b] [8/142] input_0022.json OK score=19/35 (54%) rounds=1 latency=2997.6s tokens=40568 cost=$0.0000
+[mistral-large-4-1t-a52b] [9/142] input_0549.json OK score=20/35 (57%) rounds=1 latency=3293.8s tokens=44930 cost=$0.0000
+[mistral-large-4-1t-a52b] [10/142] input_0472.json OK score=23/35 (66%) rounds=1 latency=3310.7s tokens=47777 cost=$0.0000
+[mistral-large-4-1t-a52b] [11/142] input_0121.json OK score=17/35 (49%) rounds=1 latency=3410.3s tokens=49063 cost=$0.0000
+[mistral-large-4-1t-a52b] [12/142] input_0156.json OK score=21/35 (60%) rounds=1 latency=3425.0s tokens=50927 cost=$0.0000
+[mistral-large-4-1t-a52b] [13/142] input_0414.json OK score=20/35 (57%) rounds=1 latency=1868.8s tokens=38231 cost=$0.0000
+[mistral-large-4-1t-a52b] [14/142] input_0187.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [14/142] input_0521.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [14/142] input_0318.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [14/142] input_0183.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [14/142] input_0405.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] 5 consecutive failures — stopping model
+Method: script | Models: 1 | Cases: 142 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] Resuming: 13 done, 127 remaining
+[mistral-large-4-1t-a52b] [14/142] input_0183.json OK score=21/35 (60%) rounds=1 latency=1026.1s tokens=23966 cost=$0.0000
+[mistral-large-4-1t-a52b] [15/142] input_0499.json OK score=19/35 (54%) rounds=1 latency=1707.9s tokens=36856 cost=$0.0000
+[mistral-large-4-1t-a52b] [16/142] input_0379.json OK score=24/35 (69%) rounds=1 latency=1780.4s tokens=38562 cost=$0.0000
+[mistral-large-4-1t-a52b] [17/142] input_0556.json OK score=22/35 (63%) rounds=1 latency=2063.3s tokens=45940 cost=$0.0000
+[mistral-large-4-1t-a52b] [18/142] input_0395.json OK score=25/35 (71%) rounds=1 latency=2302.1s tokens=48948 cost=$0.0000
+[mistral-large-4-1t-a52b] [19/142] input_0521.json OK score=17/35 (49%) rounds=1 latency=2389.4s tokens=50146 cost=$0.0000
+[mistral-large-4-1t-a52b] [20/142] input_0187.json OK score=19/35 (54%) rounds=1 latency=2396.0s tokens=53411 cost=$0.0000
+[mistral-large-4-1t-a52b] [21/142] input_0372.json OK score=35/35 (100%) rounds=1 latency=2470.3s tokens=53890 cost=$0.0000
+[mistral-large-4-1t-a52b] [22/142] input_0405.json OK score=18/35 (51%) rounds=1 latency=2532.5s tokens=41834 cost=$0.0000
+[mistral-large-4-1t-a52b] [23/142] input_0461.json OK score=20/35 (57%) rounds=1 latency=2666.0s tokens=44150 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [24/142] input_0038.json OK score=22/35 (63%) rounds=1 latency=1575.2s tokens=27958 cost=$0.0000
+[mistral-large-4-1t-a52b] [25/142] input_0486.json OK score=24/35 (69%) rounds=1 latency=1825.6s tokens=41521 cost=$0.0000
+[mistral-large-4-1t-a52b] [26/142] input_0536.json OK score=21/35 (60%) rounds=1 latency=1956.6s tokens=43455 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [27/142] input_0292.json OK score=17/35 (49%) rounds=1 latency=2937.5s tokens=62414 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [28/142] input_0290.json OK score=16/35 (46%) rounds=1 latency=3253.6s tokens=60594 cost=$0.0000
+[mistral-large-4-1t-a52b] [29/142] input_0087.json OK score=20/35 (57%) rounds=1 latency=5990.4s tokens=42814 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [30/142] input_0024.json OK score=23/35 (66%) rounds=1 latency=1943.1s tokens=33610 cost=$0.0000
+[mistral-large-4-1t-a52b] [31/142] input_0318.json OK score=21/35 (60%) rounds=1 latency=6256.4s tokens=51137 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s

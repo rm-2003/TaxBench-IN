@@ -1,0 +1,18 @@
+Method: script | Models: 1 | Cases: 190 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=8
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)

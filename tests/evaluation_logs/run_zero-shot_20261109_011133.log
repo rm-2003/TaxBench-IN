@@ -1,0 +1,41 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=4
+[mistral-large-4-1t-a52b] Resuming: 439 done, 130 remaining
+[mistral-large-4-1t-a52b] [440/569] input_0284.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] [440/569] input_0198.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] [440/569] input_0306.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] [440/569] input_0523.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] [440/569] input_0261.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] 5 consecutive failures — stopping model
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [zero-shot] ===
+Overall accuracy:    57.0% (439 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             57.5%
+  Capital Gains (2 fields)      36.0%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.8%
+  Deductions (9 fields)         83.4%
+  Tax Computation (12 fields)   38.6%
+
+What the score is made of:
+  Derived (31 fields, computed):   51.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          923.8 sec/case
+  Mean tokens:           27,139 total (2,762 prompt + 24,377 completion)
+  Total tokens (all):    11,914,016
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261109_011133.log

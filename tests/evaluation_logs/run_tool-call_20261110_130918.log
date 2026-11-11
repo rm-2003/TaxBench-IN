@@ -1,0 +1,299 @@
+Method: tool-call | Models: 1 | Cases: 52 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=8
+[mistral-large-4-1t-a52b] [1/52] input_0187.json OK score=20/35 (57%) rounds=4 latency=2912.7s tokens=159682 cost=$0.0000[m      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [2/52] input_0292.json OK score=17/35 (49%) rounds=5 latency=4058.0s tokens=245241 cost=$0.0000
+[mistral-large-4-1t-a52b] [3/52] input_0440.json OK score=21/35 (60%) rounds=6 latency=4067.4s tokens=294159 cost=$0.000[m      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network erro      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read op      Network erro      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read ope      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+      Network error (ReadTimeout)       Netw
+[mistral-large-4-1t-a52b] [4/52] input_0452.json OK score=19/35 (54%) rounds=6 latency=8296.6s tokens=144394 cost=$0.00      Network error (ReadTimeout) —       Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+             Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+         Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detai      Network error (ReadTime      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+[mistral-large-4-1t-a52b] [5/51] input_0401.json OK score=24/35 (69%) rounds=4 latency=9001.7s tokens=56[mistral-large-4-1t-a52b] [5/52] in      Network error (RemoteProtocolError) — retry 3/15 in 60s
+        detail:      Network error (RemoteProtocolError) — retry       Network error (RemoteProtocolE      Network error (RemoteProtocolError) — retry 3/15 in 60s
+        detail: peer clo      Network error (ReadTimeout) — retry      Network error (ReadTimeout) — retry 3/15 in 60s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 3/15 in 60s
+        Network error (ReadTimeout) — retry       Network error (ReadTimeout) — retry 3/15 in 60s
+        detail: The read operati      Network error (ReadTimeout) — retry 3/15 in 60s
+        detail      Network error (ReadTimeout) — retry 3/15 in 60s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry       Network error (ReadTimeout) — retry 3/15 in 60s
+       Network error (ReadTimeout) — retry 3/15 in 60s
+        detail: The read operation timed out
+[mistral-large-4-1t-a52b] [6/52] input_0168.json OK score=24/35 (69%) rounds=5 latency=5976.6s [mistral-large-4-1t-a52b] [[mistral-large-4-1t-a52b] [7/52] input_0087.json OK score=20/35 (57%) rounds=5 latency=14872.4s [mistral-large-4-1t-a52b] [[mistral-large-4-1t-a52b] [8/52] input_0546.json OK score=18/35 (51%) rounds=5 latency=14618.2s tokens=199125 cost=$0.0000
+[mistral-large-4-1t-a52b] [9/52] input_0348.json OK score=32/35 (91%) rounds=3 latency=1515.2s tokens=75888 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [10/52] input_0386.json OK score=24/35 (69%) rounds=5 latency=12723.4s tokens=333925 cost=$0.0000
+[mistral-large-4-1t-a52b] [11/52] input_0061.json OK score=23/35 (66%) rounds=4 latency=782.1s tokens=45153 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [12/52] input_0015.json OK score=20/35 (57%) rounds=5 latency=1626[mistral-large-4-1t-a52b] [12/5[mistral-large-4-1t-a52b] [13/52] input_0510.json OK score=17/35 (49%) rounds=4 latency=3655.0s tokens=190662 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [14/52] input_0101.json OK score=16/35 (46%) rounds=5 latency=20497.3s tokens=265181 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [15/52] input_0561.json OK score=18/35 (51%) rounds=5 latency=12574.8s tokens=151003 cost=$0.0000
+[mistral-large-4-1t-a52b] [16/52] input_0551.json OK score=15/35 (43%) rounds=5 latency=18988.3      Transient error (503) �      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [17/52] input_0378.json OK score=23/35 (66%) rounds=4 latency=6994.8s tokens=106654 cost=$0.0000
+[mistral-large-4-1t-a52b] [18/52] input_0003.json OK score=2      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Transient error (503) — retry in 2s
+        detail: stream ended withou      Transient er      Transient error (503) — retry in 8s
+        detail: stream ended without[mistral-large-4-      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [17/51] input_0483.json OK score=15/35 (43%) rounds=6 latency=27284.9s tokens=229500 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream ended withou      Transient er      Transient error (503) — retry in 32s
+        detail: stream ended withou      Transient er      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [18/51] input_0051.json OK score=23/35 (66%) rounds=6 latency=4342.6s tokens=79202 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [19/51] input_0112.json OK score=16/35 (46%) rounds=4 latency=10306.5s tokens=207427 cost=$0.0000
+[mistral-large-4-1t-a52b] [20/51] input_0486.json OK score=20/35 (57%) rounds=4 latency=30390.5s tokens=179078 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — wait      Network error (RemoteProtocolError) — retry 4/15 in 120s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[mistral-large-4-1t-a52b] [30/52] input_0298.json OK score=21/35 (60%) rounds=4 latency=17793.5s tokens=179053 cost      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Net      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 2/15 in 30s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[mistral-large-4-1t-a52b] [31/52] input_0406.json OK score=19/35 (54%) rounds=12 latency=3575.9s tokens=275015 cost=$0.0000
+[mistral-large-4-1t-a52b] [32/52] input_0127.json OK score=20/35 (57%) rounds=5 latency=1852.1s tokens=174[mistral-large-4-1t-a52b] [42/52] input_0128.json OK score=17/35 (49%) rounds=5 latency=7158.9s tokens=210013 cost=$0.0000
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [43/52] input_0509.json OK score=20/35 (57%) rounds=5 latency=18678.0s tokens=167015 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [44/52] input_0513.json OK score=18/35 (51%) rounds=4 latency=12941.6s tokens=180947 cost=$0.0000
+[mistral-large-4-1t-a52b] [45/52] input_0105.json OK score=20/35 (57%) rounds=4 latency=13154.2s tokens=293277 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [tool-call] ===
+Overall accuracy:    59.0% (45 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         4.8 per case
+
+Per-section accuracy:
+  Salary (7 fields)             58.7%
+  Capital Gains (2 fields)      32.2%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         4.4%
+  Deductions (9 fields)         87.9%
+  Tax Computation (12 fields)   40.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.8%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          6256.3 sec/case
+  Mean tokens:           171,524 total (136,781 prompt + 34,743 completion)
+  Total tokens (all):    7,718,573
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__tool-call.shard2of11_results.csv
+
+Part.shard2of11: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261110_130918.log
+  34.4%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         0.0%
+  Deductions (9 fields)         85.4%
+  Tax Computation (12 fields)   40.6%
+
+What the score is made of:
+  Derived (31 fields, computed):   52.5%
+  Copied  ([mistral-large-4-1t-a52b] [43/52] input_0115.json OK score=19/35 (54%) rounds=5 latency=6542.5s tokens=284765 cost=$0.0000
+[mistral-large[mistral-large-4-1t-a52b] [44/52] input_0532.json OK score=21/35 (60%) rounds=4 latency=43412.6s tokens=340528 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [tool-call] ===
+Overall accuracy:    58.8% (44 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         5.3 per case
+
+Per-section accuracy:
+  Salary (7 fields)             63.6%
+  Capital Gains (2 fields)      27.3%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         4.5%
+  Deductions (9 fields)         85.4%
+  Tax Computation (12 fields)   40.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          7015.4 sec/case
+  Mean tokens:           179,154 total (145,622 prompt + 33,532 completion)
+  Total tokens (all):    7,882,792
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__tool-call.shard3of11_results.csv
+
+Part.shard3of11: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261110_130918.log
+t: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261110_130918.log
+, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261110_130918.log
+ 15s (attempt 2)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+[mistral-large-4-1t-a52b] [34/51] input_0139.json OK score=22/35 (63%) rounds=5 latency=1924.9s tokens=124867 cost=$0.0000
+[mistral-large-4-1t-a52b] [35/51] input_0319.json OK score=20/35 (57%) rounds=4 latency=13277.3s tokens=253195 cost=$0.0000
+[mistral-large-4-1t-a52b] [36/51] input_0278.json OK score=18/35 (51%) rounds=6 latency=24724.5s tokens=374738 cos[mistral-l[mistral-large-4-1t-a52b] [37/51] input_0291.json OK score=20/35 (57%) rounds=6 latency=3756.7s tokens=454489 cost=$0.0000
+[mistral-large-4-1t-a52b] [38/51] input_0299.json OK score=33/35 (94%) rounds=4 latency=5659.7s tokens=143146 cos[mistral-large-4-1t-a52b] [45/51] input_0506.json OK score=17/35 (49%) rounds=5 latency=16773.6s tokens=310990 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [tool-call] ===
+Overall accuracy:    58.0% (45 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         5.1 per case
+
+Per-section accuracy:
+  Salary (7 fields)             58.4%
+  Capital Gains (2 fields)      21.1%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         5.6%
+  Deductions (9 fields)         86.4%
+  Tax Computation (12 fields)   40.7%
+
+What the score is made of:
+  Derived (31 fields, computed):   52.5%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          6735.9 sec/case
+  Mean tokens:           156,543 total (126,858 prompt + 29,685 completion)
+  Total tokens (all):    7,044,431
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__tool-call.shard10of11_results.csv
+
+Part.shard10of11: summaries not written; merge part checkpoints, then run res[mistral-large-4-1t-a52b] [45/51] input_0390.json OK score=35/35 (100%) rounds=5 latency=1672.5s tokens=236971 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[mistral-large-4-1t-a52b] [46/51] input_0285.json OK score=19/35 (54%) rounds=4 latency=3492.0s tokens=277075 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [tool-call] ===
+Overall accuracy:    58.6% (46 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         5.2 per case
+
+Per-section accuracy:
+  Salary (7 fields)             54.7%
+  Capital Gains (2 fields)      29.3%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         7.6%
+  Deductions (9 fields)         87.4%
+  Tax Computation (12 fields)   42.4%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.3%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          7413.1 sec/case
+  Mean tokens:           194,295 total (159,599 prompt + 34,697 completion)
+  Total tokens (all):    8,937,590
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__tool-call.shard9of11_results.csv
+
+Part.shard9of11: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261110_130918.log

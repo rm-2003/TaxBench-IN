@@ -1,0 +1,64 @@
+Method: zero-shot | Models: 1 | Cases: 81 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=8
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+      429 rate limit — waiting 120s (attempt 4)
+[minimax-m3.1-flash] [1/81] input_0156.json OK score=15/35 (43%) rounds=1 latency=320.0s tokens=9375 cost=$0.0000
+Method: zero-shot | Models: 1 | Cases: 81 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=4
+[minimax-m3.1-flash] Resuming: 1 done, 80 remaining
+[minimax-m3.1-flash] [2/81] input_0381.json OK score=16/35 (46%) rounds=1 latency=502.7s tokens=11433 cost=$0.0000
+[minimax-m3.1-flash] [3/81] input_0179.json OK score=20/35 (57%) rounds=1 latency=775.9s tokens=19115 cost=$0.0000
+[minimax-m3.1-flash] [4/81] input_0199.json OK score=19/35 (54%) rounds=1 latency=819.9s tokens=20633 cost=$0.0000
+[minimax-m3.1-flash] [5/81] input_0194.json OK score=20/35 (57%) rounds=1 latency=1379.5s tokens=35338 cost=$0.0000
+[minimax-m3.1-flash] [6/81] input_0512.json OK score=16/35 (46%) rounds=1 latency=1418.8s tokens=33847 cost=$0.0000
+[minimax-m3.1-flash] [7/81] input_0456.json OK score=20/35 (57%) rounds=1 latency=840.9s tokens=20881 cost=$0.0000
+[minimax-m3.1-flash] [8/81] input_0154.json OK score=15/35 (43%) rounds=1 latency=1572.4s tokens=42073 cost=$0.0000
+[minimax-m3.1-flash] [9/81] input_0556.json OK score=17/35 (49%) rounds=1 latency=499.3s tokens=11900 cost=$0.0000
+[minimax-m3.1-flash] [10/81] input_0266.json OK score=15/35 (43%) rounds=1 latency=1304.6s tokens=22212 cost=$0.0000
+[minimax-m3.1-flash] [11/81] input_0117.json OK score=12/35 (34%) rounds=1 latency=832.1s tokens=15327 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+[minimax-m3.1-flash] [12/81] input_0436.json OK score=19/35 (54%) rounds=1 latency=9173.3s tokens=16296 cost=$0.0000
+[minimax-m3.1-flash] [13/81] input_0176.json OK score=20/35 (57%) rounds=1 latency=7857.3s tokens=16544 cost=$0.0000
+[minimax-m3.1-flash] [14/81] input_0043.json OK score=21/35 (60%) rounds=1 latency=574.6s tokens=18136 cost=$0.0000
+[minimax-m3.1-flash] [15/81] input_0357.json OK score=15/35 (43%) rounds=1 latency=641.5s tokens=11633 cost=$0.0000
+[minimax-m3.1-flash] [16/81] input_0165.json OK score=15/35 (43%) rounds=1 latency=348.4s tokens=11882 cost=$0.0000
+[minimax-m3.1-flash] [17/81] input_0461.json OK score=9/35 (26%) rounds=1 latency=9014.2s tokens=52091 cost=$0.0000
+[minimax-m3.1-flash] [18/81] input_0020.json OK score=19/35 (54%) rounds=1 latency=378.1s tokens=10402 cost=$0.0000
+[minimax-m3.1-flash] [19/81] input_0540.json OK score=16/35 (46%) rounds=1 latency=1055.5s tokens=21641 cost=$0.0000
+[minimax-m3.1-flash] [20/81] input_0119.json OK score=15/35 (43%) rounds=1 latency=13302.5s tokens=92898 cost=$0.0000
+[minimax-m3.1-flash] [21/81] input_0522.json OK score=15/35 (43%) rounds=1 latency=2252.4s tokens=46670 cost=$0.0000
+[minimax-m3.1-flash] [22/81] input_0163.json OK score=15/35 (43%) rounds=1 latency=1026.4s tokens=30510 cost=$0.0000
+[minimax-m3.1-flash] [23/81] input_0042.json OK score=23/35 (66%) rounds=1 latency=2645.5s tokens=21124 cost=$0.0000

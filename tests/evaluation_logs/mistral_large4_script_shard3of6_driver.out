@@ -1,0 +1,29 @@
+2026-11-10 07:33 script 3/6 (NVIDIA_API_KEY_12): exit 0, 69 OK, 0 parse-fail, 1 skip; total 69/70
+2026-11-10 07:33 restart 1/72 in 10 min
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261109_102957.log
+2026-11-10 10:43 WATCHDOG: no new case in 180 min; killing 45271
+2026-11-10 10:43 script 3/6 (NVIDIA_API_KEY_12): exit 143, 0 OK, 0 parse-fail, 0 skip; total 69/70
+2026-11-10 10:43 restart 2/72 in 10 min
+        detail: The read operation timed out
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+2026-11-10 14:00 WATCHDOG: no new case in 180 min; killing 55427
+2026-11-10 14:00 script 3/6 (NVIDIA_API_KEY_12): exit 143, 0 OK, 0 parse-fail, 0 skip; total 69/70
+2026-11-10 14:00 restart 3/72 in 10 min
+[mistral-large-4-1t-a52b] Resuming: 69 done, 1 remaining
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+2026-11-10 17:49 WATCHDOG: no new case in 180 min; killing 59874
+2026-11-10 17:51 script 3/6 (NVIDIA_API_KEY_12): exit 143, 0 OK, 0 parse-fail, 0 skip; total 69/70
+2026-11-10 17:51 restart 4/72 in 10 min
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+2026-11-10 21:11 WATCHDOG: no new case in 180 min; killing 73007
+2026-11-10 21:11 script 3/6 (NVIDIA_API_KEY_12): exit 143, 0 OK, 0 parse-fail, 0 skip; total 69/70
+2026-11-10 21:11 restart 5/72 in 10 min
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out

@@ -1,0 +1,112 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] Resuming: 496 done, 73 remaining
+[mistral-large-4-1t-a52b] [497/569] input_0274.json OK score=20/35 (57%) rounds=1 latency=1273.4s tokens=19796 cost=$0.0000
+[mistral-large-4-1t-a52b] [498/569] input_0037.json OK score=22/35 (63%) rounds=1 latency=1348.5s tokens=19949 cost=$0.0000
+[mistral-large-4-1t-a52b] [499/569] input_0350.json OK score=31/35 (89%) rounds=1 latency=1521.5s tokens=20065 cost=$0.0000
+[mistral-large-4-1t-a52b] [500/569] input_0480.json OK score=19/35 (54%) rounds=1 latency=1598.6s tokens=26998 cost=$0.0000
+[mistral-large-4-1t-a52b] [501/569] input_0126.json OK score=32/35 (91%) rounds=1 latency=1688.8s tokens=28478 cost=$0.0000
+[mistral-large-4-1t-a52b] [502/569] input_0514.json OK score=18/35 (51%) rounds=1 latency=1901.6s tokens=33550 cost=$0.0000
+[mistral-large-4-1t-a52b] [503/569] input_0137.json OK score=14/35 (40%) rounds=1 latency=2012.2s tokens=35589 cost=$0.0000
+[mistral-large-4-1t-a52b] [504/569] input_0360.json OK score=22/35 (63%) rounds=1 latency=2091.3s tokens=38230 cost=$0.0000
+[mistral-large-4-1t-a52b] [505/569] input_0167.json OK score=20/35 (57%) rounds=1 latency=642.6s tokens=16609 cost=$0.0000
+[mistral-large-4-1t-a52b] [506/569] input_0182.json OK score=20/35 (57%) rounds=1 latency=905.5s tokens=23821 cost=$0.0000
+[mistral-large-4-1t-a52b] [507/569] input_0326.json OK score=23/35 (66%) rounds=1 latency=2537.0s tokens=29695 cost=$0.0000
+[mistral-large-4-1t-a52b] [508/569] input_0332.json OK score=26/35 (74%) rounds=1 latency=2547.8s tokens=29977 cost=$0.0000
+[mistral-large-4-1t-a52b] [509/569] input_0088.json OK score=19/35 (54%) rounds=1 latency=2605.4s tokens=32060 cost=$0.0000
+[mistral-large-4-1t-a52b] [510/569] input_0374.json OK score=22/35 (63%) rounds=1 latency=1183.0s tokens=32275 cost=$0.0000
+[mistral-large-4-1t-a52b] [511/569] input_0537.json OK score=20/35 (57%) rounds=1 latency=820.0s tokens=23448 cost=$0.0000
+[mistral-large-4-1t-a52b] [512/569] input_0380.json OK score=20/35 (57%) rounds=1 latency=1589.0s tokens=41796 cost=$0.0000
+[mistral-large-4-1t-a52b] [513/569] input_0108.json OK score=20/35 (57%) rounds=1 latency=1847.5s tokens=22720 cost=$0.0000
+[mistral-large-4-1t-a52b] [514/569] input_0312.json OK score=22/35 (63%) rounds=1 latency=3311.3s tokens=41983 cost=$0.0000
+[mistral-large-4-1t-a52b] [515/569] input_0344.json OK score=25/35 (71%) rounds=1 latency=2269.6s tokens=28190 cost=$0.0000
+[mistral-large-4-1t-a52b] [516/569] input_0555.json OK score=20/35 (57%) rounds=1 latency=1102.0s tokens=29163 cost=$0.0000
+[mistral-large-4-1t-a52b] [517/569] input_0543.json OK score=16/35 (46%) rounds=1 latency=1666.0s tokens=42730 cost=$0.0000
+[mistral-large-4-1t-a52b] [518/569] input_0234.json OK score=22/35 (63%) rounds=1 latency=857.6s tokens=23484 cost=$0.0000
+[mistral-large-4-1t-a52b] [519/569] input_0197.json OK score=23/35 (66%) rounds=1 latency=825.4s tokens=22563 cost=$0.0000
+[mistral-large-4-1t-a52b] [520/569] input_0371.json OK score=24/35 (69%) rounds=1 latency=911.4s tokens=22550 cost=$0.0000
+[mistral-large-4-1t-a52b] [521/569] input_0301.json OK score=33/35 (94%) rounds=1 latency=857.0s tokens=17760 cost=$0.0000
+[mistral-large-4-1t-a52b] [522/569] input_0297.json OK score=24/35 (69%) rounds=1 latency=2041.6s tokens=33005 cost=$0.0000
+[mistral-large-4-1t-a52b] [523/569] input_0388.json OK score=20/35 (57%) rounds=1 latency=909.8s tokens=22361 cost=$0.0000
+[mistral-large-4-1t-a52b] [524/569] input_0047.json OK score=23/35 (66%) rounds=1 latency=1713.1s tokens=31248 cost=$0.0000
+[mistral-large-4-1t-a52b] [525/569] input_0471.json OK score=17/35 (49%) rounds=1 latency=892.7s tokens=22629 cost=$0.0000
+[mistral-large-4-1t-a52b] [526/569] input_0128.json OK score=20/35 (57%) rounds=1 latency=978.4s tokens=23967 cost=$0.0000
+[mistral-large-4-1t-a52b] [527/569] input_0082.json OK score=19/35 (54%) rounds=1 latency=2414.5s tokens=41946 cost=$0.0000
+[mistral-large-4-1t-a52b] [528/569] input_0072.json OK score=18/35 (51%) rounds=1 latency=1866.2s tokens=34610 cost=$0.0000
+[mistral-large-4-1t-a52b] [529/569] input_0081.json OK score=19/35 (54%) rounds=1 latency=1553.1s tokens=33345 cost=$0.0000
+[mistral-large-4-1t-a52b] [530/569] input_0104.json OK score=18/35 (51%) rounds=1 latency=2795.3s tokens=52009 cost=$0.0000
+[mistral-large-4-1t-a52b] [531/569] input_0271.json OK score=16/35 (46%) rounds=1 latency=832.0s tokens=23121 cost=$0.0000
+[mistral-large-4-1t-a52b] [532/569] input_0353.json OK score=29/35 (83%) rounds=1 latency=838.1s tokens=21822 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [533/569] input_0100.json OK score=18/35 (51%) rounds=1 latency=847.2s tokens=22815 cost=$0.0000
+[mistral-large-4-1t-a52b] [534/569] input_0368.json OK score=23/35 (66%) rounds=1 latency=1089.2s tokens=27950 cost=$0.0000
+[mistral-large-4-1t-a52b] [535/569] input_0563.json OK score=21/35 (60%) rounds=1 latency=970.2s tokens=25282 cost=$0.0000
+[mistral-large-4-1t-a52b] [536/569] input_0345.json OK score=30/35 (86%) rounds=1 latency=881.9s tokens=23307 cost=$0.0000
+[mistral-large-4-1t-a52b] [537/569] input_0045.json OK score=20/35 (57%) rounds=1 latency=1902.7s tokens=39832 cost=$0.0000
+[mistral-large-4-1t-a52b] [538/569] input_0465.json OK score=22/35 (63%) rounds=1 latency=4190.7s tokens=16853 cost=$0.0000
+[mistral-large-4-1t-a52b] [539/569] input_0390.json OK score=19/35 (54%) rounds=1 latency=1321.7s tokens=33128 cost=$0.0000
+[mistral-large-4-1t-a52b] [540/569] input_0221.json OK score=20/35 (57%) rounds=1 latency=1128.2s tokens=30060 cost=$0.0000
+[mistral-large-4-1t-a52b] [541/569] input_0548.json OK score=21/35 (60%) rounds=1 latency=1135.5s tokens=29249 cost=$0.0000
+[mistral-large-4-1t-a52b] [542/569] input_0160.json OK score=18/35 (51%) rounds=1 latency=1209.8s tokens=31254 cost=$0.0000
+[mistral-large-4-1t-a52b] [543/569] input_0349.json OK score=32/35 (91%) rounds=1 latency=1030.4s tokens=18315 cost=$0.0000
+[mistral-large-4-1t-a52b] [544/569] input_0095.json OK score=19/35 (54%) rounds=1 latency=1725.8s tokens=36131 cost=$0.0000
+[mistral-large-4-1t-a52b] [545/569] input_0560.json OK score=20/35 (57%) rounds=1 latency=940.0s tokens=25943 cost=$0.0000
+[mistral-large-4-1t-a52b] [546/569] input_0007.json OK score=24/35 (69%) rounds=1 latency=926.2s tokens=17454 cost=$0.0000
+[mistral-large-4-1t-a52b] [547/569] input_0285.json OK score=21/35 (60%) rounds=1 latency=948.3s tokens=24523 cost=$0.0000
+[mistral-large-4-1t-a52b] [548/569] input_0226.json OK score=20/35 (57%) rounds=1 latency=776.6s tokens=21885 cost=$0.0000
+[mistral-large-4-1t-a52b] [549/569] input_0430.json OK score=19/35 (54%) rounds=1 latency=846.6s tokens=20628 cost=$0.0000
+[mistral-large-4-1t-a52b] [550/569] input_0204.json OK score=20/35 (57%) rounds=1 latency=824.8s tokens=21458 cost=$0.0000
+[mistral-large-4-1t-a52b] [551/569] input_0164.json OK score=18/35 (51%) rounds=1 latency=1720.7s tokens=40073 cost=$0.0000
+[mistral-large-4-1t-a52b] [552/569] input_0028.json OK score=22/35 (63%) rounds=1 latency=1192.5s tokens=25900 cost=$0.0000
+[mistral-large-4-1t-a52b] [553/569] input_0096.json OK score=16/35 (46%) rounds=1 latency=1020.2s tokens=20263 cost=$0.0000
+[mistral-large-4-1t-a52b] [554/569] input_0033.json OK score=24/35 (69%) rounds=1 latency=818.9s tokens=16295 cost=$0.0000
+[mistral-large-4-1t-a52b] [555/569] input_0460.json OK score=18/35 (51%) rounds=1 latency=1592.5s tokens=31103 cost=$0.0000
+[mistral-large-4-1t-a52b] [556/569] input_0433.json OK score=19/35 (54%) rounds=1 latency=757.0s tokens=14524 cost=$0.0000
+[mistral-large-4-1t-a52b] [557/569] input_0518.json OK score=19/35 (54%) rounds=1 latency=1531.9s tokens=25985 cost=$0.0000
+[mistral-large-4-1t-a52b] [558/569] input_0031.json OK score=18/35 (51%) rounds=1 latency=1165.7s tokens=23262 cost=$0.0000
+[mistral-large-4-1t-a52b] [559/569] input_0239.json OK score=17/35 (49%) rounds=1 latency=1555.1s tokens=28580 cost=$0.0000
+[mistral-large-4-1t-a52b] [560/569] input_0224.json OK score=19/35 (54%) rounds=1 latency=1750.6s tokens=30982 cost=$0.0000
+[mistral-large-4-1t-a52b] [561/569] input_0559.json OK score=21/35 (60%) rounds=1 latency=1258.4s tokens=20658 cost=$0.0000
+[mistral-large-4-1t-a52b] [562/569] input_0026.json OK score=24/35 (69%) rounds=1 latency=839.4s tokens=19104 cost=$0.0000
+[mistral-large-4-1t-a52b] [563/569] input_0105.json OK score=19/35 (54%) rounds=1 latency=1314.2s tokens=28717 cost=$0.0000
+[mistral-large-4-1t-a52b] [564/569] input_0090.json OK score=15/35 (43%) rounds=1 latency=1753.2s tokens=35737 cost=$0.0000
+[mistral-large-4-1t-a52b] [565/569] input_0143.json OK score=16/35 (46%) rounds=1 latency=1303.6s tokens=23526 cost=$0.0000
+[mistral-large-4-1t-a52b] [566/569] input_0229.json OK score=20/35 (57%) rounds=1 latency=1450.2s tokens=27351 cost=$0.0000
+[mistral-large-4-1t-a52b] [567/569] input_0251.json OK score=20/35 (57%) rounds=1 latency=1665.8s tokens=32137 cost=$0.0000
+[mistral-large-4-1t-a52b] [568/569] input_0115.json OK score=17/35 (49%) rounds=1 latency=1772.9s tokens=37739 cost=$0.0000
+[mistral-large-4-1t-a52b] [569/569] input_0282.json OK score=18/35 (51%) rounds=1 latency=2033.4s tokens=37437 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [zero-shot] ===
+Overall accuracy:    57.4% (569 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             58.4%
+  Capital Gains (2 fields)      37.2%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         3.6%
+  Deductions (9 fields)         82.9%
+  Tax Computation (12 fields)   39.5%
+
+What the score is made of:
+  Derived (31 fields, computed):   52.0%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          1096.1 sec/case
+  Mean tokens:           27,317 total (2,760 prompt + 24,557 completion)
+  Total tokens (all):    15,543,535
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261109_074223.log
