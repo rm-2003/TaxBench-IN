@@ -1,7 +1,0 @@
-2026-11-10 10:01 script 2/6 (NVIDIA_API_KEY_11): exit 0, 72 OK, 0 parse-fail, 1 skip; total 72/73
-2026-11-10 10:01 restart 1/72 in 10 min
-Total spent: $0.0000
-
-Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261109_102957.log
-2026-11-10 11:15 script 2/6 (NVIDIA_API_KEY_11): exit 0, 1 OK, 0 parse-fail, 0 skip; total 73/73
-script 2/6 COMPLETE

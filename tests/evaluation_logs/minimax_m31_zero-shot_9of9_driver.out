@@ -1,7 +1,0 @@
-2026-11-10 16:11 zero-shot 9/9 (NVIDIA_API_KEY_20): exit 0, 36 OK, 0 parse-fail, 1 skip; total 36/37
-2026-11-10 16:11 restart 1/72 in 10 min
-Total spent: $0.0000
-
-Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261110_085658.log
-2026-11-10 16:43 zero-shot 9/9 (NVIDIA_API_KEY_20): exit 0, 1 OK, 0 parse-fail, 0 skip; total 37/37
-zero-shot 9/9 COMPLETE

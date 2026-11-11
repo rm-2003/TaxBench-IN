@@ -1,6 +1,0 @@
-Method: zero-shot | Models: 1 | Cases: 3 (seed=42)
-Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=3, budget=$17.00
-  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
-  Cost guard: initial usage = $0.0000, budget = $17.00
-
-[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4

@@ -1,6 +1,0 @@
-Method: tool-call | Models: 1 | Cases: 82 (seed=42)
-Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
-  mistral-large-4-1t-a52b             rpm=35  concurrency=4
-  Cost guard: initial usage = $0.0000, budget = $17.00
-
-[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12

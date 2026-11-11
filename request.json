@@ -1,9 +1,0 @@
-{
-    "options":  {
-                    "num_predict":  256,
-                    "num_ctx":  16384
-                },
-    "prompt":  "Explain the difference between a direct-mapped cache and a fully associative cache in 3 sentences.",
-    "model":  "deepseek-r1-70b",
-    "stream":  false
-}

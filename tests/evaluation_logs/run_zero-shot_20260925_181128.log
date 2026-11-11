@@ -1,5 +1,0 @@
-Method: zero-shot | Models: 1 | Cases: 3 (seed=42)
-Constants: max_rounds=20, max_script_retries=3, script_timeout=20s, max_cases=3, budget=$17.00
-  gemma4-12b-ctx8k                    rpm=600  concurrency=1
-
-[gemma4-12b-ctx8k] Starting — rpm=600, concurrency=1

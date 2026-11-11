@@ -1098,3 +1098,14 @@ strictly comparable with the Nemotron and Mistral tool-call arms. The Gemma
 tool-call score (1.6) indicates a failed run, not a model result. Removed
 stray root files (`--max-cases`, `--method`, `--model`, `gemma4_server.log`).
 `rescore.py`: 0 drift for every model; summaries rebuilt.
+
+### Repository cleanup (11 Nov 2026)
+
+Removed files nothing depends on: 78 `run_*.log` files from runs that ended
+before finishing a single case (aborted starts, crashes), the 85 per-key
+`*_driver.out` wrapper logs (restart notes and totals only; the per-case
+logs stay), `request.json` (a one-off Ollama test request) and
+`nvidia_nemotron-3-ultra-550b-a55b_free__tool-call.jsonl.pre-nudge.bak`.
+`get_started.py` moved to `deploy/modal_deepseek_r1_70b.py`. `.gitignore`
+now covers driver logs, merged part checkpoints and per-part result CSVs.
+All removed files remain in git history.
