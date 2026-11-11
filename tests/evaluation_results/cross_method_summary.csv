@@ -1,6 +1,6 @@
 model,zero-shot_accuracy,zero-shot_mean_tokens,zero-shot_mean_latency,script_accuracy,script_mean_tokens,script_mean_latency,tool-call_accuracy,tool-call_mean_tokens,tool-call_mean_latency
 llamacpp/gpt-oss-120b,0.5239,7551.0,39.7,0.5047,11192.0,64.75,0.4428,60350.0,42.83
-nim/minimaxai/minimax-m3.1-flash,0.4943,28676.0,2030.38,0.4906,47259.0,2944.63,0.4956,123295.0,2470.89
+nim/minimaxai/minimax-m3.1-flash,0.4943,28676.0,2030.38,0.4957,45593.0,2692.78,0.499,119645.0,2816.39
 nim/mistralai/mistral-large-4-1t-a52b,0.5745,27317.0,1096.11,0.6019,41402.0,6504.83,0.5814,187439.0,6436.25
 nim/nvidia/nemotron-3-ultra-550b-a55b,,,,,,,0.5902,98793.0,679.82
 nvidia/nemotron-3-ultra-550b-a55b:free,0.617,17584.0,834.4,0.6338,22253.0,879.98,0.5697,102315.0,417.45

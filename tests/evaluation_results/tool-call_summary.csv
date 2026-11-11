@@ -1,6 +1,6 @@
 model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
 llamacpp/gpt-oss-120b,0.4428,0.4677,0.3304,0.8957,0.0281,0.5507,0.3221,9.1,53,569,42.83,55447.0,4903.0,60350.0,31549243,2789839,0.0,0.0
-nim/minimaxai/minimax-m3.1-flash,0.4956,0.5015,0.2766,0.9947,0.0399,0.6619,0.3551,4.5,0,188,2470.89,97434.0,25861.0,123295.0,18317614,4861779,0.0,0.0
+nim/minimaxai/minimax-m3.1-flash,0.499,0.5167,0.2979,0.9918,0.0413,0.6508,0.3615,4.3,2,569,2816.39,93818.0,25827.0,119645.0,53382426,14695621,0.0,0.0
 nim/mistralai/mistral-large-4-1t-a52b,0.5814,0.5812,0.2592,1.0,0.0378,0.867,0.4069,5.3,0,569,6436.25,153928.0,33510.0,187439.0,87585091,19067448,0.0,0.0
 nim/nvidia/nemotron-3-ultra-550b-a55b,0.5902,0.629,0.3881,0.994,0.0507,0.8312,0.4095,9.1,2,335,679.82,86687.0,12107.0,98793.0,29040019,4055738,0.0,0.0
 nvidia/nemotron-3-ultra-550b-a55b:free,0.5697,0.5984,0.3852,0.9795,0.0492,0.8183,0.3815,9.2,4,244,417.45,90266.0,12049.0,102315.0,22024927,2939877,0.0,0.0

@@ -1,0 +1,37 @@
+Method: tool-call | Models: 1 | Cases: 63 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=5
+[minimax-m3.1-flash] Resuming: 41 done, 1 remaining
+[minimax-m3.1-flash] [42/63] input_0164.json OK score=14/35 (40%) rounds=4 latency=1730.6s tokens=170271 cost=$0.0000
+
+=== Evaluation Report: nim/minimaxai/minimax-m3.1-flash [tool-call] ===
+Overall accuracy:    51.6% (42 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         4.3 per case
+
+Per-section accuracy:
+  Salary (7 fields)             48.3%
+  Capital Gains (2 fields)      40.5%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         10.7%
+  Deductions (9 fields)         62.4%
+  Tax Computation (12 fields)   41.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   45.3%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          2415.8 sec/case
+  Mean tokens:           117,403 total (92,484 prompt + 24,920 completion)
+  Total tokens (all):    4,930,941
+  Total cost:            $0.0000 ($0.0000/case)
+[minimax-m3.1-flash] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_minimaxai_minimax-m3.1-flash__tool-call.shard6of9_results.csv
+
+Part.shard6of9: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261111_164442.log

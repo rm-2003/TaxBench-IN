@@ -1109,3 +1109,21 @@ logs stay), `request.json` (a one-off Ollama test request) and
 `get_started.py` moved to `deploy/modal_deepseek_r1_70b.py`. `.gitignore`
 now covers driver logs, merged part checkpoints and per-part result CSVs.
 All removed files remain in git history.
+
+### MiniMax M3.1 Flash complete (12 Nov 2026)
+
+`nim/minimaxai/minimax-m3.1-flash`, 569 cases per method, merged from the
+per-key part checkpoints and rebuilt with `rescore.py` (0 drift):
+
+| Method | Accuracy | All 35 correct | Parse failures |
+|---|---|---|---|
+| zero-shot | 49.4 | 4 | 7 |
+| script | 49.6 | 1 | 0 |
+| tool-call | 49.9 | 1 | 2 |
+
+Paired bootstrap: script − zero-shot +0.1 [−0.7, +1.0]; tool-call −
+zero-shot +0.5 [−0.4, +1.4]; script − tool-call −0.3 [−1.0, +0.4]. Unlike
+Nemotron and Mistral, neither method changes MiniMax's accuracy measurably.
+No tool-call case reached the 20-round cap (median 4 rounds). Script and
+tool-call ran on 17 keys at 5 concurrent requests each; script saw 215
+retried 429s and one SKIP, redone before completion.

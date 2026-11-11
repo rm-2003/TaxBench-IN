@@ -1,0 +1,40 @@
+Method: script | Models: 1 | Cases: 71 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=5
+[minimax-m3.1-flash] Resuming: 38 done, 2 remaining
+[minimax-m3.1-flash] [39/71] input_0088.json OK score=11/35 (31%) rounds=2 latency=2483.9s tokens=71479 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[minimax-m3.1-flash] [40/71] input_0474.json OK score=19/35 (54%) rounds=1 latency=6972.6s tokens=64541 cost=$0.0000
+
+=== Evaluation Report: nim/minimaxai/minimax-m3.1-flash [script] ===
+Overall accuracy:    49.3% (40 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.1 per case
+
+Per-section accuracy:
+  Salary (7 fields)             40.7%
+  Capital Gains (2 fields)      31.2%
+  Other Sources (3 fields)      98.3%
+  Aggregates (2 fields)         1.2%
+  Deductions (9 fields)         74.4%
+  Tax Computation (12 fields)   34.2%
+
+What the score is made of:
+  Derived (31 fields, computed):   42.9%
+  Copied  (4 fields, from input): 98.8%
+
+Cost / efficiency:
+  Mean latency:          2784.6 sec/case
+  Mean tokens:           47,493 total (4,184 prompt + 43,309 completion)
+  Total tokens (all):    1,899,720
+  Total cost:            $0.0000 ($0.0000/case)
+[minimax-m3.1-flash] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_minimaxai_minimax-m3.1-flash__script.shard4of8_results.csv
+
+Part.shard4of8: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261111_184346.log
