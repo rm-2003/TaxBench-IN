@@ -1080,3 +1080,21 @@ added to `MODEL_CONFIG` with streaming. Zero-shot, 569 cases: 49.4 accuracy,
 Ultra. Some keys returned 429s at 8 concurrent requests and none at 4–6, with
 no other load on their accounts, so the MiniMax limit appears to depend on
 per-key concurrency. Script and tool-call are running.
+
+### Merged `main` (Navya's GPT-OSS, DeepSeek-R1, Gemma tool-call runs) (11 Nov 2026)
+
+Brought in `llamacpp/gpt-oss-120b` (zero-shot 52.4, script 50.5, tool-call
+44.3; 569 each), `ollama/deepseek-r1-70b` tool-call (34.3, 389 cases) and
+`ollama/gemma4-12b-ctx16k` tool-call (1.6, 412 cases), plus `get_started.py`
+(her Modal deployment for DeepSeek). `tests/evaluate_llm.py` kept this
+branch's version: `main`'s copy predated the NIM route, streaming and the
+tool-call continue-prompt (`MAX_TOOL_NUDGES`), and would have removed them.
+Her additions that do not change results were carried over: the four extra
+local entries in `MODEL_CONFIG`, `OLLAMA_BASE_URL`, and `MODAL_KEY` /
+`MODAL_SECRET` headers for an Ollama server on Modal. Her per-run `backend`
+field stays in her checkpoints but is not written by this version. Her
+tool-call runs used the code without the continue-prompt, so they are not
+strictly comparable with the Nemotron and Mistral tool-call arms. The Gemma
+tool-call score (1.6) indicates a failed run, not a model result. Removed
+stray root files (`--max-cases`, `--method`, `--model`, `gemma4_server.log`).
+`rescore.py`: 0 drift for every model; summaries rebuilt.

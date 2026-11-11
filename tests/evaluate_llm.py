@@ -169,6 +169,11 @@ MODEL_CONFIG = {
     # instance is already saturating the allocated GPUs, and concurrent
     # benchmark cases would compete for the same decode resources.
     "llamacpp/gpt-oss-120b":             {"rpm": 600, "concurrency": 1},
+    # Further local models run by Navya (llama.cpp, or Ollama hosted on Modal).
+    "llamacpp/gemma-4-12b":              {"rpm": 600, "concurrency": 1},
+    "llamacpp/deepseek-r1-distill-70b":  {"rpm": 600, "concurrency": 1},
+    "llamacpp/llama-3.3-70b":            {"rpm": 600, "concurrency": 1},
+    "ollama/deepseek-r1-70b":            {"rpm": 600, "concurrency": 1},
     # Same Nemotron weights via NVIDIA's own API (build.nvidia.com) instead of
     # OpenRouter's :free route, which is itself served by Nvidia. No daily cap;
     # the free tier is rate-limited per minute (~40 rpm), so stay under it.
@@ -384,7 +389,7 @@ class CaseResult:
 
 LOCAL_PREFIX = "ollama/"
 LLAMACPP_PREFIX = "llamacpp/"
-LOCAL_BASE_URL = "http://localhost:11434/v1"
+LOCAL_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
 LLAMACPP_BASE_URL = os.environ.get(
     "LLAMACPP_BASE_URL", "http://localhost:8080/v1"
 )
@@ -430,9 +435,17 @@ def get_client(model=None):
             timeout=LOCAL_TIMEOUT_SECS,
         )
     if model and model.startswith(LOCAL_PREFIX):
+        # An Ollama server deployed on Modal (OLLAMA_BASE_URL pointing at it)
+        # authenticates with a Modal proxy token pair sent as headers.
+        modal_key = os.environ.get("MODAL_KEY")
+        modal_secret = os.environ.get("MODAL_SECRET")
+        if bool(modal_key) != bool(modal_secret):
+            raise RuntimeError("Both MODAL_KEY and MODAL_SECRET must be set.")
+        headers = {"Modal-Key": modal_key, "Modal-Secret": modal_secret} if modal_key else {}
         return OpenAI(
             base_url=LOCAL_BASE_URL,
             api_key="ollama",
+            default_headers=headers,
             timeout=LOCAL_TIMEOUT_SECS,
         )
     if model and model.startswith(MODAL_PREFIX):

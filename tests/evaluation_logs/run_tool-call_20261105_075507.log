@@ -1,0 +1,84 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  deepseek-r1-70b                     rpm=600  concurrency=1
+
+[deepseek-r1-70b] Starting — rpm=600, concurrency=1
+[deepseek-r1-70b] Resuming: 346 done, 223 remaining
+[deepseek-r1-70b] [347/569] input_0457.json OK score=8/35 (23%) rounds=1 latency=180.0s tokens=4348 cost=$0.0000
+[deepseek-r1-70b] [348/569] input_0062.json OK score=13/35 (37%) rounds=1 latency=77.0s tokens=4537 cost=$0.0000
+[deepseek-r1-70b] [349/569] input_0232.json OK score=12/35 (34%) rounds=1 latency=78.8s tokens=4624 cost=$0.0000
+[deepseek-r1-70b] [350/569] input_0265.json OK score=11/35 (31%) rounds=1 latency=99.9s tokens=5128 cost=$0.0000
+[deepseek-r1-70b] [351/569] input_0225.json OK score=14/35 (40%) rounds=1 latency=54.9s tokens=4082 cost=$0.0000
+[deepseek-r1-70b] [352/569] input_0402.json OK score=14/35 (40%) rounds=1 latency=83.9s tokens=4791 cost=$0.0000
+[deepseek-r1-70b] [353/569] input_0333.json OK score=21/35 (60%) rounds=1 latency=54.5s tokens=3912 cost=$0.0000
+[deepseek-r1-70b] [354/569] input_0509.json OK score=13/35 (37%) rounds=1 latency=153.5s tokens=6406 cost=$0.0000
+[deepseek-r1-70b] [355/569] input_0448.json OK score=9/35 (26%) rounds=1 latency=65.9s tokens=4372 cost=$0.0000
+[deepseek-r1-70b] [356/569] input_0542.json OK score=12/35 (34%) rounds=1 latency=86.9s tokens=4844 cost=$0.0000
+[deepseek-r1-70b] [357/569] input_0103.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=111.9s tokens=5349 cost=$0.0000
+[deepseek-r1-70b] [358/569] input_0354.json OK score=30/35 (86%) rounds=1 latency=58.1s tokens=3974 cost=$0.0000
+[deepseek-r1-70b] [359/569] input_0389.json OK score=14/35 (40%) rounds=1 latency=74.9s tokens=4637 cost=$0.0000
+[deepseek-r1-70b] [360/569] input_0467.json OK score=12/35 (34%) rounds=1 latency=67.5s tokens=4376 cost=$0.0000
+[deepseek-r1-70b] [361/569] input_0545.json OK score=12/35 (34%) rounds=1 latency=80.0s tokens=4681 cost=$0.0000
+[deepseek-r1-70b] [362/569] input_0311.json OK score=18/35 (51%) rounds=1 latency=71.6s tokens=4360 cost=$0.0000
+[deepseek-r1-70b] [363/569] input_0426.json OK score=13/35 (37%) rounds=1 latency=67.3s tokens=4361 cost=$0.0000
+[deepseek-r1-70b] [364/569] input_0459.json OK score=9/35 (26%) rounds=1 latency=77.8s tokens=4639 cost=$0.0000
+[deepseek-r1-70b] [365/569] input_0085.json OK score=10/35 (29%) rounds=1 latency=68.7s tokens=4485 cost=$0.0000
+[deepseek-r1-70b] [366/569] input_0567.json OK score=12/35 (34%) rounds=1 latency=85.6s tokens=4818 cost=$0.0000
+[deepseek-r1-70b] [367/569] input_0244.json OK score=8/35 (23%) rounds=1 latency=102.6s tokens=5269 cost=$0.0000
+[deepseek-r1-70b] [368/569] input_0338.json OK score=18/35 (51%) rounds=1 latency=59.9s tokens=3986 cost=$0.0000
+[deepseek-r1-70b] [369/569] input_0066.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=64.0s tokens=4337 cost=$0.0000
+[deepseek-r1-70b] [370/569] input_0065.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=67.4s tokens=4390 cost=$0.0000
+[deepseek-r1-70b] [371/569] input_0273.json OK score=12/35 (34%) rounds=1 latency=73.7s tokens=4516 cost=$0.0000
+[deepseek-r1-70b] [372/569] input_0036.json OK score=12/35 (34%) rounds=1 latency=70.3s tokens=4333 cost=$0.0000
+[deepseek-r1-70b] [373/569] input_0249.json OK score=11/35 (31%) rounds=1 latency=69.6s tokens=4381 cost=$0.0000
+[deepseek-r1-70b] [374/569] input_0044.json OK score=17/35 (49%) rounds=1 latency=108.7s tokens=5270 cost=$0.0000
+[deepseek-r1-70b] [375/569] input_0041.json OK score=11/35 (31%) rounds=1 latency=79.2s tokens=4710 cost=$0.0000
+[deepseek-r1-70b] [376/569] input_0531.json OK score=9/35 (26%) rounds=1 latency=76.4s tokens=4614 cost=$0.0000
+[deepseek-r1-70b] [377/569] input_0124.json OK score=9/35 (26%) rounds=1 latency=76.5s tokens=4664 cost=$0.0000
+[deepseek-r1-70b] [378/569] input_0030.json OK score=12/35 (34%) rounds=1 latency=88.7s tokens=4869 cost=$0.0000
+[deepseek-r1-70b] [379/569] input_0123.json OK score=13/35 (37%) rounds=1 latency=64.1s tokens=4367 cost=$0.0000
+[deepseek-r1-70b] [380/569] input_0158.json OK score=13/35 (37%) rounds=1 latency=53.5s tokens=4019 cost=$0.0000
+[deepseek-r1-70b] [381/569] input_0447.json OK score=8/35 (23%) rounds=1 latency=75.0s tokens=4598 cost=$0.0000
+[deepseek-r1-70b] [382/569] input_0412.json OK score=10/35 (29%) rounds=1 latency=67.8s tokens=4355 cost=$0.0000
+[deepseek-r1-70b] [383/569] input_0010.json OK score=11/35 (31%) rounds=1 latency=94.9s tokens=5001 cost=$0.0000
+[deepseek-r1-70b] [384/569] input_0566.json OK score=13/35 (37%) rounds=1 latency=84.9s tokens=4801 cost=$0.0000
+[deepseek-r1-70b] [385/569] input_0166.json OK score=14/35 (40%) rounds=1 latency=57.6s tokens=4154 cost=$0.0000
+[deepseek-r1-70b] [386/569] input_0307.json OK score=16/35 (46%) rounds=1 latency=87.6s tokens=4818 cost=$0.0000
+[deepseek-r1-70b] [387/569] input_0001.json OK score=18/35 (51%) rounds=1 latency=71.0s tokens=4092 cost=$0.0000
+[deepseek-r1-70b] [388/569] input_0272.json OK score=8/35 (23%) rounds=1 latency=72.5s tokens=4488 cost=$0.0000
+[deepseek-r1-70b] [389/569] input_0277.json OK score=13/35 (37%) rounds=1 latency=70.5s tokens=4441 cost=$0.0000
+[deepseek-r1-70b] [390/569] input_0083.json SKIP (NotFoundError: modal-http: workspace ac-F2wB11dGc0GQpzPwFpbs9B is disabled)
+[deepseek-r1-70b] [390/569] input_0192.json SKIP (NotFoundError: modal-http: workspace ac-F2wB11dGc0GQpzPwFpbs9B is disabled)
+[deepseek-r1-70b] [390/569] input_0438.json SKIP (NotFoundError: modal-http: workspace ac-F2wB11dGc0GQpzPwFpbs9B is disabled)
+[deepseek-r1-70b] [390/569] input_0102.json SKIP (NotFoundError: modal-http: workspace ac-F2wB11dGc0GQpzPwFpbs9B is disabled)
+[deepseek-r1-70b] [390/569] input_0502.json SKIP (NotFoundError: modal-http: workspace ac-F2wB11dGc0GQpzPwFpbs9B is disabled)
+[deepseek-r1-70b] 5 consecutive failures — stopping model
+
+=== Evaluation Report: ollama/deepseek-r1-70b [tool-call] ===
+Overall accuracy:    34.3% (389 cases)
+Failed to parse:     31 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             30.2%
+  Capital Gains (2 fields)      14.9%
+  Other Sources (3 fields)      92.0%
+  Aggregates (2 fields)         1.2%
+  Deductions (9 fields)         39.4%
+  Tax Computation (12 fields)   27.3%
+
+What the score is made of:
+  Derived (31 fields, computed):   26.9%
+  Copied  (4 fields, from input): 92.0%
+
+Cost / efficiency:
+  Mean latency:          78.6 sec/case
+  Mean tokens:           4,517 total (2,833 prompt + 1,684 completion)
+  Total tokens (all):    1,757,290
+  Total cost:            $0.0000 ($0.0000/case)
+[deepseek-r1-70b] CSV: C:\college related files\TaxBench-IN\tests\evaluation_results\ollama_deepseek-r1-70b__tool-call_results.csv
+
+Method summary: C:\college related files\TaxBench-IN\tests\evaluation_results\tool-call_summary.csv
+Cross-method pivot: C:\college related files\TaxBench-IN\tests\evaluation_results\cross_method_summary.csv
+
+Log saved: C:\college related files\TaxBench-IN\tests\evaluation_logs\run_tool-call_20261105_075507.log

@@ -1,0 +1,41 @@
+Method: tool-call | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 206 done, 363 remaining
+[gemma4-12b-ctx16k] [207/569] input_0019.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0193.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0279.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0490.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] [207/569] input_0077.json SKIP (APIConnectionError: Connection error.)
+[gemma4-12b-ctx16k] 5 consecutive failures — stopping model
+
+=== Evaluation Report: ollama/gemma4-12b-ctx16k [tool-call] ===
+Overall accuracy:    1.3% (206 cases)
+Failed to parse:     139 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             0.0%
+  Capital Gains (2 fields)      13.6%
+  Other Sources (3 fields)      0.0%
+  Aggregates (2 fields)         0.0%
+  Deductions (9 fields)         2.2%
+  Tax Computation (12 fields)   0.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   1.5%
+  Copied  (4 fields, from input): 0.0%
+
+Cost / efficiency:
+  Mean latency:          138.4 sec/case
+  Mean tokens:           16,384 total (3,364 prompt + 13,020 completion)
+  Total tokens (all):    3,375,104
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx16k] CSV: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx16k__tool-call_results.csv
+
+Method summary: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/tool-call_summary.csv
+Cross-method pivot: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_logs/run_tool-call_20261105_035407.log

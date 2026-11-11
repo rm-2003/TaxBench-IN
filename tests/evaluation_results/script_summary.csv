@@ -1,4 +1,6 @@
 model,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
+llamacpp/gpt-oss-120b,0.5047,0.5159,0.3699,0.9971,0.029,0.6682,0.3543,1.1,0,569,64.75,3387.0,7805.0,11192.0,1927047,4441259,0.0,0.0
+nim/minimaxai/minimax-m3.1-flash,0.4906,0.4567,0.3248,0.9856,0.0157,0.7017,0.335,1.1,0,254,2944.63,4685.0,42574.0,47259.0,1190013,10813842,0.0,0.0
 nim/mistralai/mistral-large-4-1t-a52b,0.6019,0.6351,0.346,1.0,0.0458,0.8682,0.4186,1.0,0,568,6504.83,2950.0,38452.0,41402.0,1675577,21840878,0.0,0.0
 nvidia/nemotron-3-ultra-550b-a55b:free,0.6338,0.764,0.5044,1.0,0.0826,0.8551,0.4139,1.1,0,569,879.98,3894.0,18359.0,22253.0,2215479,10446374,0.0,0.0
 ollama/gemma4-12b-ctx16k,0.452,0.4543,0.16,0.98,0.04,0.6578,0.2817,2.3,1,50,2794.47,14513.0,11052.0,25565.0,725665,552600,0.0,0.0
