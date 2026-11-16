@@ -1,0 +1,41 @@
+Method: script | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 50 done, 519 remaining
+[gemma4-12b-ctx16k] [51/569] input_0178.json SKIP (BadRequestError: Error code: 400 - request (16407 tokens) exceeds the available context size (163)
+[gemma4-12b-ctx16k] [51/569] input_0154.json SKIP (BadRequestError: Error code: 400 - request (16408 tokens) exceeds the available context size (163)
+[gemma4-12b-ctx16k] [51/569] input_0241.json SKIP (BadRequestError: Error code: 400 - request (16408 tokens) exceeds the available context size (163)
+[gemma4-12b-ctx16k] [51/569] input_0347.json SKIP (BadRequestError: Error code: 400 - request (16408 tokens) exceeds the available context size (163)
+[gemma4-12b-ctx16k] [51/569] input_0464.json SKIP (BadRequestError: Error code: 400 - request (16448 tokens) exceeds the available context size (163)
+[gemma4-12b-ctx16k] 5 consecutive failures — stopping model
+
+=== Evaluation Report: ollama/gemma4-12b-ctx16k [script] ===
+Overall accuracy:    45.2% (50 cases)
+Failed to parse:     1 cases (scored as 0)
+Mean rounds:         2.3 per case
+
+Per-section accuracy:
+  Salary (7 fields)             45.4%
+  Capital Gains (2 fields)      16.0%
+  Other Sources (3 fields)      98.0%
+  Aggregates (2 fields)         4.0%
+  Deductions (9 fields)         65.8%
+  Tax Computation (12 fields)   28.2%
+
+What the score is made of:
+  Derived (31 fields, computed):   38.5%
+  Copied  (4 fields, from input): 97.5%
+
+Cost / efficiency:
+  Mean latency:          2794.5 sec/case
+  Mean tokens:           25,565 total (14,513 prompt + 11,052 completion)
+  Total tokens (all):    1,278,265
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx16k] CSV: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx16k__script_results.csv
+
+Method summary: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/script_summary.csv
+Cross-method pivot: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_logs/run_script_20261110_233214.log

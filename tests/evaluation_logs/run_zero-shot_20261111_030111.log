@@ -1,0 +1,59 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 545 done, 24 remaining
+[gemma4-12b-ctx16k] [546/569] input_0164.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [547/569] input_0007.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [548/569] input_0285.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=142.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [549/569] input_0460.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [550/569] input_0226.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [551/569] input_0430.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [552/569] input_0204.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [553/569] input_0028.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=143.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [554/569] input_0518.json OK score=2/35 (6%) rounds=1 latency=141.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [555/569] input_0239.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [556/569] input_0224.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [557/569] input_0096.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [558/569] input_0031.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [559/569] input_0033.json OK score=2/35 (6%) rounds=1 latency=141.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [560/569] input_0433.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=142.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [561/569] input_0090.json OK score=0/35 (0%) rounds=1 latency=140.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [562/569] input_0559.json OK score=0/35 (0%) rounds=1 latency=141.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [563/569] input_0105.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [564/569] input_0143.json OK score=0/35 (0%) rounds=1 latency=140.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [565/569] input_0229.json OK score=2/35 (6%) rounds=1 latency=141.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [566/569] input_0251.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=142.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [567/569] input_0282.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=142.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [568/569] input_0026.json OK score=25/35 (71%) rounds=1 latency=80.8s tokens=10578 cost=$0.0000
+[gemma4-12b-ctx16k] [569/569] input_0115.json OK score=0/35 (0%) rounds=1 latency=141.1s tokens=16384 cost=$0.0000
+
+=== Evaluation Report: ollama/gemma4-12b-ctx16k [zero-shot] ===
+Overall accuracy:    38.2% (569 cases)
+Failed to parse:     50 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             34.7%
+  Capital Gains (2 fields)      11.0%
+  Other Sources (3 fields)      87.3%
+  Aggregates (2 fields)         0.4%
+  Deductions (9 fields)         53.9%
+  Tax Computation (12 fields)   27.1%
+
+What the score is made of:
+  Derived (31 fields, computed):   31.9%
+  Copied  (4 fields, from input): 87.3%
+
+Cost / efficiency:
+  Mean latency:          190.3 sec/case
+  Mean tokens:           5,560 total (3,075 prompt + 2,485 completion)
+  Total tokens (all):    3,163,546
+  Total cost:            $0.0000 ($0.0000/case)
+[gemma4-12b-ctx16k] CSV: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/ollama_gemma4-12b-ctx16k__zero-shot_results.csv
+
+Method summary: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+
+Log saved: /nfs_home/users/dhruvk/TaxBench-IN/Thesis_code/tests/evaluation_logs/run_zero-shot_20261111_030111.log

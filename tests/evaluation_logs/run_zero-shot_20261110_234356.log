@@ -1,0 +1,54 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00
+  gemma4-12b-ctx16k                   rpm=600  concurrency=1
+
+[gemma4-12b-ctx16k] Starting — rpm=600, concurrency=1
+[gemma4-12b-ctx16k] Resuming: 496 done, 73 remaining
+[gemma4-12b-ctx16k] [497/569] input_0126.json OK score=1/35 (3%) rounds=1 latency=140.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [498/569] input_0514.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [499/569] input_0274.json OK score=2/35 (6%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [500/569] input_0088.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [501/569] input_0326.json OK score=1/35 (3%) rounds=1 latency=142.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [502/569] input_0312.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [503/569] input_0037.json OK score=2/35 (6%) rounds=1 latency=141.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [504/569] input_0332.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=143.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [505/569] input_0350.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=144.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [506/569] input_0480.json OK score=1/35 (3%) rounds=1 latency=141.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [507/569] input_0360.json OK score=1/35 (3%) rounds=1 latency=139.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [508/569] input_0137.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [509/569] input_0344.json OK score=2/35 (6%) rounds=1 latency=142.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [510/569] input_0108.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [511/569] input_0182.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [512/569] input_0380.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.8s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [513/569] input_0167.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [514/569] input_0374.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [515/569] input_0465.json OK score=3/35 (9%) rounds=1 latency=145.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [516/569] input_0543.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [517/569] input_0537.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [518/569] input_0104.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [519/569] input_0555.json OK score=1/35 (3%) rounds=1 latency=142.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [520/569] input_0082.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [521/569] input_0297.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [522/569] input_0234.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=145.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [523/569] input_0047.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [524/569] input_0072.json OK score=2/35 (6%) rounds=1 latency=141.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [525/569] input_0197.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [526/569] input_0371.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [527/569] input_0301.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.6s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [528/569] input_0081.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.3s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [529/569] input_0388.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [530/569] input_0128.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=139.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [531/569] input_0471.json OK score=2/35 (6%) rounds=1 latency=141.0s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [532/569] input_0045.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [533/569] input_0271.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [534/569] input_0353.json OK score=3/35 (9%) rounds=1 latency=143.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [535/569] input_0368.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.2s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [536/569] input_0100.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.9s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [537/569] input_0390.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [538/569] input_0095.json OK score=2/35 (6%) rounds=1 latency=142.7s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [539/569] input_0563.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=140.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [540/569] input_0345.json OK score=1/35 (3%) rounds=1 latency=143.4s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [541/569] input_0221.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.5s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [542/569] input_0160.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=141.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [543/569] input_0548.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=143.1s tokens=16384 cost=$0.0000
+[gemma4-12b-ctx16k] [544/569] input_0349.json OK score=3/35 (9%) rounds=1 latency=144.9s tokens=16384 cost=$0.0000
