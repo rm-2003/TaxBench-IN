@@ -1,0 +1,57 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=4
+[mistral-large-4-1t-a52b] Resuming: 155 done, 414 remaining
+[mistral-large-4-1t-a52b] [156/569] input_0507.json OK score=18/35 (51%) rounds=1 latency=914.0s tokens=21549 cost=$0.0000
+[mistral-large-4-1t-a52b] [157/569] input_0014.json OK score=20/35 (57%) rounds=1 latency=1087.3s tokens=26611 cost=$0.0000
+[mistral-large-4-1t-a52b] [158/569] input_0441.json OK score=19/35 (54%) rounds=1 latency=1198.9s tokens=31857 cost=$0.0000
+[mistral-large-4-1t-a52b] [159/569] input_0024.json OK score=18/35 (51%) rounds=1 latency=1396.9s tokens=33034 cost=$0.0000
+[mistral-large-4-1t-a52b] [160/569] input_0478.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [160/569] input_0435.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [160/569] input_0551.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [160/569] input_0497.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [160/569] input_0054.json OK score=21/35 (60%) rounds=1 latency=893.0s tokens=21466 cost=$0.0000
+[mistral-large-4-1t-a52b] [161/569] input_0163.json OK score=19/35 (54%) rounds=1 latency=909.3s tokens=22097 cost=$0.0000
+[mistral-large-4-1t-a52b] [162/569] input_0308.json OK score=23/35 (66%) rounds=1 latency=1048.3s tokens=23912 cost=$0.0000
+[mistral-large-4-1t-a52b] [163/569] input_0500.json OK score=19/35 (54%) rounds=1 latency=1169.2s tokens=26692 cost=$0.0000
+[mistral-large-4-1t-a52b] [164/569] input_0191.json OK score=19/35 (54%) rounds=1 latency=1156.1s tokens=22311 cost=$0.0000
+[mistral-large-4-1t-a52b] [165/569] input_0070.json OK score=18/35 (51%) rounds=1 latency=1058.2s tokens=21504 cost=$0.0000
+[mistral-large-4-1t-a52b] [166/569] input_0180.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [166/569] input_0386.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [166/569] input_0040.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [166/569] input_0155.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [166/569] input_0027.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] 5 consecutive failures — stopping model
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [zero-shot] ===
+Overall accuracy:    56.9% (165 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             58.0%
+  Capital Gains (2 fields)      38.8%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.7%
+  Deductions (9 fields)         81.8%
+  Tax Computation (12 fields)   38.9%
+
+What the score is made of:
+  Derived (31 fields, computed):   51.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          1020.8 sec/case
+  Mean tokens:           27,255 total (2,758 prompt + 24,497 completion)
+  Total tokens (all):    4,497,074
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261107_070735.log

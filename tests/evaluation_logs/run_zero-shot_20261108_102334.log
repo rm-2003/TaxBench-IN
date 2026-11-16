@@ -1,0 +1,87 @@
+Method: zero-shot | Models: 1 | Cases: 569 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=4
+[mistral-large-4-1t-a52b] Resuming: 363 done, 206 remaining
+[mistral-large-4-1t-a52b] [364/569] input_0242.json OK score=14/35 (40%) rounds=1 latency=590.0s tokens=19710 cost=$0.0000
+[mistral-large-4-1t-a52b] [365/569] input_0216.json OK score=17/35 (49%) rounds=1 latency=854.9s tokens=25053 cost=$0.0000
+[mistral-large-4-1t-a52b] [366/569] input_0116.json OK score=17/35 (49%) rounds=1 latency=919.1s tokens=30038 cost=$0.0000
+[mistral-large-4-1t-a52b] [367/569] input_0062.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [367/569] input_0457.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [367/569] input_0399.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [367/569] input_0232.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [367/569] input_0338.json OK score=20/35 (57%) rounds=1 latency=693.9s tokens=18134 cost=$0.0000
+[mistral-large-4-1t-a52b] [368/569] input_0244.json OK score=13/35 (37%) rounds=1 latency=958.4s tokens=26799 cost=$0.0000
+[mistral-large-4-1t-a52b] [369/569] input_0249.json OK score=15/35 (43%) rounds=1 latency=606.3s tokens=29970 cost=$0.0000
+[mistral-large-4-1t-a52b] [370/569] input_0567.json OK score=19/35 (54%) rounds=1 latency=1311.9s tokens=46804 cost=$0.0000
+[mistral-large-4-1t-a52b] [371/569] input_0085.json OK score=16/35 (46%) rounds=1 latency=1383.5s tokens=51874 cost=$0.0000
+[mistral-large-4-1t-a52b] [372/569] input_0531.json OK score=17/35 (49%) rounds=1 latency=946.0s tokens=31356 cost=$0.0000
+[mistral-large-4-1t-a52b] [373/569] input_0124.json OK score=24/35 (69%) rounds=1 latency=670.7s tokens=17715 cost=$0.0000
+[mistral-large-4-1t-a52b] [374/569] input_0030.json OK score=24/35 (69%) rounds=1 latency=692.5s tokens=20186 cost=$0.0000
+[mistral-large-4-1t-a52b] [375/569] input_0158.json OK score=19/35 (54%) rounds=1 latency=506.9s tokens=17474 cost=$0.0000
+[mistral-large-4-1t-a52b] [376/569] input_0123.json OK score=23/35 (66%) rounds=1 latency=1254.6s tokens=47225 cost=$0.0000
+[mistral-large-4-1t-a52b] [377/569] input_0447.json OK score=18/35 (51%) rounds=1 latency=730.2s tokens=27782 cost=$0.0000
+[mistral-large-4-1t-a52b] [378/569] input_0412.json OK score=17/35 (49%) rounds=1 latency=834.1s tokens=34928 cost=$0.0000
+[mistral-large-4-1t-a52b] [379/569] input_0566.json OK score=23/35 (66%) rounds=1 latency=493.9s tokens=18536 cost=$0.0000
+[mistral-large-4-1t-a52b] [380/569] input_0010.json OK score=22/35 (63%) rounds=1 latency=733.4s tokens=32977 cost=$0.0000
+[mistral-large-4-1t-a52b] [381/569] input_0166.json OK score=19/35 (54%) rounds=1 latency=845.0s tokens=38853 cost=$0.0000
+[mistral-large-4-1t-a52b] [382/569] input_0001.json OK score=25/35 (71%) rounds=1 latency=415.7s tokens=12941 cost=$0.0000
+[mistral-large-4-1t-a52b] [383/569] input_0307.json OK score=19/35 (54%) rounds=1 latency=725.7s tokens=24357 cost=$0.0000
+[mistral-large-4-1t-a52b] [384/569] input_0272.json OK score=17/35 (49%) rounds=1 latency=470.1s tokens=21083 cost=$0.0000
+[mistral-large-4-1t-a52b] [385/569] input_0192.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [385/569] input_0438.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [385/569] input_0083.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [385/569] input_0277.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [385/569] input_0491.json OK score=20/35 (57%) rounds=1 latency=692.7s tokens=20170 cost=$0.0000
+[mistral-large-4-1t-a52b] [386/569] input_0400.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [386/569] input_0502.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [386/569] input_0102.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [386/569] input_0153.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [386/569] input_0055.json OK score=22/35 (63%) rounds=1 latency=561.3s tokens=21468 cost=$0.0000
+[mistral-large-4-1t-a52b] [387/569] input_0321.json OK score=23/35 (66%) rounds=1 latency=776.5s tokens=29285 cost=$0.0000
+[mistral-large-4-1t-a52b] [388/569] input_0260.json OK score=17/35 (49%) rounds=1 latency=1003.3s tokens=34907 cost=$0.0000
+[mistral-large-4-1t-a52b] [389/569] input_0092.json OK score=14/35 (40%) rounds=1 latency=1238.8s tokens=46549 cost=$0.0000
+[mistral-large-4-1t-a52b] [390/569] input_0391.json OK score=20/35 (57%) rounds=1 latency=786.7s tokens=30509 cost=$0.0000
+[mistral-large-4-1t-a52b] [391/569] input_0369.json OK score=20/35 (57%) rounds=1 latency=444.7s tokens=23233 cost=$0.0000
+[mistral-large-4-1t-a52b] [392/569] input_0257.json OK score=19/35 (54%) rounds=1 latency=925.9s tokens=35457 cost=$0.0000
+[mistral-large-4-1t-a52b] [393/569] input_0463.json OK score=19/35 (54%) rounds=1 latency=852.9s tokens=35631 cost=$0.0000
+[mistral-large-4-1t-a52b] [394/569] input_0506.json OK score=20/35 (57%) rounds=1 latency=579.9s tokens=21157 cost=$0.0000
+[mistral-large-4-1t-a52b] [395/569] input_0223.json OK score=16/35 (46%) rounds=1 latency=470.6s tokens=19193 cost=$0.0000
+[mistral-large-4-1t-a52b] [396/569] input_0002.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [396/569] input_0528.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [396/569] input_0233.json SKIP (RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked)
+[mistral-large-4-1t-a52b] [396/569] input_0175.json SKIP (ReadTimeout: The read operation timed out)
+[mistral-large-4-1t-a52b] [396/569] input_0151.json SKIP (APIConnectionError: Connection error.)
+[mistral-large-4-1t-a52b] 5 consecutive failures — stopping model
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [zero-shot] ===
+Overall accuracy:    56.9% (395 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             57.8%
+  Capital Gains (2 fields)      35.7%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.9%
+  Deductions (9 fields)         83.1%
+  Tax Computation (12 fields)   38.6%
+
+What the score is made of:
+  Derived (31 fields, computed):   51.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          933.8 sec/case
+  Mean tokens:           27,081 total (2,760 prompt + 24,321 completion)
+  Total tokens (all):    10,697,068
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__zero-shot_results.csv
+
+Method summary: /Users/pranavbiju/Thesis_code/tests/evaluation_results/zero-shot_summary.csv
+Cross-method pivot: /Users/pranavbiju/Thesis_code/tests/evaluation_results/cross_method_summary.csv
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261108_102334.log

@@ -1,0 +1,495 @@
+Method: script | Models: 1 | Cases: 95 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] [1/95] input_0140.json OK score=21/35 (60%) rounds=1 latency=2254.7s tokens=36193 cost=$0.0000
+[mistral-large-4-1t-a52b] [2/95] input_0475.json OK score=20/35 (57%) rounds=1 latency=2998.2s tokens=38241 cost=$0.0000
+[mistral-large-4-1t-a52b] [3/95] input_0163.json OK score=16/35 (46%) rounds=1 latency=3064.0s tokens=50480 cost=$0.0000
+[mistral-large-4-1t-a52b] [4/95] input_0165.json OK score=18/35 (51%) rounds=1 latency=3175.5s tokens=52160 cost=$0.0000
+[mistral-large-4-1t-a52b] [5/95] input_0189.json OK score=21/35 (60%) rounds=1 latency=3194.5s tokens=51832 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [6/95] input_0417.json OK score=20/35 (57%) rounds=1 latency=2533.2s tokens=33791 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [7/95] input_0144.json OK score=21/35 (60%) rounds=1 latency=6098.1s tokens=36349 cost=$0.0000
+[mistral-large-4-1t-a52b] [8/95] input_0452.json OK score=21/35 (60%) rounds=1 latency=6110.6s tokens=32896 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [9/95] input_0392.json OK score=24/35 (69%) rounds=1 latency=7065.6s tokens=52209 cost=$0.0000
+[mistral-large-4-1t-a52b] [10/95] input_0228.json OK score=20/35 (57%) rounds=1 latency=1668.0s tokens=24330 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [11/95] input_0367.json OK score=23/35 (66%) rounds=1 latency=2054.3s tokens=33739 cost=$0.0000
+[mistral-large-4-1t-a52b] [12/95] input_0134.json OK score=24/35 (69%) rounds=1 latency=5480.7s tokens=32148 cost=$0.0000
+[mistral-large-4-1t-a52b] [13/95] input_0159.json OK score=21/35 (60%) rounds=1 latency=6225.2s tokens=40047 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [14/95] input_0305.json OK score=27/35 (77%) rounds=1 latency=3434.2s tokens=28713 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [15/95] input_0131.json OK score=24/35 (69%) rounds=1 latency=6892.1s tokens=31169 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+[mistral-large-4-1t-a52b] [16/95] input_0242.json OK score=21/35 (60%) rounds=1 latency=19955.3s tokens=25711 cost=$0.0000
+[mistral-large-4-1t-a52b] [17/95] input_0070.json OK score=20/35 (57%) rounds=1 latency=20519.3s tokens=43040 cost=$0.0000
+[mistral-large-4-1t-a52b] [18/95] input_0454.json OK score=19/35 (54%) rounds=1 latency=20636.4s tokens=47206 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+
+
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+
+
+
+
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [19/95] input_0056.json OK score=22/35 (63%) rounds=1 latency=3201.9s tokens=28335 cost=$0.0000
+[mistral-large-4-1t-a52b] [20/95] input_0410.json OK score=22/35 (63%) rounds=1 latency=20694.2s tokens=36963 cost=$0.0000
+[mistral-large-4-1t-a52b] [21/95] input_0427.json OK score=17/35 (49%) rounds=1 latency=3209.2s tokens=31171 cost=$0.0000
+[mistral-large-4-1t-a52b] [22/95] input_0250.json OK score=19/35 (54%) rounds=1 latency=16403.5s tokens=36069 cost=$0.0000
+[mistral-large-4-1t-a52b] [23/95] input_0504.json OK score=21/35 (60%) rounds=1 latency=24816.9s tokens=39841 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+[mistral-large-4-1t-a52b] [24/95] input_0039.json OK score=21/35 (60%) rounds=1 latency=13467.2s tokens=18876 cost=$0.0000
+[mistral-large-4-1t-a52b] [25/95] input_0458.json OK score=21/35 (60%) rounds=1 latency=6948.0s tokens=40538 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [26/95] input_0446.json OK score=18/35 (51%) rounds=1 latency=2552.2s tokens=47791 cost=$0.0000
+[mistral-large-4-1t-a52b] [27/95] input_0003.json OK score=17/35 (49%) rounds=1 latency=25149.2s tokens=47224 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [28/95] input_0008.json OK score=23/35 (66%) rounds=1 latency=17055.3s tokens=34495 cost=$0.0000
+[mistral-large-4-1t-a52b] [29/95] input_0407.json OK score=18/35 (51%) rounds=1 latency=19232.7s tokens=37783 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [30/95] input_0174.json OK score=22/35 (63%) rounds=1 latency=2801.3s tokens=34920 cost=$0.0000
+[mistral-large-4-1t-a52b] [31/95] input_0049.json OK score=24/35 (69%) rounds=1 latency=5798.8s tokens=30241 cost=$0.0000
+[mistral-large-4-1t-a52b] [32/95] input_0035.json OK score=24/35 (69%) rounds=1 latency=5156.1s tokens=22913 cost=$0.0000
+[mistral-large-4-1t-a52b] [33/95] input_0044.json OK score=25/35 (71%) rounds=1 latency=1960.4s tokens=27408 cost=$0.0000
+[mistral-large-4-1t-a52b] [34/95] input_0542.json OK score=20/35 (57%) rounds=1 latency=2880.6s tokens=39462 cost=$0.0000
+[mistral-large-4-1t-a52b] [35/95] input_0296.json OK score=20/35 (57%) rounds=1 latency=6521.1s tokens=39769 cost=$0.0000
+[mistral-large-4-1t-a52b] [36/95] input_0311.json OK score=22/35 (63%) rounds=1 latency=2921.0s tokens=45135 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [37/95] input_0158.json OK score=19/35 (54%) rounds=1 latency=2130.1s tokens=41504 cost=$0.0000
+[mistral-large-4-1t-a52b] [38/95] input_0438.json OK score=19/35 (54%) rounds=1 latency=1875.7s tokens=28307 cost=$0.0000
+[mistral-large-4-1t-a52b] [39/95] input_0223.json OK score=18/35 (51%) rounds=1 latency=1659.3s tokens=28723 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [40/95] input_0321.json OK score=24/35 (69%) rounds=1 latency=2575.2s tokens=51316 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [41/95] input_0265.json OK score=18/35 (51%) rounds=1 latency=6236.2s tokens=54009 cost=$0.0000
+[mistral-large-4-1t-a52b] [42/95] input_0463.json OK score=17/35 (49%) rounds=1 latency=3256.9s tokens=54784 cost=$0.0000
+      Network error (RemoteProtocolError) — retry 6/15 in 300s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[mistral-large-4-1t-a52b] [43/95] input_0564.json OK score=22/35 (63%) rounds=1 latency=9866.3s tokens=47574 cost=$0.0000
+[mistral-large-4-1t-a52b] [44/95] input_0434.json OK score=19/35 (54%) rounds=1 latency=2343.5s tokens=45280 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [45/95] input_0485.json OK score=21/35 (60%) rounds=1 latency=2375.3s tokens=46126 cost=$0.0000
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[mistral-large-4-1t-a52b] [46/95] input_0025.json OK score=22/35 (63%) rounds=1 latency=2758.5s tokens=43450 cost=$0.0000
+[mistral-large-4-1t-a52b] [47/95] input_0307.json OK score=20/35 (57%) rounds=1 latency=5808.8s tokens=39967 cost=$0.0000
+[mistral-large-4-1t-a52b] [48/95] input_0247.json OK score=18/35 (51%) rounds=1 latency=26134.1s tokens=53937 cost=$0.0000
+[mistral-large-4-1t-a52b] [49/95] input_0203.json OK score=24/35 (69%) rounds=1 latency=1997.8s tokens=34235 cost=$0.0000
+[mistral-large-4-1t-a52b] [50/95] input_0524.json OK score=23/35 (66%) rounds=1 latency=2042.1s tokens=34784 cost=$0.0000
+[mistral-large-4-1t-a52b] [51/95] input_0488.json OK score=21/35 (60%) rounds=1 latency=2632.1s tokens=43781 cost=$0.0000
+[mistral-large-4-1t-a52b] [52/95] input_0383.json OK score=25/35 (71%) rounds=1 latency=2771.6s tokens=46124 cost=$0.0000
+[mistral-large-4-1t-a52b] [53/95] input_0338.json OK score=24/35 (69%) rounds=1 latency=8865.8s tokens=49576 cost=$0.0000
+[mistral-large-4-1t-a52b] [54/95] input_0508.json OK score=19/35 (54%) rounds=1 latency=6733.8s tokens=50885 cost=$0.0000
+[mistral-large-4-1t-a52b] [55/95] input_0206.json OK score=24/35 (69%) rounds=1 latency=2317.9s tokens=35543 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [56/95] input_0544.json OK score=17/35 (49%) rounds=1 latency=5804.6s tokens=48672 cost=$0.0000
+[mistral-large-4-1t-a52b] [57/95] input_0380.json OK score=22/35 (63%) rounds=1 latency=1603.2s tokens=24624 cost=$0.0000
+[mistral-large-4-1t-a52b] [58/95] input_0029.json OK score=20/35 (57%) rounds=1 latency=2728.2s tokens=48850 cost=$0.0000
+[mistral-large-4-1t-a52b] [59/95] input_0480.json OK score=20/35 (57%) rounds=1 latency=3303.1s tokens=46259 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [60/95] input_0104.json OK score=19/35 (54%) rounds=1 latency=2873.3s tokens=39868 cost=$0.0000
+[mistral-large-4-1t-a52b] [61/95] input_0160.json OK score=21/35 (60%) rounds=1 latency=2171.4s tokens=41586 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Network error (RemoteProtocolError) — retry 7/15 in 300s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[mistral-large-4-1t-a52b] [62/95] input_0128.json OK score=20/35 (57%) rounds=1 latency=7175.4s tokens=43609 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream timeout after 3600s
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 2/15 in 30s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)      Network error (RemoteProtocolError) — retry 8/15 in 300s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [63/95] input_0433.json OK score=20/35 (57%) rounds=1 latency=8243.0s tokens=26872 cost=$0.0000
+[mistral-large-4-1t-a52b] [64/95] input_0285.json OK score=18/35 (51%) rounds=1 latency=9637.1s tokens=30149 cost=$0.0000
+[mistral-large-4-1t-a52b] [65/95] input_0518.json OK score=22/35 (63%) rounds=1 latency=9648.6s tokens=37411 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [66/95] input_0236.json SKIP (Exception: All 10 retries exhausted)
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [66/95] input_0251.json OK score=19/35 (54%) rounds=1 latency=11346.5s tokens=42301 cost=$0.0000
+[mistral-large-4-1t-a52b] [67/95] input_0195.json OK score=21/35 (60%) rounds=1 latency=16664.5s tokens=45402 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [68/95] input_0100.json OK score=20/35 (57%) rounds=1 latency=14970.1s tokens=54427 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [69/95] input_0072.json OK score=20/35 (57%) rounds=1 latency=17982.6s tokens=34660 cost=$0.0000
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+      Transient error (503) — retry in 32s
+        detail: stream timeout after 3600s
+[mistral-large-4-1t-a52b] [70/95] input_0088.json OK score=15/35 (43%) rounds=1 latency=21235.7s tokens=48805 cost=$0.0000
+[mistral-large-4-1t-a52b] [71/95] input_0449.json OK score=21/35 (60%) rounds=1 latency=24758.8s tokens=45525 cost=$0.0000
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+[mistral-large-4-1t-a52b] [72/95] input_0113.json OK score=19/35 (54%) rounds=1 latency=29290.4s tokens=49240 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [script] ===
+Overall accuracy:    59.0% (72 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             61.7%
+  Capital Gains (2 fields)      36.8%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.1%
+  Deductions (9 fields)         87.3%
+  Tax Computation (12 fields)   39.2%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.8%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          8165.9 sec/case
+  Mean tokens:           39,824 total (2,871 prompt + 36,953 completion)
+  Total tokens (all):    2,867,353
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__script.shard2of6_results.csv
+
+Shard 2/6: summaries not written; merge shard checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261109_102957.log
+Method: script | Models: 1 | Cases: 95 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] Resuming: 72 done, 1 remaining
+[mistral-large-4-1t-a52b] [73/95] input_0236.json OK score=18/35 (51%) rounds=1 latency=3223.3s tokens=57574 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [script] ===
+Overall accuracy:    58.9% (73 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             61.8%
+  Capital Gains (2 fields)      37.0%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.1%
+  Deductions (9 fields)         87.1%
+  Tax Computation (12 fields)   39.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.6%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          8098.2 sec/case
+  Mean tokens:           40,067 total (2,872 prompt + 37,196 completion)
+  Total tokens (all):    2,924,927
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__script.shard2of6_results.csv
+
+Part.shard2of6: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261110_044137.log

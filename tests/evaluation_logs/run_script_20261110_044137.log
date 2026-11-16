@@ -1,0 +1,37 @@
+Method: script | Models: 1 | Cases: 95 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  mistral-large-4-1t-a52b             rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[mistral-large-4-1t-a52b] Starting — rpm=35, concurrency=12
+[mistral-large-4-1t-a52b] Resuming: 72 done, 1 remaining
+[mistral-large-4-1t-a52b] [73/95] input_0236.json OK score=18/35 (51%) rounds=1 latency=3223.3s tokens=57574 cost=$0.0000
+
+=== Evaluation Report: nim/mistralai/mistral-large-4-1t-a52b [script] ===
+Overall accuracy:    58.9% (73 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             61.8%
+  Capital Gains (2 fields)      37.0%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         2.1%
+  Deductions (9 fields)         87.1%
+  Tax Computation (12 fields)   39.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   53.6%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          8098.2 sec/case
+  Mean tokens:           40,067 total (2,872 prompt + 37,196 completion)
+  Total tokens (all):    2,924,927
+  Total cost:            $0.0000 ($0.0000/case)
+[mistral-large-4-1t-a52b] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_mistralai_mistral-large-4-1t-a52b__script.shard2of6_results.csv
+
+Part.shard2of6: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261110_044137.log

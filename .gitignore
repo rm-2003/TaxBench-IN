@@ -3,3 +3,9 @@
 *.jsonl.bak
 __pycache__/
 *.pyc
+# Per-key run splitting: wrapper logs, already-merged part checkpoints and
+# per-part result CSVs (rebuilt by rescore.py)
+*_driver.out
+*.jsonl.merged*
+*.shard*_results.csv
+*.range*_results.csv

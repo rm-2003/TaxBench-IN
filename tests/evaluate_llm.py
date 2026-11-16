@@ -33,6 +33,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from openai import OpenAI
+from openai.types.chat import ChatCompletion
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -49,10 +50,11 @@ LOGS_DIR = SCRIPT_DIR / "evaluation_logs"
 # API & retry constants
 # ---------------------------------------------------------------------------
 MAX_OUTPUT_TOKENS = None
-MAX_TRANSIENT_RETRIES = 3 # overridable with CLI
+MAX_TRANSIENT_RETRIES = 3  # attempts per API call; overridable with --max-transient-retries
 COST_CHECK_INTERVAL = 5
 FREE_COOLDOWN_SECS = 120
 FREE_COOLDOWN_MAX_RETRIES = 2
+STREAM_MAX_SECS = 3600  # total cap on one streamed response (models with "stream": True)
 API_TIMEOUT_SECS = 600  # per-attempt request timeout; without this a stuck
                          # provider blocks the case (and its concurrency slot)
                          # forever, as observed with nemotron-3-ultra hanging
@@ -87,6 +89,10 @@ EMPTY_COMPLETION_RETRIES = 4  # raised from 2 after 30 Sep: the provider went
 # Evaluation defaults (overridable via CLI)
 # ---------------------------------------------------------------------------
 MAX_TOOL_ROUNDS = 20
+MAX_TOOL_NUDGES = 2  # continue-prompts per tool-call case after a reply with no tool calls and no JSON
+TOOL_NUDGE = ("Your last reply contained neither calculate calls nor the final JSON. "
+              "Continue: use the calculate tool for any remaining arithmetic, then "
+              "reply with only the final JSON.")
 # Raised from 3 once run_script() stopped resending the whole retry history.
 # Under the old behaviour each extra round added a superseded script to the
 # prompt, so more retries made things strictly worse. With only the most recent
@@ -99,6 +105,12 @@ MAX_TOOL_ROUNDS = 20
 # variable-name typo — recoverable, but out of rounds. Rounds 1-4 are unchanged
 # by this value, so a run at 6 contains a run at 3 as a strict prefix and the
 # two conditions are separable after the fact from rounds_used.
+# Network failures (connection refused/reset, read timeouts, Wi-Fi drops) get
+# their own, longer retry budget that does not use up MAX_TRANSIENT_RETRIES:
+# waits of 10s, 30s, 1 min, 2 min, then 5 min each, up to NETWORK_MAX_RETRIES
+# (~1 h in all), so a short outage is waited out instead of SKIPping the case.
+NETWORK_RETRY_WAITS = [10, 30, 60, 120, 300]
+NETWORK_MAX_RETRIES = 15
 MAX_SCRIPT_RETRIES = 6
 SCRIPT_TIMEOUT = 20
 TOLERANCE = 0.01
@@ -157,10 +169,28 @@ MODEL_CONFIG = {
     # instance is already saturating the allocated GPUs, and concurrent
     # benchmark cases would compete for the same decode resources.
     "llamacpp/gpt-oss-120b":             {"rpm": 600, "concurrency": 1},
+    # Further local models run by Navya (llama.cpp, or Ollama hosted on Modal).
     "llamacpp/gemma-4-12b":              {"rpm": 600, "concurrency": 1},
     "llamacpp/deepseek-r1-distill-70b":  {"rpm": 600, "concurrency": 1},
     "llamacpp/llama-3.3-70b":            {"rpm": 600, "concurrency": 1},
-    "ollama/deepseek-r1-70b": {"rpm": 600, "concurrency": 1,},
+    "ollama/deepseek-r1-70b":            {"rpm": 600, "concurrency": 1},
+    # Same Nemotron weights via NVIDIA's own API (build.nvidia.com) instead of
+    # OpenRouter's :free route, which is itself served by Nvidia. No daily cap;
+    # the free tier is rate-limited per minute (~40 rpm), so stay under it.
+    "nim/nvidia/nemotron-3-ultra-550b-a55b": {"rpm": 35, "concurrency": 4},
+    # Mistral Large 4 (~1T total / ~52B active MoE, per its ID) via NVIDIA's
+    # API, same per-minute limit as above. All three methods run on this route.
+    # A real case takes ~26 min (26k reasoning tokens) and a non-streamed request
+    # never returns inside API_TIMEOUT_SECS, so this model is streamed.
+    "nim/mistralai/mistral-large-4-1t-a52b": {"rpm": 35, "concurrency": 4, "stream": True},
+    # MiniMax M3.1 Flash (428B total / 23B active MoE per NVIDIA's model card,
+    # released 22 Oct 2026) via NVIDIA's API. First token takes ~1.5 min under
+    # load, then ~25 tokens/s, so streamed like Mistral Large 4.
+    "nim/minimaxai/minimax-m3.1-flash":    {"rpm": 35, "concurrency": 4, "stream": True},
+    # Llama 3.3 70B Instruct (bf16, 2x H100) served by vLLM on Modal; see
+    # deploy/modal_llama33_70b.py. Own deployment, so no shared rate limit:
+    # concurrency is bounded by the server's batching, not a quota.
+    "modal/llama-3.3-70b-instruct":     {"rpm": 600, "concurrency": 16},
 }
 
 FREE_FALLBACKS = {
@@ -341,7 +371,6 @@ class CaseResult:
     description: str
     archetype: str  # taxpayer profile ID, e.g. "P01" (empty for pairwise/ota modes)
     model: str
-    backend: str
     method: str
     rounds_used: int
     parsed: bool
@@ -360,10 +389,7 @@ class CaseResult:
 
 LOCAL_PREFIX = "ollama/"
 LLAMACPP_PREFIX = "llamacpp/"
-LOCAL_BASE_URL = os.environ.get(
-    "OLLAMA_BASE_URL",
-    "http://localhost:11434/v1",
-)
+LOCAL_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
 LLAMACPP_BASE_URL = os.environ.get(
     "LLAMACPP_BASE_URL", "http://localhost:8080/v1"
 )
@@ -375,11 +401,20 @@ def is_local_model(model):
     return bool(model) and model.startswith((LOCAL_PREFIX, LLAMACPP_PREFIX))
 
 
+NIM_PREFIX = "nim/"
+NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
+MODAL_PREFIX = "modal/"  # own vLLM deployment on Modal; URL and key from env
+
+
+def is_nim_model(model):
+    return bool(model) and model.startswith(NIM_PREFIX)
+
+
 def api_model_name(model):
-    """Strip a local routing prefix so the request carries the server model ID."""
+    """Strip a routing prefix so the request carries the server/provider model ID."""
     if not model:
         return model
-    for prefix in (LOCAL_PREFIX, LLAMACPP_PREFIX):
+    for prefix in (LOCAL_PREFIX, LLAMACPP_PREFIX, NIM_PREFIX, MODAL_PREFIX):
         if model.startswith(prefix):
             return model[len(prefix):]
     return model
@@ -392,33 +427,7 @@ def api_model_name(model):
 # local Ollama server for "ollama/*" IDs and llama.cpp for "llamacpp/*" IDs
 # (no quota, no cost — used for local evaluation).
 # ---------------------------------------------------------------------------
-def get_model_backend(model):
-    """Return the actual serving backend for an evaluation model."""
-    if model == "ollama/gemma4-12b-ctx16k":
-        backend = os.environ.get("GEMMA4_BACKEND", "ollama").strip().lower()
-        if backend not in ("ollama", "llamacpp"):
-            raise ValueError(
-                "GEMMA4_BACKEND must be either 'ollama' or 'llamacpp'"
-            )
-        return backend
-
-    if model and model.startswith(LLAMACPP_PREFIX):
-        return "llamacpp"
-
-    if model and model.startswith(LOCAL_PREFIX):
-        return "ollama"
-
-    return "remote"
-
-
 def get_client(model=None):
-    if (model == "ollama/gemma4-12b-ctx16k"
-            and get_model_backend(model) == "llamacpp"):
-        return OpenAI(
-            base_url=LLAMACPP_BASE_URL,
-            api_key="llamacpp",
-            timeout=LOCAL_TIMEOUT_SECS,
-        )
     if model and model.startswith(LLAMACPP_PREFIX):
         return OpenAI(
             base_url=LLAMACPP_BASE_URL,
@@ -426,26 +435,32 @@ def get_client(model=None):
             timeout=LOCAL_TIMEOUT_SECS,
         )
     if model and model.startswith(LOCAL_PREFIX):
+        # An Ollama server deployed on Modal (OLLAMA_BASE_URL pointing at it)
+        # authenticates with a Modal proxy token pair sent as headers.
         modal_key = os.environ.get("MODAL_KEY")
         modal_secret = os.environ.get("MODAL_SECRET")
-
-        headers = {}
-        if modal_key and modal_secret:
-            headers = {
-                "Modal-Key": modal_key,
-                "Modal-Secret": modal_secret,
-            }
-        elif modal_key or modal_secret:
-            raise RuntimeError(
-                "Both MODAL_KEY and MODAL_SECRET must be set."
-            )
-
+        if bool(modal_key) != bool(modal_secret):
+            raise RuntimeError("Both MODAL_KEY and MODAL_SECRET must be set.")
+        headers = {"Modal-Key": modal_key, "Modal-Secret": modal_secret} if modal_key else {}
         return OpenAI(
             base_url=LOCAL_BASE_URL,
             api_key="ollama",
             default_headers=headers,
             timeout=LOCAL_TIMEOUT_SECS,
         )
+    if model and model.startswith(MODAL_PREFIX):
+        base_url = os.environ.get("MODAL_VLLM_BASE_URL")
+        api_key = os.environ.get("MODAL_VLLM_API_KEY")
+        if not base_url or not api_key:
+            print("ERROR: Set MODAL_VLLM_BASE_URL and MODAL_VLLM_API_KEY environment variables.")
+            sys.exit(1)
+        return OpenAI(base_url=base_url, api_key=api_key, timeout=API_TIMEOUT_SECS)
+    if is_nim_model(model):
+        api_key = os.environ.get("NVIDIA_API_KEY")
+        if not api_key:
+            print("ERROR: Set NVIDIA_API_KEY environment variable.")
+            sys.exit(1)
+        return OpenAI(base_url=NIM_BASE_URL, api_key=api_key, timeout=API_TIMEOUT_SECS)
     if model and model.startswith("gemini-"):
         api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
@@ -807,6 +822,83 @@ class RateLimitExhausted(Exception):
     pass
 
 
+def _create_streaming(client, **kwargs):
+    """Stream a completion and return it as an ordinary ChatCompletion.
+
+    Callers read the result exactly as they read a non-streamed response. A
+    stream that ends without a finish_reason, or exceeds STREAM_MAX_SECS, raises
+    a 503 ProviderError so it is retried or SKIPped, never scored as an answer.
+    """
+    t0 = time.monotonic()
+    content, reasoning = [], []
+    tool_calls = {}
+    finish_reason = None
+    usage = None
+    meta = {"id": "stream", "created": int(time.time()), "model": kwargs.get("model", "")}
+    stream = client.chat.completions.create(
+        stream=True, stream_options={"include_usage": True}, **kwargs)
+    for chunk in stream:
+        if time.monotonic() - t0 > STREAM_MAX_SECS:
+            stream.close()
+            raise ProviderError(f"stream timeout after {STREAM_MAX_SECS}s", status_code=503)
+        err = (chunk.model_extra or {}).get("error")
+        if err:
+            raise ProviderError(f"upstream error in stream: {err}", status_code=503)
+        if chunk.usage:
+            usage = chunk.usage.model_dump()
+        if chunk.id:
+            meta.update(id=chunk.id, created=chunk.created, model=chunk.model or meta["model"])
+        if not chunk.choices:
+            continue
+        choice = chunk.choices[0]
+        delta = choice.delta
+        if delta.content:
+            content.append(delta.content)
+        text = getattr(delta, "reasoning_content", None) or getattr(delta, "reasoning", None)
+        if text:
+            reasoning.append(text)
+        for tc in delta.tool_calls or []:
+            slot = tool_calls.setdefault(tc.index, {"id": None, "type": "function",
+                                                    "function": {"name": "", "arguments": ""}})
+            if tc.id:
+                slot["id"] = tc.id
+            if tc.function and tc.function.name:
+                slot["function"]["name"] += tc.function.name
+            if tc.function and tc.function.arguments:
+                slot["function"]["arguments"] += tc.function.arguments
+        if choice.finish_reason:
+            finish_reason = choice.finish_reason
+    if finish_reason is None:
+        raise ProviderError("stream ended without a finish_reason", status_code=503)
+    message = {"role": "assistant", "content": "".join(content) or None}
+    if reasoning:
+        message["reasoning_content"] = "".join(reasoning)
+    if tool_calls:
+        message["tool_calls"] = [tool_calls[i] for i in sorted(tool_calls)]
+    return ChatCompletion.model_validate({
+        **meta, "object": "chat.completion", "usage": usage,
+        "choices": [{"index": 0, "finish_reason": finish_reason, "message": message}],
+    })
+
+
+def _is_network_error(e):
+    """True for connection-level failures (no HTTP status): the request never
+    got an answer, so retrying after the network recovers is always safe."""
+    from openai import APIConnectionError  # APITimeoutError is a subclass
+    if isinstance(e, APIConnectionError):
+        return True
+    # Errors raised while reading a stream come from the HTTP library itself,
+    # unwrapped (openai 3.x uses httpx2; older versions use httpx).
+    for mod in ("httpx2", "httpx"):
+        lib = sys.modules.get(mod)
+        if lib is not None and isinstance(e, getattr(lib, "TransportError", ())):
+            return True
+    err_str = str(e).lower()
+    return any(s in err_str for s in ("timed out", "connection reset", "connection refused",
+                                      "connection error", "remote end closed",
+                                      "incomplete chunked read", "network is unreachable"))
+
+
 def _is_daily_cap_error(err_str):
     """True if a 429's message indicates a hard per-day quota (no point retrying
     today), as opposed to a transient per-minute rate limit.
@@ -833,15 +925,14 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
     use_json_format = model_delay_state.get("json_format_supported", False)
     requested_model = kwargs.get("model", "")
     active_model = api_model_name(requested_model)
-    reasoning_effort = (
-        MODEL_CONFIG.get(requested_model, {}).get("reasoning_effort")
-        if get_model_backend(requested_model) == "ollama"
-        else None
-    )
+    reasoning_effort = MODEL_CONFIG.get(requested_model, {}).get("reasoning_effort")
     last_was_rate_limit = False
     model_max_tokens = model_delay_state.get("max_tokens", MAX_OUTPUT_TOKENS)
 
-    for attempt in range(MAX_TRANSIENT_RETRIES):
+    attempt = -1
+    network_fails = 0
+    while attempt + 1 < MAX_TRANSIENT_RETRIES:
+        attempt += 1
         rate_limiter.wait()
         call_kwargs = dict(kwargs)
         call_kwargs["model"] = active_model
@@ -853,7 +944,10 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
             call_kwargs["response_format"] = {"type": "json_object"}
 
         try:
-            resp = client.chat.completions.create(**call_kwargs)
+            if MODEL_CONFIG.get(requested_model, {}).get("stream"):
+                resp = _create_streaming(client, **call_kwargs)
+            else:
+                resp = client.chat.completions.create(**call_kwargs)
 
             # OpenRouter delivers upstream provider failures as an `error`
             # object inside an HTTP 200 body with no `choices`, so the SDK does
@@ -876,6 +970,16 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
         except Exception as e:
             err_str = str(e).lower()
             status = getattr(e, "status_code", None) or getattr(e, "code", None)
+
+            # Network failure: wait it out on its own budget (see NETWORK_RETRY_WAITS)
+            if _is_network_error(e) and network_fails < NETWORK_MAX_RETRIES:
+                wait = NETWORK_RETRY_WAITS[min(network_fails, len(NETWORK_RETRY_WAITS) - 1)]
+                network_fails += 1
+                attempt -= 1  # does not count against MAX_TRANSIENT_RETRIES
+                print(f"      Network error ({type(e).__name__}) — retry {network_fails}/"
+                      f"{NETWORK_MAX_RETRIES} in {wait}s\n        detail: {str(e)[:200]}")
+                time.sleep(wait)
+                continue
 
             # response_format not supported — retry without it
             if use_json_format and (status == 400
@@ -1126,6 +1230,7 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rat
     tracker = TokenTracker()
     messages = build_messages("tool-call", system_prompt, input_json)
     rounds = 0
+    nudges = 0
 
     for _round in range(max_rounds):
         resp = api_call_with_retry(
@@ -1142,9 +1247,25 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rat
         if not msg.tool_calls:
             rounds += 1
             text = get_response_text(msg)
-            messages.append({"role": "assistant", "content": text[:500]})
             output = extract_json(text)
-            return output, rounds, tracker, (messages if output is None else None)
+            # A reply with no tool calls and no JSON is the model thinking aloud
+            # mid-computation, not a final answer: on 23 Oct nemotron stopped
+            # after 1-2 correct tool rounds with "Now I have: ... HRA exemption =
+            # 800,000 ..." (input_0289) and "Let me continue with the"
+            # (input_0199), and both were scored PARSE_FAIL 0/35. Send it back
+            # with a nudge, at most MAX_TOOL_NUDGES times per case.
+            if output is None and nudges < MAX_TOOL_NUDGES and rounds < max_rounds:
+                nudges += 1
+                print(f"      tool-call: reply had no tool calls and no JSON "
+                      f"(finish_reason={choice.finish_reason}) -- nudge {nudges}/{MAX_TOOL_NUDGES}")
+                messages.append({"role": "assistant", "content": text})
+                messages.append({"role": "user", "content": TOOL_NUDGE})
+                continue
+            messages.append({"role": "assistant", "content": text[:500]})
+            # Return the transcript even when the answer parses: it is the only
+            # record of how many calculate calls were made per round and whether
+            # any were rejected. evaluate_case() still decides whether to store it.
+            return output, rounds, tracker, messages
 
         messages.append(msg)
         for tc in msg.tool_calls:
@@ -1288,14 +1409,27 @@ def model_slug(model):
     return model.replace("/", "_").replace(":", "_")
 
 
-def checkpoint_path(model, method):
+_abandoned_inflight = False  # set when a model stops with cases still in flight
+SHARD = None  # (k, n) when run with --shard k/n; set in main()
+CASE_RANGE = None  # (a, b) when run with --case-range a:b; set in main()
+
+
+def _shard_suffix():
+    suffix = f".range{CASE_RANGE[0]}-{CASE_RANGE[1]}" if CASE_RANGE else ""
+    return suffix + (f".shard{SHARD[0]}of{SHARD[1]}" if SHARD else "")
+
+
+def checkpoint_path(model, method, sharded=True):
+    """Checkpoint file; a --shard run writes its own file so that parallel
+    processes never append to the same one. Merge shards when all are done."""
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-    return CHECKPOINT_DIR / f"{model_slug(model)}__{method}.jsonl"
+    suffix = _shard_suffix() if sharded else ""
+    return CHECKPOINT_DIR / f"{model_slug(model)}__{method}{suffix}.jsonl"
 
 
-def load_checkpoint(model, method):
+def load_checkpoint(model, method, sharded=True):
     """Returns (completed_set, results_list)."""
-    path = checkpoint_path(model, method)
+    path = checkpoint_path(model, method, sharded)
     completed = set()
     results = []
     if path.exists():
@@ -1312,7 +1446,6 @@ def save_checkpoint(model, method, result: CaseResult):
     path = checkpoint_path(model, method)
     entry = {  # noqa: thread-safe via _checkpoint_lock
         "case_file": result.case_file,
-        "backend": result.backend,
         "rounds_used": result.rounds_used,
         "parsed": result.parsed,
         "llm_output": result.llm_output,
@@ -1412,7 +1545,6 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
         description=case["description"],
         archetype=case["archetype"],
         model=model,
-        backend=get_model_backend(model),
         method=method,
         rounds_used=rounds,
         parsed=parsed,
@@ -1441,11 +1573,6 @@ def result_from_checkpoint_entry(entry, model, method, case_by_file=None):
         description=case.get("description", ""),
         archetype=case.get("archetype", ""),
         model=model,
-        backend=entry.get(
-            "backend",
-            "ollama" if model == "ollama/gemma4-12b-ctx16k"
-            else get_model_backend(model),
-        ),
         method=method,
         rounds_used=entry["rounds_used"],
         parsed=entry["parsed"],
@@ -1465,11 +1592,11 @@ def result_from_checkpoint_entry(entry, model, method, case_by_file=None):
 
 def write_per_model_method_csv(model, method, results):
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    fname = f"{model_slug(model)}__{method}_results.csv"
+    fname = f"{model_slug(model)}__{method}{_shard_suffix()}_results.csv"
     path = RESULTS_DIR / fname
 
     fieldnames = (
-        ["case_file", "description", "archetype", "model", "backend", "method", "rounds_used", "parsed",
+        ["case_file", "description", "archetype", "model", "method", "rounds_used", "parsed",
          "latency_sec", "prompt_tokens", "completion_tokens", "total_tokens", "cost"]
         + ALL_FIELD_NAMES
         + [f"{f}_pct_error" for f in ALL_FIELD_NAMES]
@@ -1485,7 +1612,6 @@ def write_per_model_method_csv(model, method, results):
                 "description": r.description,
                 "archetype": r.archetype,
                 "model": r.model,
-                "backend": r.backend,
                 "method": r.method,
                 "rounds_used": r.rounds_used,
                 "parsed": 1 if r.parsed else 0,
@@ -1509,7 +1635,7 @@ def write_method_summary_csv(method, all_model_results):
     path = RESULTS_DIR / f"{method}_summary.csv"
 
     fieldnames = [
-        "model", "backend", "overall_accuracy",
+        "model", "overall_accuracy",
         "salary_accuracy", "capital_gains_accuracy", "other_sources_accuracy",
         "aggregates_accuracy", "deductions_accuracy", "tax_computation_accuracy",
         "mean_rounds", "parse_fail_count", "total_cases",
@@ -1538,7 +1664,6 @@ def write_method_summary_csv(method, all_model_results):
 
         rows[model] = {
             "model": model,
-            "backend": "+".join(sorted({r.backend for r in results})),
             "overall_accuracy": round(sum(r.total_pct for r in results) / n, 4),
             "salary_accuracy": section_acc(SECTION_MAP["salary"]),
             "capital_gains_accuracy": section_acc(SECTION_MAP["capital_gains"]),
@@ -1671,7 +1796,7 @@ def run_model(client, model, method, cases, args):
     tag = _model_tag(model)
     cfg = MODEL_CONFIG.get(model, DEFAULT_MODEL_CONFIG)
     rate_limiter = RateLimiter(cfg["rpm"])
-    concurrency = cfg["concurrency"]
+    concurrency = args.concurrency or cfg["concurrency"]
 
     with _print_lock:
         print(f"\n[{tag}] Starting — rpm={cfg['rpm']}, concurrency={concurrency}")
@@ -1681,6 +1806,18 @@ def run_model(client, model, method, cases, args):
     prior_results = [result_from_checkpoint_entry(e, model, method, case_by_file) for e in checkpoint_entries]
 
     pending_cases = [c for c in cases if c["file"] not in completed]
+    if SHARD or CASE_RANGE:
+        main_done, _ = load_checkpoint(model, method, sharded=False)
+        pending_cases = [c for c in pending_cases if c["file"] not in main_done]
+    if args.skip_done_by:
+        # Cases another route already completed for this method (e.g. finishing
+        # an OpenRouter arm via nim/): skip them, but keep this checkpoint pure.
+        other_done, _ = load_checkpoint(args.skip_done_by, method)
+        before = len(pending_cases)
+        pending_cases = [c for c in pending_cases if c["file"] not in other_done]
+        with _print_lock:
+            print(f"[{tag}] Skipping {before - len(pending_cases)} cases already done by "
+                  f"{args.skip_done_by} [{method}]")
     if completed:
         with _print_lock:
             print(f"[{tag}] Resuming: {len(completed)} done, {len(pending_cases)} remaining")
@@ -1711,6 +1848,7 @@ def run_model(client, model, method, cases, args):
         If any in-flight succeeds, reset the flag and resume feeding.
         Returns (results, rate_limit_halted, skipped_cases).
         """
+        global _abandoned_inflight
         case_iter = iter(batch_cases)
         batch_results = []
         skipped_cases = []
@@ -1718,7 +1856,12 @@ def run_model(client, model, method, cases, args):
         rate_limit_paused = False
         stop = False
 
-        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+        # Not a `with` block: its exit waits for every in-flight case, and on
+        # 9 Nov a consecutive-failure stop then hung 1.5 h on requests that never
+        # returned. After that stop the in-flight cases are abandoned instead
+        # (finished cases are already checkpointed; a rerun redoes the rest).
+        executor = ThreadPoolExecutor(max_workers=concurrency)
+        try:
             future_to_case = {}
 
             # seed the initial window
@@ -1792,7 +1935,9 @@ def run_model(client, model, method, cases, args):
                         if consecutive_skips >= CONSECUTIVE_SKIP_LIMIT:
                             with _print_lock:
                                 print(f"[{tag}] {CONSECUTIVE_SKIP_LIMIT} consecutive "
-                                      f"failures — stopping model")
+                                      f"failures — stopping model, abandoning "
+                                      f"{len(future_to_case)} in-flight case(s)")
+                            _abandoned_inflight = True
                             stop = True
                             break
 
@@ -1806,6 +1951,8 @@ def run_model(client, model, method, cases, args):
                         if nxt is None:
                             break
                         future_to_case[executor.submit(process_case, nxt)] = nxt
+        finally:
+            executor.shutdown(wait=not _abandoned_inflight, cancel_futures=_abandoned_inflight)
 
         # any un-submitted cases go into skipped
         skipped_cases.extend(case_iter)
@@ -1864,11 +2011,34 @@ class _Tee:
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    global _cost_guard, MAX_TRANSIENT_RETRIES
     parser = argparse.ArgumentParser(description="LLM benchmark evaluator for Indian tax calculator")
     parser.add_argument("--method", choices=["zero-shot", "script", "tool-call"], default="zero-shot")
     parser.add_argument("--model", type=str, default=None, help="Provider/model ID (e.g. llamacpp/gpt-oss-120b); if omitted runs all models")
     parser.add_argument("--max-rounds", type=int, default=MAX_TOOL_ROUNDS)
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
+    # Attempts per API call before a transient (500/502/503) failure SKIPs the
+    # case. Tool-call makes ~5-10 calls per case and one exhausted call discards
+    # the whole case, so an overloaded free endpoint needs a larger budget here
+    # than zero-shot does. Waits after the third attempt stay at 32s.
+    parser.add_argument("--max-transient-retries", type=int, default=MAX_TRANSIENT_RETRIES)
+    # Overrides the per-model concurrency. On the 50-request/day free tier a
+    # daily-cap 429 discards every in-flight case, so tool-call runs (~11
+    # requests per case) should use 1 to lose at most one partial case.
+    parser.add_argument("--concurrency", type=int, default=None)
+    # Model ID whose checkpoint (same method) lists cases to skip: lets one arm
+    # be finished on a second provider route without duplicating cases.
+    parser.add_argument("--skip-done-by", type=str, default=None)
+    # Run only part k of n of the selected cases (every n-th case from offset
+    # k-1), writing to its own checkpoint, so several processes or API keys can
+    # share one arm. Merge the shard checkpoints into the main one afterwards.
+    parser.add_argument("--shard", type=str, default=None, help="k/n, e.g. 1/3")
+    parser.add_argument("--case-range", type=str, default=None,
+                        help="a:b, run only cases[a:b] of the seed order (applied before --shard); "
+                             "like --shard, it writes its own checkpoint, to be merged later")
+    parser.add_argument("--reverse", action="store_true",
+                        help="run the selected cases last-first, so a second process can work "
+                             "from the far end of a running arm without overlapping it")
     parser.add_argument("--script-timeout", type=int, default=SCRIPT_TIMEOUT)
     parser.add_argument("--delay", type=float, default=DELAY_BETWEEN_CASES)
     parser.add_argument("--max-cases", type=int, default=MAX_CASES, help="Max number of cases to evaluate (default 500)")
@@ -1888,14 +2058,27 @@ def main():
     all_cases = load_cases()
     random.Random(args.seed).shuffle(all_cases)
     cases = all_cases[:args.max_cases]
+    global SHARD, CASE_RANGE
+    if args.case_range:
+        a, b = (int(x) for x in args.case_range.split(":"))
+        CASE_RANGE = (a, b)
+        cases = cases[a:b]
+    if args.shard:
+        k, n = (int(x) for x in args.shard.split("/"))
+        assert 1 <= k <= n, "--shard must be k/n with 1 <= k <= n"
+        SHARD = (k, n)
+        cases = cases[k - 1::n]
+    if args.reverse:
+        cases = cases[::-1]
     models = [args.model] if args.model else MODELS
 
-    global _cost_guard
+    MAX_TRANSIENT_RETRIES = args.max_transient_retries
     _cost_guard = CostGuard(budget=args.budget)
 
     print(f"Method: {args.method} | Models: {len(models)} | Cases: {len(cases)} (seed={args.seed})")
     print(f"Constants: max_rounds={args.max_rounds}, max_script_retries={args.max_script_retries}, "
-          f"script_timeout={args.script_timeout}s, max_cases={args.max_cases}, budget=${args.budget:.2f}")
+          f"script_timeout={args.script_timeout}s, max_cases={args.max_cases}, budget=${args.budget:.2f}, "
+          f"max_transient_retries={MAX_TRANSIENT_RETRIES}")
     for m in models:
         cfg = MODEL_CONFIG.get(m, DEFAULT_MODEL_CONFIG)
         print(f"  {_model_tag(m):35s} rpm={cfg['rpm']:2d}  concurrency={cfg['concurrency']}")
@@ -1924,14 +2107,17 @@ def main():
                         print(f"[{_model_tag(m)}] MODEL FAILED: {e}")
                     all_model_results[m] = []
 
-    # Write method-level summary
-    summary_path = write_method_summary_csv(args.method, all_model_results)
-    print(f"\nMethod summary: {summary_path}")
+    if SHARD or CASE_RANGE:
+        print(f"\nPart{_shard_suffix()}: summaries not written; merge part checkpoints, then run rescore.py")
+    else:
+        # Write method-level summary
+        summary_path = write_method_summary_csv(args.method, all_model_results)
+        print(f"\nMethod summary: {summary_path}")
 
-    # Attempt cross-method pivot
-    pivot_path = write_cross_method_pivot()
-    if pivot_path:
-        print(f"Cross-method pivot: {pivot_path}")
+        # Attempt cross-method pivot
+        pivot_path = write_cross_method_pivot()
+        if pivot_path:
+            print(f"Cross-method pivot: {pivot_path}")
 
     total_spent = _cost_guard.spent()
     if total_spent is not None:
@@ -1941,6 +2127,11 @@ def main():
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
     log_file.close()
+    if _abandoned_inflight:
+        # Abandoned request threads may never return, and a normal exit joins
+        # them; exit now (non-zero, so a wrapper loop knows the run is unfinished).
+        sys.stdout.flush()
+        os._exit(3)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 model,backend,overall_accuracy,salary_accuracy,capital_gains_accuracy,other_sources_accuracy,aggregates_accuracy,deductions_accuracy,tax_computation_accuracy,mean_rounds,parse_fail_count,total_cases,mean_latency_sec,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens,total_prompt_tokens,total_completion_tokens,total_cost,mean_cost
 llamacpp/deepseek-r1-distill-70b,llamacpp,0.3745,0.361,0.1793,0.9842,0.0123,0.413,0.2941,1.0,9,569,99.7,2708.0,2175.0,4884.0,1541000,1237749,0.0,0.0
-llamacpp/gpt-oss-120b,,0.5239,0.5292,0.377,0.9982,0.0211,0.7335,0.3534,1.0,0,569,39.7,2753.0,4797.0,7551.0,1566605,2729756,0.0,0.0
-nvidia/nemotron-3-ultra-550b-a55b:free,,0.617,0.7369,0.5308,0.9121,0.0773,0.8555,0.3988,1.0,5,569,834.4,2381.0,15203.0,17584.0,1354600,8650763,0.0,0.0
 ollama/gemma4-12b-ctx16k,llamacpp+ollama,0.3823,0.3472,0.1098,0.8735,0.0044,0.5393,0.2707,1.0,50,569,190.27,3075.0,2485.0,5560.0,1749448,1414098,0.0,0.0
 ollama/gemma4-12b-ctx8k,,0.3669,0.2229,0.12,1.0,0.0,0.5422,0.2633,1.0,0,50,197.91,2442.0,819.0,3261.0,122090,40950,0.0,0.0
+llamacpp/gpt-oss-120b,0.5239,0.5292,0.377,0.9982,0.0211,0.7335,0.3534,1.0,0,569,39.7,2753.0,4797.0,7551.0,1566605,2729756,0.0,0.0
+nim/minimaxai/minimax-m3.1-flash,0.4943,0.4735,0.2979,0.983,0.0404,0.6727,0.3588,1.0,7,569,2030.38,2849.0,25826.0,28676.0,1621229,14695229,0.0,0.0
+nim/mistralai/mistral-large-4-1t-a52b,0.5745,0.584,0.3717,1.0,0.036,0.8287,0.3954,1.0,0,569,1096.11,2760.0,24557.0,27317.0,1570645,13972890,0.0,0.0
+nvidia/nemotron-3-ultra-550b-a55b:free,0.617,0.7369,0.5308,0.9121,0.0773,0.8555,0.3988,1.0,5,569,834.4,2381.0,15203.0,17584.0,1354600,8650763,0.0,0.0

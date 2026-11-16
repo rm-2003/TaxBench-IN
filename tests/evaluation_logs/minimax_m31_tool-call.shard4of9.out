@@ -1,0 +1,128 @@
+Method: tool-call | Models: 1 | Cases: 63 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=5
+[minimax-m3.1-flash] [1/63] input_0554.json OK score=19/35 (54%) rounds=4 latency=642.3s tokens=55996 cost=$0.0000
+[minimax-m3.1-flash] [2/63] input_0403.json OK score=20/35 (57%) rounds=3 latency=674.5s tokens=49853 cost=$0.0000
+[minimax-m3.1-flash] [3/63] input_0172.json OK score=22/35 (63%) rounds=4 latency=1039.8s tokens=96148 cost=$0.0000
+[minimax-m3.1-flash] [4/63] input_0168.json OK score=17/35 (49%) rounds=5 latency=2201.5s tokens=289052 cost=$0.0000
+[minimax-m3.1-flash] [5/63] input_0080.json OK score=13/35 (37%) rounds=5 latency=1412.4s tokens=158603 cost=$0.0000
+[minimax-m3.1-flash] [6/63] input_0278.json OK score=13/35 (37%) rounds=5 latency=2508.8s tokens=182922 cost=$0.0000
+[minimax-m3.1-flash] [7/63] input_0365.json OK score=12/35 (34%) rounds=4 latency=604.7s tokens=48862 cost=$0.0000
+[minimax-m3.1-flash] [8/63] input_0021.json OK score=21/35 (60%) rounds=5 latency=2242.8s tokens=148550 cost=$0.0000
+[minimax-m3.1-flash] [9/63] input_0495.json OK score=18/35 (51%) rounds=4 latency=1009.4s tokens=66924 cost=$0.0000
+[minimax-m3.1-flash] [10/63] input_0245.json OK score=16/35 (46%) rounds=5 latency=3184.3s tokens=338221 cost=$0.0000
+[minimax-m3.1-flash] [11/63] input_0361.json OK score=16/35 (46%) rounds=4 latency=1072.8s tokens=72417 cost=$0.0000
+[minimax-m3.1-flash] [12/63] input_0048.json OK score=21/35 (60%) rounds=4 latency=2037.0s tokens=147027 cost=$0.0000
+[minimax-m3.1-flash] [13/63] input_0243.json OK score=15/35 (43%) rounds=5 latency=1579.4s tokens=124360 cost=$0.0000
+[minimax-m3.1-flash] [14/63] input_0116.json OK score=10/35 (29%) rounds=5 latency=1436.9s tokens=152380 cost=$0.0000
+[minimax-m3.1-flash] [15/63] input_0530.json OK score=19/35 (54%) rounds=4 latency=3315.4s tokens=253091 cost=$0.0000
+[minimax-m3.1-flash] [16/63] input_0249.json OK score=14/35 (40%) rounds=5 latency=634.0s tokens=60982 cost=$0.0000
+[minimax-m3.1-flash] [17/63] input_0448.json OK score=13/35 (37%) rounds=5 latency=1726.4s tokens=172857 cost=$0.0000
+[minimax-m3.1-flash] [18/63] input_0264.json OK score=12/35 (34%) rounds=4 latency=3234.6s tokens=300200 cost=$0.0000
+[minimax-m3.1-flash] [19/63] input_0459.json OK score=18/35 (51%) rounds=5 latency=1349.8s tokens=124513 cost=$0.0000
+      Transient error (503) — retry in 2s
+        detail: stream timeout after 3600s
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+[minimax-m3.1-flash] [20/63] input_0004.json OK score=16/35 (46%) rounds=4 latency=5798.9s tokens=93619 cost=$0.0000
+[minimax-m3.1-flash] [21/63] input_0412.json OK score=22/35 (63%) rounds=5 latency=3133.8s tokens=237961 cost=$0.0000
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[minimax-m3.1-flash] [22/63] input_0260.json OK score=9/35 (26%) rounds=4 latency=10263.6s tokens=85876 cost=$0.0000
+Method: tool-call | Models: 1 | Cases: 63 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  minimax-m3.1-flash                  rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[minimax-m3.1-flash] Starting — rpm=35, concurrency=5
+[minimax-m3.1-flash] Resuming: 22 done, 19 remaining
+[minimax-m3.1-flash] [23/63] input_0192.json OK score=15/35 (43%) rounds=4 latency=1069.4s tokens=62386 cost=$0.0000
+[minimax-m3.1-flash] [24/63] input_0275.json OK score=15/35 (43%) rounds=4 latency=1417.8s tokens=104100 cost=$0.0000
+[minimax-m3.1-flash] [25/63] input_0240.json OK score=14/35 (40%) rounds=4 latency=2036.4s tokens=158935 cost=$0.0000
+[minimax-m3.1-flash] [26/63] input_0520.json OK score=22/35 (63%) rounds=4 latency=2297.4s tokens=163841 cost=$0.0000
+[minimax-m3.1-flash] [27/63] input_0071.json OK score=13/35 (37%) rounds=4 latency=1265.7s tokens=69395 cost=$0.0000
+[minimax-m3.1-flash] [28/63] input_0528.json OK score=13/35 (37%) rounds=5 latency=3111.4s tokens=295751 cost=$0.0000
+[minimax-m3.1-flash] [29/63] input_0118.json OK score=13/35 (37%) rounds=5 latency=1912.1s tokens=140216 cost=$0.0000
+[minimax-m3.1-flash] [30/63] input_0534.json OK score=19/35 (54%) rounds=4 latency=1333.7s tokens=61333 cost=$0.0000
+[minimax-m3.1-flash] [31/63] input_0276.json OK score=19/35 (54%) rounds=4 latency=4371.5s tokens=219824 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Transient error (503) — retry in 2s
+        detail: Service temporarily unavailable
+      Transient error (503) — retry in 2s
+        detail: Service temporarily unavailable
+[minimax-m3.1-flash] [32/63] input_0468.json OK score=15/35 (43%) rounds=5 latency=4422.2s tokens=131669 cost=$0.0000
+      Transient error (503) — retry in 8s
+        detail: Service temporarily unavailable
+      Transient error (503) — retry in 2s
+        detail: Service temporarily unavailable
+      429 rate limit — waiting 45s (attempt 3)
+      Transient error (503) — retry in 2s
+        detail: Service temporarily unavailable
+      Transient error (503) — retry in 2s
+        detail: Service temporarily unavailable
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 8s
+        detail: stream ended without a finish_reason
+      Network error (APITimeoutError) — retry 1/15 in 10s
+        detail: Request timed out.
+      Network error (APITimeoutError) — retry 1/15 in 10s
+        detail: Request timed out.
+[minimax-m3.1-flash] [33/63] input_0453.json OK score=12/35 (34%) rounds=6 latency=7623.1s tokens=239786 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[minimax-m3.1-flash] [34/63] input_0274.json OK score=19/35 (54%) rounds=4 latency=5902.3s tokens=61460 cost=$0.0000
+[minimax-m3.1-flash] [35/63] input_0137.json OK score=16/35 (46%) rounds=4 latency=5709.9s tokens=98188 cost=$0.0000
+[minimax-m3.1-flash] [36/63] input_0368.json OK score=17/35 (49%) rounds=5 latency=1133.3s tokens=81363 cost=$0.0000
+[minimax-m3.1-flash] [37/63] input_0537.json OK score=15/35 (43%) rounds=4 latency=5131.1s tokens=83807 cost=$0.0000
+[minimax-m3.1-flash] [38/63] input_0349.json OK score=28/35 (80%) rounds=3 latency=811.0s tokens=44906 cost=$0.0000
+[minimax-m3.1-flash] [39/63] input_0028.json OK score=22/35 (63%) rounds=4 latency=854.4s tokens=52799 cost=$0.0000
+[minimax-m3.1-flash] [40/63] input_0371.json OK score=16/35 (46%) rounds=3 latency=4666.5s tokens=109690 cost=$0.0000
+[minimax-m3.1-flash] [41/63] input_0559.json OK score=16/35 (46%) rounds=4 latency=966.3s tokens=49942 cost=$0.0000
+
+=== Evaluation Report: nim/minimaxai/minimax-m3.1-flash [tool-call] ===
+Overall accuracy:    47.0% (41 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         4.3 per case
+
+Per-section accuracy:
+  Salary (7 fields)             43.6%
+  Capital Gains (2 fields)      35.4%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         4.9%
+  Deductions (9 fields)         60.2%
+  Tax Computation (12 fields)   35.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   40.2%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          2613.1 sec/case
+  Mean tokens:           133,898 total (105,381 prompt + 28,517 completion)
+  Total tokens (all):    5,489,805
+  Total cost:            $0.0000 ($0.0000/case)
+[minimax-m3.1-flash] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_minimaxai_minimax-m3.1-flash__tool-call.shard4of9_results.csv
+
+Part.shard4of9: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261111_133845.log

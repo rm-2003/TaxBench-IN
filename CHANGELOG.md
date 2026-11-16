@@ -941,3 +941,189 @@ picked up elsewhere: see `HANDOFF_GEMMA.md` (Gemma zero-shot ctx16k at 496/569,
 script ctx16k at 50/569). Nemotron arms are still running here and their
 checkpoints in this commit are partial: tool-call at 558/569 (244 OpenRouter +
 314 NIM, excluding the 10 NIM overlap rows) and script at 60/569.
+
+#### Nemotron tool-call complete at 569 (pooled); route effect found
+
+569/569 on 1 Nov: 244 cases via OpenRouter `:free`, 325 via `nim/`.
+
+| Nemotron, 569 cases | Overall | Salary | CapGains | Other | Aggregates | Deductions | TaxComp | Parse fails | Tokens/case |
+|---|---|---|---|---|---|---|---|---|---|
+| zero-shot (OpenRouter) | 61.7 | 73.7 | 53.1 | 91.2 | 7.7 | 85.5 | 39.9 | 5 | 17,584 |
+| tool-call (pooled)     | 58.2 | 61.5 | 38.9 | 98.8 | 5.1 | 82.7 | 39.7 | 6 | 99,982 |
+
+Pooled tool-call minus zero-shot: -3.5 points, paired bootstrap 95% CI
+[-4.6, -2.5] (better 146 / worse 332 / same 91). All 6 parse failures hit the
+20-round cap while still calling `calculate` (P08 x4, P02 x2). Strict-correct: 2.
+
+**The routes are not equivalent.** Tool-call minus zero-shot is -5.6 on the
+244 OpenRouter cases but -2.0 on the 325 NIM cases; difference +3.5, 95% CI
+[+1.5, +5.7]. The split follows the seed-42 shuffle order, so it is close to a
+random split, and case mix is an unlikely explanation. The 10-case overlap
+check (+2.0 for NIM) pointed the same way but was too small to detect it. So the
+pooled 569 figure mixes two routes that differ, and the zero-shot baseline is
+OpenRouter only. Tool-call is below zero-shot within each route, so the
+direction holds, but the size of the gap depends on the route.
+
+#### Nemotron script arm complete at 569; all three Nemotron arms done
+
+Script arm extended from 50 to 569 via OpenRouter `:free` (1-5 Nov), same
+settings as the 50-case arm (`max_script_retries` 6, `script_timeout` 20 s),
+rotating free-tier keys. The driver retries on the same key after a
+connection/timeout stop (10 min wait); this recovered three network drops.
+Navya's `reasoning_content` fallback (merged 1 Nov) was active for the cases
+run after the merge.
+
+| Nemotron, 569 cases | Overall | Salary | CapGains | Other | Aggr. | Deductions | TaxComp | Parse fails | Strict | Tokens/case | Median latency |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| zero-shot  | 61.7 | 73.7 | 53.1 | 91.2  | 7.7 | 85.5 | 39.9 | 5 | 2 | 17,584 | 449 s |
+| script     | 63.4 | 76.4 | 50.4 | 100.0 | 8.3 | 85.5 | 41.4 | 0 | 4 | 22,253 | 366 s |
+| tool-call* | 58.2 | 61.5 | 38.9 | 98.8  | 5.1 | 82.7 | 39.7 | 6 | 2 | 99,982 | 347 s |
+
+\* pooled OpenRouter 244 + NIM 325; see the route-effect note above.
+
+Paired bootstrap (5,000 resamples, seed 42), points: script - zero-shot +1.7
+[+0.9, +2.5] (better 254 / worse 176); tool-call - zero-shot -3.5 [-4.6, -2.5];
+script - tool-call +5.2 [+4.5, +6.0]. On the 50-case subset script vs zero-shot
+was -0.4 (60.7 vs 61.1): the subset was too small to resolve a ~2-point effect.
+Means are inflated by laptop-sleep periods, so latency is reported as median.
+
+#### New model: Mistral Large 4 via NVIDIA (`nim/`), all three methods
+
+Llama 3.3 70B was the intended next model but has no free route any more: NVIDIA
+retired it on 26 Aug 2026 (HTTP 410), OpenRouter no longer offers a `:free`
+variant, and Modal requires a payment method for every GPU type that fits a
+70B (H100, A100-80GB, L40S, L4, A10G all refused at deploy). The Modal app
+(`deploy/modal_llama33_70b.py`, vLLM 0.32.0, revision 6f6073b, bf16 on
+2x H100, API-key protected) and a `modal/` harness route are kept for if a
+payment method is added.
+
+Probing the NVIDIA catalogue on 6 Nov (one chat and one tool-call request
+each): working with tool calls were google/gemma-4-31b-it,
+mistralai/mistral-large-4-1t-a52b and minimaxai/minimax-m3.1-flash (114 s for
+a trivial reply); deepseek-v4.1-flash, gpt-oss-20b and glm-5.3-flash timed out;
+nemotron-3-super-120b, kimi-k2.6, palmyra-fin-70b and gemma-3-12b returned 404
+although listed. Started `nim/mistralai/mistral-large-4-1t-a52b` (~1T total /
+~52B active, per its ID) on zero-shot, then script, then tool-call, 569 cases
+each, concurrency 4, 35 rpm, `--max-transient-retries 10`, all on the one
+route.
+
+#### Mistral Large 4: streaming added after 0 of 569 in the first attempt
+
+The first zero-shot attempt (6 Nov) finished no cases in 4 hours. Probe on
+input_0289 (three parallel requests): default settings 1,559 s, 26,554 output
+tokens, 20/35; `reasoning_effort: low` 774 s, 10,956 tokens, 17/35;
+`reasoning_effort: none` rejected with HTTP 400. A non-streamed request cannot
+return inside the 600 s `API_TIMEOUT_SECS`. Added `_create_streaming()`, enabled
+per model with `"stream": True` in `MODEL_CONFIG` and used only by Mistral Large
+4: it assembles the stream into an ordinary `ChatCompletion`, caps one response
+at `STREAM_MAX_SECS` (3,600 s), and raises a retryable 503 if the stream ends
+without a `finish_reason`, so a cut-off stream is never scored. Verified end to
+end with a batched tool-call round trip. Default reasoning is kept, matching
+the Nemotron arms. Restarted on all three methods, 569 cases each.
+
+### Harness: network retries and no hang after a failure stop (9 Nov 2026)
+
+At 12:15 on 9 Nov all four Mistral script shards hit a burst of
+`ReadTimeout` errors raised while reading a stream. The message ("the read
+operation timed out") matched none of the transient checks, so each case was
+SKIPped at once; five in a row stopped the model. The run then sat for 1.5 h
+without exiting, because leaving the `ThreadPoolExecutor` block waits for every
+in-flight case and some never returned. Two changes:
+
+- Connection-level failures (`APIConnectionError`/`APITimeoutError`, the HTTP
+  library's `TransportError` family, matched for both `httpx2` and `httpx`, and
+  messages such as "timed out" or "connection reset") now have their own retry
+  budget in `api_call_with_retry`: waits of 10 s, 30 s, 1 min, 2 min, then
+  5 min, up to `NETWORK_MAX_RETRIES` = 15 (about 1 h), without using up
+  `--max-transient-retries`. Unit-tested with a fake client: 8 consecutive
+  `ReadTimeout`s then success returns normally; 16 `ConnectError`s raise.
+- After a consecutive-failure stop, the in-flight cases are abandoned
+  (`shutdown(wait=False, cancel_futures=True)`) and the process exits with
+  code 3 after writing its reports. Finished cases are already checkpointed,
+  and a rerun redoes the rest. Scores and checkpoints are unaffected.
+
+The script shards were restarted from their checkpoints (10, 13, 10 and 10
+cases kept). Each run now has a wrapper loop that restarts it after any
+unfinished exit and kills it if no case finishes for 3 h.
+
+### Mistral Large 4 complete; MiniMax M3.1 Flash added (9–11 Nov 2026)
+
+`nim/mistralai/mistral-large-4-1t-a52b`, all three methods, seed 42, merged
+from the per-key shard checkpoints (`*.shard*.jsonl.merged` kept) and rebuilt
+with `tests/rescore.py` (0 drift):
+
+| Method | Cases | Accuracy | All 35 correct | Parse failures |
+|---|---|---|---|---|
+| zero-shot | 569 | 57.4 | 3 | 0 |
+| script | 568 | 60.2 | 4 | 0 |
+| tool-call | 569 | 58.1 | 3 | 0 |
+
+Paired bootstrap (2,000 resamples): script − zero-shot +2.7 [+2.2, +3.4];
+tool-call − zero-shot +0.7 [+0.1, +1.3]; script − tool-call +2.1 [+1.5, +2.7].
+Unlike Nemotron (tool-call −3.5 vs zero-shot), Mistral gains slightly from
+tools; no tool-call case reached the 20-round cap (median 5 rounds).
+Script is missing `input_0295.json`: every attempt over ~12 h failed on the
+provider side (streams cut off without a `finish_reason` or silent past the
+read timeout), so it was stopped rather than scored. Zero-shot and script
+were also slowed by server load: above ~100 concurrent streams across all
+keys, per-stream speed fell to 5–8 tokens/s and many answers hit the 1-hour
+`STREAM_MAX_SECS` cap and were retried; the cap affects only latency, never
+scores. Harness additions used for these runs: `--shard`, `--case-range`,
+`--reverse`, and a generic per-key wrapper loop with a 3 h no-progress
+watchdog.
+
+`nim/minimaxai/minimax-m3.1-flash` (428B total / 23B active MoE per NVIDIA's
+model card, released 22 Oct 2026; one spec field on the same card says ~220B)
+added to `MODEL_CONFIG` with streaming. Zero-shot, 569 cases: 49.4 accuracy,
+4 all-correct, 7 parse failures. Paired differences on the same cases:
+−8.0 [−9.0, −7.1] vs Mistral Large 4 and −12.3 [−13.3, −11.1] vs Nemotron 3
+Ultra. Some keys returned 429s at 8 concurrent requests and none at 4–6, with
+no other load on their accounts, so the MiniMax limit appears to depend on
+per-key concurrency. Script and tool-call are running.
+
+### Merged `main` (Navya's GPT-OSS, DeepSeek-R1, Gemma tool-call runs) (11 Nov 2026)
+
+Brought in `llamacpp/gpt-oss-120b` (zero-shot 52.4, script 50.5, tool-call
+44.3; 569 each), `ollama/deepseek-r1-70b` tool-call (34.3, 389 cases) and
+`ollama/gemma4-12b-ctx16k` tool-call (1.6, 412 cases), plus `get_started.py`
+(her Modal deployment for DeepSeek). `tests/evaluate_llm.py` kept this
+branch's version: `main`'s copy predated the NIM route, streaming and the
+tool-call continue-prompt (`MAX_TOOL_NUDGES`), and would have removed them.
+Her additions that do not change results were carried over: the four extra
+local entries in `MODEL_CONFIG`, `OLLAMA_BASE_URL`, and `MODAL_KEY` /
+`MODAL_SECRET` headers for an Ollama server on Modal. Her per-run `backend`
+field stays in her checkpoints but is not written by this version. Her
+tool-call runs used the code without the continue-prompt, so they are not
+strictly comparable with the Nemotron and Mistral tool-call arms. The Gemma
+tool-call score (1.6) indicates a failed run, not a model result. Removed
+stray root files (`--max-cases`, `--method`, `--model`, `gemma4_server.log`).
+`rescore.py`: 0 drift for every model; summaries rebuilt.
+
+### Repository cleanup (11 Nov 2026)
+
+Removed files nothing depends on: 78 `run_*.log` files from runs that ended
+before finishing a single case (aborted starts, crashes), the 85 per-key
+`*_driver.out` wrapper logs (restart notes and totals only; the per-case
+logs stay), `request.json` (a one-off Ollama test request) and
+`nvidia_nemotron-3-ultra-550b-a55b_free__tool-call.jsonl.pre-nudge.bak`.
+`get_started.py` moved to `deploy/modal_deepseek_r1_70b.py`. `.gitignore`
+now covers driver logs, merged part checkpoints and per-part result CSVs.
+All removed files remain in git history.
+
+### MiniMax M3.1 Flash complete (12 Nov 2026)
+
+`nim/minimaxai/minimax-m3.1-flash`, 569 cases per method, merged from the
+per-key part checkpoints and rebuilt with `rescore.py` (0 drift):
+
+| Method | Accuracy | All 35 correct | Parse failures |
+|---|---|---|---|
+| zero-shot | 49.4 | 4 | 7 |
+| script | 49.6 | 1 | 0 |
+| tool-call | 49.9 | 1 | 2 |
+
+Paired bootstrap: script − zero-shot +0.1 [−0.7, +1.0]; tool-call −
+zero-shot +0.5 [−0.4, +1.4]; script − tool-call −0.3 [−1.0, +0.4]. Unlike
+Nemotron and Mistral, neither method changes MiniMax's accuracy measurably.
+No tool-call case reached the 20-round cap (median 4 rounds). Script and
+tool-call ran on 17 keys at 5 concurrent requests each; script saw 215
+retried 429s and one SKIP, redone before completion.
