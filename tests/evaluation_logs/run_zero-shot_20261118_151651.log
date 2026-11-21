@@ -1,0 +1,190 @@
+Method: zero-shot | Models: 1 | Cases: 190 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+[kimi-k3.1-pro] Resuming: 51 done, 139 remaining
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+[kimi-k3.1-pro] [52/190] input_0540.json OK score=23/35 (66%) rounds=1 latency=2696.0s tokens=30454 cost=$0.0000
+[kimi-k3.1-pro] [53/190] input_0478.json OK score=25/35 (71%) rounds=1 latency=2963.2s tokens=15844 cost=$0.0000
+[kimi-k3.1-pro] [54/190] input_0435.json OK score=23/35 (66%) rounds=1 latency=2994.4s tokens=17447 cost=$0.0000
+[kimi-k3.1-pro] [55/190] input_0500.json OK score=25/35 (71%) rounds=1 latency=3102.5s tokens=23948 cost=$0.0000
+[kimi-k3.1-pro] [56/190] input_0546.json OK score=23/35 (66%) rounds=1 latency=3509.7s tokens=22342 cost=$0.0000
+[kimi-k3.1-pro] [57/190] input_0180.json OK score=30/35 (86%) rounds=1 latency=723.0s tokens=11547 cost=$0.0000
+[kimi-k3.1-pro] [58/190] input_0171.json OK score=29/35 (83%) rounds=1 latency=396.7s tokens=12925 cost=$0.0000
+[kimi-k3.1-pro] [59/190] input_0191.json OK score=28/35 (80%) rounds=1 latency=1337.2s tokens=21808 cost=$0.0000
+[kimi-k3.1-pro] [60/190] input_0525.json OK score=23/35 (66%) rounds=1 latency=1283.4s tokens=30926 cost=$0.0000
+[kimi-k3.1-pro] [61/190] input_0181.json OK score=30/35 (86%) rounds=1 latency=592.0s tokens=20870 cost=$0.0000
+[kimi-k3.1-pro] [62/190] input_0462.json OK score=22/35 (63%) rounds=1 latency=1728.2s tokens=45674 cost=$0.0000
+[kimi-k3.1-pro] [63/190] input_0168.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=1242.1s tokens=26376 cost=$0.0000
+[kimi-k3.1-pro] [64/190] input_0384.json OK score=32/35 (91%) rounds=1 latency=923.2s tokens=25964 cost=$0.0000
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+[kimi-k3.1-pro] [65/190] input_0403.json OK score=24/35 (69%) rounds=1 latency=566.2s tokens=4682 cost=$0.0000
+[kimi-k3.1-pro] [66/190] input_0063.json OK score=19/35 (54%) rounds=1 latency=1435.2s tokens=43940 cost=$0.0000
+[kimi-k3.1-pro] [67/190] input_0214.json OK score=26/35 (74%) rounds=1 latency=1298.5s tokens=13649 cost=$0.0000
+[kimi-k3.1-pro] [68/190] input_0210.json OK score=24/35 (69%) rounds=1 latency=849.4s tokens=17986 cost=$0.0000
+[kimi-k3.1-pro] [69/190] input_0399.json OK score=31/35 (89%) rounds=1 latency=999.5s tokens=15559 cost=$0.0000
+[kimi-k3.1-pro] [70/190] input_0193.json OK score=34/35 (97%) rounds=1 latency=371.7s tokens=12757 cost=$0.0000
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+[kimi-k3.1-pro] [71/190] input_0409.json OK score=24/35 (69%) rounds=1 latency=3265.2s tokens=11834 cost=$0.0000
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+[kimi-k3.1-pro] [72/190] input_0492.json OK score=25/35 (71%) rounds=1 latency=3682.2s tokens=18209 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+[kimi-k3.1-pro] [73/190] input_0077.json OK score=22/35 (63%) rounds=1 latency=4549.6s tokens=46529 cost=$0.0000
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+[kimi-k3.1-pro] [74/190] input_0172.json OK score=30/35 (86%) rounds=1 latency=5989.8s tokens=15564 cost=$0.0000
+[kimi-k3.1-pro] [75/190] input_0278.json OK score=20/35 (57%) rounds=1 latency=2547.5s tokens=23809 cost=$0.0000
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 3/15 in 60s
+        detail: The read operation timed out
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 9/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 10/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 11/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 12/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 9/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 9/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 13/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 10/15 in 300s
+        detail: Connection error.

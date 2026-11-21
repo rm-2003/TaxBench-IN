@@ -1,0 +1,38 @@
+Method: script | Models: 1 | Cases: 82 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=3
+[kimi-k3.1-pro] Resuming: 80 done, 2 remaining
+[kimi-k3.1-pro] [81/82] input_0413.json OK score=24/35 (69%) rounds=1 latency=1912.0s tokens=35435 cost=$0.0000
+[kimi-k3.1-pro] [82/82] input_0291.json OK score=22/35 (63%) rounds=1 latency=2452.1s tokens=32380 cost=$0.0000
+
+=== Evaluation Report: nim/moonshotai/kimi-k3.1-pro [script] ===
+Overall accuracy:    74.7% (82 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.2 per case
+
+Per-section accuracy:
+  Salary (7 fields)             83.1%
+  Capital Gains (2 fields)      65.9%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         37.8%
+  Deductions (9 fields)         92.4%
+  Tax Computation (12 fields)   57.7%
+
+What the score is made of:
+  Derived (31 fields, computed):   71.4%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          3579.7 sec/case
+  Mean tokens:           43,827 total (8,165 prompt + 35,662 completion)
+  Total tokens (all):    3,593,783
+  Total cost:            $0.0000 ($0.0000/case)
+[kimi-k3.1-pro] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_moonshotai_kimi-k3.1-pro__script.shard2of7_results.csv
+
+Part.shard2of7: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_script_20261120_061717.log

@@ -187,6 +187,10 @@ MODEL_CONFIG = {
     # released 22 Oct 2026) via NVIDIA's API. First token takes ~1.5 min under
     # load, then ~25 tokens/s, so streamed like Mistral Large 4.
     "nim/minimaxai/minimax-m3.1-flash":    {"rpm": 35, "concurrency": 4, "stream": True},
+    # Kimi K3.1 Pro (~2.8T total / ~104B active MoE per Moonshot's model card)
+    # via NVIDIA's API. Fast (~1 s to first token, ~40 tokens/s on 18 Nov);
+    # streamed anyway so a long answer never meets API_TIMEOUT_SECS.
+    "nim/moonshotai/kimi-k3.1-pro":        {"rpm": 35, "concurrency": 4, "stream": True},
     # Llama 3.3 70B Instruct (bf16, 2x H100) served by vLLM on Modal; see
     # deploy/modal_llama33_70b.py. Own deployment, so no shared rate limit:
     # concurrency is bounded by the server's batching, not a quota.

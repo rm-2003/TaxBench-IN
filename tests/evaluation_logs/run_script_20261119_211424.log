@@ -1,0 +1,31 @@
+Method: script | Models: 1 | Cases: 82 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=3
+[kimi-k3.1-pro] Resuming: 69 done, 13 remaining
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason      Transient error (503) — retry in 2s
+        detail: stream ended without a finish_reason
+
+[kimi-k3.1-pro] [70/82] input_0394.json OK score=33/35 (94%) rounds=1 latency=2439.8s tokens=29610 cost=$0.0000
+[kimi-k3.1-pro] [71/82] input_0328.json OK score=26/35 (74%) rounds=1 latency=2584.0s tokens=34748 cost=$0.0000
+[kimi-k3.1-pro] [72/82] input_0514.json OK score=23/35 (66%) rounds=1 latency=2690.2s tokens=46767 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+[kimi-k3.1-pro] [73/82] input_0555.json SKIP (InternalServerError: Error code: 529 - {'message': 'Service temporarily overloaded', 'type': 'Overloa)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+[kimi-k3.1-pro] [73/82] input_0371.json SKIP (InternalServerError: Error code: 529 - {'message': 'Service temporarily overloaded', 'type': 'Overloa)
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 15s (attempt 2)
+      429 rate limit — waiting 45s (attempt 3)
+      429 rate limit — waiting 120s (attempt 4)
+[kimi-k3.1-pro] [73/82] input_0350.json OK score=35/35 (100%) rounds=1 latency=429.5s tokens=28351 cost=$0.0000
+[kimi-k3.1-pro] [74/82] input_0345.json SKIP (InternalServerError: Error code: 529 - {'message': 'Service temporarily overloaded', 'type': 'Overloa)
+[kimi-k3.1-pro] [74/82] input_0007.json SKIP (InternalServerError: Error code: 529 - {'message': 'Service temporarily overloaded', 'type': 'Overloa)
+[kimi-k3.1-pro] [74/82] input_0271.json SKIP (InternalServerError: Error code: 529 - {'message': 'Service temporarily overloaded', 'type': 'Overloa)

@@ -1,0 +1,53 @@
+Method: zero-shot | Models: 1 | Cases: 48 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+[kimi-k3.1-pro] [1/48] input_0217.json OK score=30/35 (86%) rounds=1 latency=387.0s tokens=11610 cost=$0.0000
+[kimi-k3.1-pro] [2/48] input_0370.json OK score=27/35 (77%) rounds=1 latency=718.8s tokens=19774 cost=$0.0000
+[kimi-k3.1-pro] [3/48] input_0071.json OK score=22/35 (63%) rounds=1 latency=833.3s tokens=22177 cost=$0.0000
+[kimi-k3.1-pro] [4/48] input_0535.json OK score=23/35 (66%) rounds=1 latency=630.3s tokens=18258 cost=$0.0000
+[kimi-k3.1-pro] [5/48] input_0127.json OK score=33/35 (94%) rounds=1 latency=1018.3s tokens=27195 cost=$0.0000
+[kimi-k3.1-pro] [6/48] input_0528.json OK score=22/35 (63%) rounds=1 latency=1337.4s tokens=36217 cost=$0.0000
+[kimi-k3.1-pro] [7/48] input_0350.json OK score=35/35 (100%) rounds=1 latency=534.1s tokens=7155 cost=$0.0000
+[kimi-k3.1-pro] [8/48] input_0537.json OK score=23/35 (66%) rounds=1 latency=821.9s tokens=19755 cost=$0.0000
+[kimi-k3.1-pro] [9/48] input_0118.json OK score=19/35 (54%) rounds=1 latency=1216.8s tokens=33032 cost=$0.0000
+[kimi-k3.1-pro] [10/48] input_0028.json OK score=35/35 (100%) rounds=1 latency=192.0s tokens=5349 cost=$0.0000
+[kimi-k3.1-pro] [11/48] input_0139.json OK score=33/35 (94%) rounds=1 latency=1332.6s tokens=32722 cost=$0.0000
+[kimi-k3.1-pro] [12/48] input_0388.json OK score=26/35 (74%) rounds=1 latency=861.5s tokens=25898 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[kimi-k3.1-pro] [13/48] input_0229.json OK score=30/35 (86%) rounds=1 latency=1786.4s tokens=13400 cost=$0.0000
+[kimi-k3.1-pro] [14/48] input_0221.json OK score=30/35 (86%) rounds=1 latency=2472.0s tokens=18669 cost=$0.0000
+
+=== Evaluation Report: nim/moonshotai/kimi-k3.1-pro [zero-shot] ===
+Overall accuracy:    79.2% (14 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             89.8%
+  Capital Gains (2 fields)      64.3%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         50.0%
+  Deductions (9 fields)         92.1%
+  Tax Computation (12 fields)   65.5%
+
+What the score is made of:
+  Derived (31 fields, computed):   76.5%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          1010.2 sec/case
+  Mean tokens:           20,801 total (2,841 prompt + 17,960 completion)
+  Total tokens (all):    291,211
+  Total cost:            $0.0000 ($0.0000/case)
+[kimi-k3.1-pro] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_moonshotai_kimi-k3.1-pro__zero-shot.shard1of12_results.csv
+
+Part.shard1of12: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261119_090934.log

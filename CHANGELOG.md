@@ -1127,3 +1127,33 @@ Nemotron and Mistral, neither method changes MiniMax's accuracy measurably.
 No tool-call case reached the 20-round cap (median 4 rounds). Script and
 tool-call ran on 17 keys at 5 concurrent requests each; script saw 215
 retried 429s and one SKIP, redone before completion.
+
+### Kimi K3.1 Pro complete; merged DeepSeek-R1 and Gemma data from `main` (21 Nov 2026)
+
+`nim/moonshotai/kimi-k3.1-pro` (~2.8T total / ~104B active MoE per
+Moonshot's model card, as reported by secondary sources) added to
+`MODEL_CONFIG` with streaming. 569 cases per method, run 18–20 Nov on 17
+keys split per method (`--shard`), merged and rebuilt with `rescore.py`
+(0 drift):
+
+| Method | Accuracy | All 35 correct | Parse failures |
+|---|---|---|---|
+| zero-shot | 74.9 | 60 | 3 |
+| script | 74.9 | 62 | 0 |
+| tool-call | 75.3 | 56 | 0 |
+
+Paired bootstrap: script − zero-shot −0.0 [−0.7, +0.7]; tool-call −
+zero-shot +0.4 [−0.3, +1.2]; Kimi zero-shot − Nemotron 3 Ultra zero-shot
++13.2 [+12.0, +14.5]. No tool-call case reached the 20-round cap (median
+5 rounds). Kimi is the first model with a substantial number of fully
+correct returns (~10% of cases per method). During 19 Nov (≈01:00–09:30
+IST) NVIDIA's Kimi endpoint refused or dropped nearly every request
+(other models answered on the same keys); the network retry budget and
+wrapper restarts absorbed this with no SKIPped or mis-scored case. Keys
+that returned repeated 429s at 5 concurrent requests (2, 4–8, 17) ran at 3.
+
+Also merged from `main`: `llamacpp/deepseek-r1-distill-70b` (zero-shot
+37.5, script 38.9, tool-call 33.9; 569 each) and `ollama/gemma4-12b-ctx16k`
+zero-shot completed to 569 (38.2) with tool-call extended to 569 (1.5;
+395 parse failures, a failed run, not a model result). Gemma script remains
+at 50 cases. `HANDOFF_GEMMA.md` deleted on `main`.

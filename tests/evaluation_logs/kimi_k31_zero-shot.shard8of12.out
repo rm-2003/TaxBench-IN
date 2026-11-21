@@ -1,0 +1,100 @@
+Method: zero-shot | Models: 1 | Cases: 47 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+[kimi-k3.1-pro] [1/47] input_0008.json OK score=34/35 (97%) rounds=1 latency=366.9s tokens=9060 cost=$0.0000
+[kimi-k3.1-pro] [2/47] input_0305.json OK score=33/35 (94%) rounds=1 latency=655.4s tokens=16539 cost=$0.0000
+[kimi-k3.1-pro] [3/47] input_0427.json OK score=22/35 (63%) rounds=1 latency=416.1s tokens=12722 cost=$0.0000
+[kimi-k3.1-pro] [4/47] input_0131.json OK score=35/35 (100%) rounds=1 latency=878.2s tokens=23339 cost=$0.0000
+[kimi-k3.1-pro] [5/47] input_0458.json OK score=23/35 (66%) rounds=1 latency=1256.1s tokens=32669 cost=$0.0000
+[kimi-k3.1-pro] [6/47] input_0407.json OK score=25/35 (71%) rounds=1 latency=1335.3s tokens=34505 cost=$0.0000
+[kimi-k3.1-pro] [7/47] input_0035.json OK score=34/35 (97%) rounds=1 latency=619.8s tokens=16163 cost=$0.0000
+[kimi-k3.1-pro] [8/47] input_0174.json OK score=34/35 (97%) rounds=1 latency=550.1s tokens=13997 cost=$0.0000
+[kimi-k3.1-pro] [9/47] input_0338.json OK score=27/35 (77%) rounds=1 latency=1063.9s tokens=27428 cost=$0.0000
+[kimi-k3.1-pro] [10/47] input_0296.json OK score=27/35 (77%) rounds=1 latency=1828.9s tokens=50967 cost=$0.0000
+[kimi-k3.1-pro] [11/47] input_0542.json OK score=23/35 (66%) rounds=1 latency=1242.1s tokens=28241 cost=$0.0000
+[kimi-k3.1-pro] [12/47] input_0158.json OK score=23/35 (66%) rounds=1 latency=1117.2s tokens=29008 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[kimi-k3.1-pro] [13/47] input_0025.json OK score=34/35 (97%) rounds=1 latency=965.5s tokens=9847 cost=$0.0000
+[kimi-k3.1-pro] [14/47] input_0508.json OK score=23/35 (66%) rounds=1 latency=1455.5s tokens=18860 cost=$0.0000
+[kimi-k3.1-pro] [15/47] input_0463.json OK score=22/35 (63%) rounds=1 latency=1698.2s tokens=24788 cost=$0.0000
+[kimi-k3.1-pro] [16/47] input_0383.json OK score=35/35 (100%) rounds=1 latency=734.3s tokens=14161 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 2/15 in 30s
+        detail: The read operation timed out
+      Network error (RemoteProtocolError) — retry 2/15 in 30s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 3/15 in 60s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 2/15 in 30s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 3/15 in 60s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)      Network error (RemoteProtocolError) — retry 2/15 in 30s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+[kimi-k3.1-pro] [17/47] input_0438.json OK score=21/35 (60%) rounds=1 latency=9662.5s tokens=22328 cost=$0.0000
+[kimi-k3.1-pro] [18/47] input_0203.json PARSE_FAIL score=0/35 (0%) rounds=1 latency=7330.8s tokens=21234 cost=$0.0000
+[kimi-k3.1-pro] [19/47] input_0206.json OK score=33/35 (94%) rounds=1 latency=7382.5s tokens=25800 cost=$0.0000
+[kimi-k3.1-pro] [20/47] input_0485.json OK score=21/35 (60%) rounds=1 latency=9114.1s tokens=30736 cost=$0.0000
+[kimi-k3.1-pro] [21/47] input_0113.json OK score=21/35 (60%) rounds=1 latency=7488.0s tokens=35060 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (APITimeoutError) — retry 1/15 in 10s
+        detail: Request timed out.
+[kimi-k3.1-pro] [22/47] input_0285.json OK score=22/35 (63%) rounds=1 latency=9569.0s tokens=28050 cost=$0.0000
+[kimi-k3.1-pro] [23/47] input_0100.json OK score=21/35 (60%) rounds=1 latency=9712.1s tokens=24554 cost=$0.0000
+[kimi-k3.1-pro] [24/47] input_0380.json OK score=26/35 (74%) rounds=1 latency=10140.7s tokens=26534 cost=$0.0000
+[kimi-k3.1-pro] [25/47] input_0072.json OK score=21/35 (60%) rounds=1 latency=10214.7s tokens=26567 cost=$0.0000
+[kimi-k3.1-pro] [26/47] input_0433.json OK score=24/35 (69%) rounds=1 latency=942.7s tokens=9616 cost=$0.0000
+[kimi-k3.1-pro] [27/47] input_0088.json OK score=20/35 (57%) rounds=1 latency=11220.8s tokens=38662 cost=$0.0000
+
+=== Evaluation Report: nim/moonshotai/kimi-k3.1-pro [zero-shot] ===
+Overall accuracy:    72.4% (27 cases)
+Failed to parse:     1 cases (scored as 0)
+Mean rounds:         1.0 per case
+
+Per-section accuracy:
+  Salary (7 fields)             78.3%
+  Capital Gains (2 fields)      59.3%
+  Other Sources (3 fields)      96.3%
+  Aggregates (2 fields)         35.2%
+  Deductions (9 fields)         88.9%
+  Tax Computation (12 fields)   59.0%
+
+What the score is made of:
+  Derived (31 fields, computed):   69.3%
+  Copied  (4 fields, from input): 96.3%
+
+Cost / efficiency:
+  Mean latency:          4035.6 sec/case
+  Mean tokens:           24,127 total (2,810 prompt + 21,317 completion)
+  Total tokens (all):    651,435
+  Total cost:            $0.0000 ($0.0000/case)
+[kimi-k3.1-pro] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_moonshotai_kimi-k3.1-pro__zero-shot.shard8of12_results.csv
+
+Part.shard8of12: summaries not written; merge part checkpoints, then run rescore.py
+Total spent: $0.0000
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_zero-shot_20261119_090934.log

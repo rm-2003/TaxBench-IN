@@ -1,0 +1,342 @@
+Method: tool-call | Models: 1 | Cases: 82 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+      429 rate limit — waiting 5s (attempt 1)
+[kimi-k3.1-pro] [1/82] input_0208.json OK score=28/35 (80%) rounds=5 latency=570.5s tokens=71380 cost=$0.0000
+[kimi-k3.1-pro] [2/82] input_0060.json OK score=34/35 (97%) rounds=5 latency=630.5s tokens=61454 cost=$0.0000
+[kimi-k3.1-pro] [3/82] input_0423.json OK score=23/35 (66%) rounds=5 latency=731.5s tokens=90989 cost=$0.0000
+[kimi-k3.1-pro] [4/82] input_0255.json OK score=22/35 (63%) rounds=6 latency=768.7s tokens=91173 cost=$0.0000
+[kimi-k3.1-pro] [5/82] input_0178.json OK score=34/35 (97%) rounds=4 latency=280.6s tokens=35837 cost=$0.0000
+[kimi-k3.1-pro] [6/82] input_0414.json OK score=24/35 (69%) rounds=4 latency=309.6s tokens=34326 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+[kimi-k3.1-pro] [7/82] input_0515.json OK score=22/35 (63%) rounds=6 latency=1387.5s tokens=125659 cost=$0.0000
+[kimi-k3.1-pro] [8/82] input_0267.json OK score=24/35 (69%) rounds=7 latency=910.1s tokens=137153 cost=$0.0000
+[kimi-k3.1-pro] [9/82] input_0190.json OK score=30/35 (86%) rounds=6 latency=549.6s tokens=77533 cost=$0.0000
+[kimi-k3.1-pro] [10/82] input_0263.json OK score=20/35 (57%) rounds=6 latency=768.2s tokens=101415 cost=$0.0000
+[kimi-k3.1-pro] [11/82] input_0202.json OK score=30/35 (86%) rounds=4 latency=301.6s tokens=32030 cost=$0.0000
+[kimi-k3.1-pro] [12/82] input_0499.json OK score=23/35 (66%) rounds=5 latency=611.4s tokens=78271 cost=$0.0000
+[kimi-k3.1-pro] [13/82] input_0106.json OK score=21/35 (60%) rounds=6 latency=1473.4s tokens=134755 cost=$0.0000
+[kimi-k3.1-pro] [14/82] input_0346.json OK score=35/35 (100%) rounds=3 latency=278.8s tokens=24132 cost=$0.0000
+[kimi-k3.1-pro] [15/82] input_0091.json OK score=22/35 (63%) rounds=5 latency=1080.6s tokens=80138 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+[kimi-k3.1-pro] [16/82] input_0419.json OK score=24/35 (69%) rounds=11 latency=513.6s tokens=110035 cost=$0.0000
+[kimi-k3.1-pro] [17/82] input_0177.json OK score=35/35 (100%) rounds=4 latency=498.0s tokens=57649 cost=$0.0000
+[kimi-k3.1-pro] [18/82] input_0231.json OK score=30/35 (86%) rounds=4 latency=256.4s tokens=28194 cost=$0.0000
+[kimi-k3.1-pro] [19/82] input_0238.json OK score=25/35 (71%) rounds=6 latency=673.6s tokens=95200 cost=$0.0000
+[kimi-k3.1-pro] [20/82] input_0101.json OK score=20/35 (57%) rounds=7 latency=1024.7s tokens=142164 cost=$0.0000
+[kimi-k3.1-pro] [21/82] input_0478.json OK score=25/35 (71%) rounds=4 latency=404.0s tokens=43550 cost=$0.0000
+[kimi-k3.1-pro] [22/82] input_0114.json OK score=23/35 (66%) rounds=5 latency=847.7s tokens=75170 cost=$0.0000
+[kimi-k3.1-pro] [23/82] input_0445.json OK score=23/35 (66%) rounds=8 latency=843.8s tokens=147649 cost=$0.0000
+[kimi-k3.1-pro] [24/82] input_0027.json OK score=35/35 (100%) rounds=9 latency=428.8s tokens=79642 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+[kimi-k3.1-pro] [25/82] input_0168.json OK score=35/35 (100%) rounds=4 latency=421.5s tokens=47327 cost=$0.0000
+[kimi-k3.1-pro] [26/82] input_0070.json OK score=22/35 (63%) rounds=5 latency=1010.5s tokens=92834 cost=$0.0000
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+      Network error (ReadTimeout) — retry 1/15 in 10s
+        detail: The read operation timed out
+[kimi-k3.1-pro] [27/82] input_0130.json OK score=34/35 (97%) rounds=4 latency=1095.0s tokens=42548 cost=$0.0000
+[kimi-k3.1-pro] [28/82] input_0210.json OK score=24/35 (69%) rounds=4 latency=945.0s tokens=31885 cost=$0.0000
+[kimi-k3.1-pro] [29/82] input_0184.json OK score=28/35 (80%) rounds=5 latency=457.7s tokens=65883 cost=$0.0000
+[kimi-k3.1-pro] [30/82] input_0150.json OK score=33/35 (94%) rounds=4 latency=372.4s tokens=41736 cost=$0.0000
+[kimi-k3.1-pro] [31/82] input_0073.json OK score=22/35 (63%) rounds=8 latency=1685.3s tokens=150073 cost=$0.0000
+[kimi-k3.1-pro] [32/82] input_0290.json OK score=22/35 (63%) rounds=9 latency=2842.5s tokens=395097 cost=$0.0000
+[kimi-k3.1-pro] [33/82] input_0417.json OK score=22/35 (63%) rounds=5 latency=1599.9s tokens=118648 cost=$0.0000
+[kimi-k3.1-pro] [34/82] input_0021.json OK score=33/35 (94%) rounds=4 latency=523.2s tokens=35134 cost=$0.0000
+[kimi-k3.1-pro] [35/82] input_0149.json OK score=29/35 (83%) rounds=7 latency=742.2s tokens=90653 cost=$0.0000
+[kimi-k3.1-pro] [36/82] input_0415.json OK score=22/35 (63%) rounds=5 latency=878.3s tokens=71112 cost=$0.0000
+[kimi-k3.1-pro] [37/82] input_0378.json OK score=34/35 (97%) rounds=7 latency=665.6s tokens=84559 cost=$0.0000
+[kimi-k3.1-pro] [38/82] input_0334.json OK score=31/35 (89%) rounds=3 latency=418.7s tokens=29003 cost=$0.0000
+[kimi-k3.1-pro] [39/82] input_0147.json OK score=27/35 (77%) rounds=5 latency=892.0s tokens=87435 cost=$0.0000
+[kimi-k3.1-pro] [40/82] input_0227.json OK score=34/35 (97%) rounds=6 latency=664.9s tokens=72085 cost=$0.0000
+[kimi-k3.1-pro] [41/82] input_0327.json OK score=32/35 (91%) rounds=4 latency=804.4s tokens=80703 cost=$0.0000
+[kimi-k3.1-pro] [42/82] input_0236.json OK score=24/35 (69%) rounds=10 latency=1520.9s tokens=214835 cost=$0.0000
+[kimi-k3.1-pro] [43/82] input_0458.json OK score=22/35 (63%) rounds=11 latency=686.8s tokens=115111 cost=$0.0000
+[kimi-k3.1-pro] [44/82] input_0361.json OK score=35/35 (100%) rounds=6 latency=857.2s tokens=77052 cost=$0.0000
+[kimi-k3.1-pro] [45/82] input_0358.json OK score=26/35 (74%) rounds=6 latency=1049.8s tokens=92677 cost=$0.0000
+[kimi-k3.1-pro] [46/82] input_0319.json OK score=21/35 (60%) rounds=4 latency=919.8s tokens=65747 cost=$0.0000
+[kimi-k3.1-pro] [47/82] input_0479.json OK score=24/35 (69%) rounds=6 latency=1213.8s tokens=120652 cost=$0.0000
+[kimi-k3.1-pro] [48/82] input_0402.json OK score=33/35 (94%) rounds=5 latency=603.9s tokens=57189 cost=$0.0000
+[kimi-k3.1-pro] [49/82] input_0110.json OK score=21/35 (60%) rounds=5 latency=1464.8s tokens=114613 cost=$0.0000
+[kimi-k3.1-pro] [50/82] input_0446.json OK score=24/35 (69%) rounds=5 latency=791.9s tokens=62750 cost=$0.0000
+[kimi-k3.1-pro] [51/82] input_0431.json OK score=22/35 (63%) rounds=6 latency=948.6s tokens=86586 cost=$0.0000
+[kimi-k3.1-pro] [52/82] input_0001.json OK score=35/35 (100%) rounds=6 latency=298.3s tokens=30604 cost=$0.0000
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+      Network error (RemoteProtocolError) — retry 1/15 in 10s
+        detail: peer closed connection without sending complete message body (incomplete chunked read)
+Method: tool-call | Models: 1 | Cases: 82 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+  Cost guard: initial usage = $0.0000, budget = $17.00
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+[kimi-k3.1-pro] Resuming: 52 done, 30 remaining
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      429 rate limit — waiting 15s (attempt 2)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+[kimi-k3.1-pro] [53/82] input_0502.json OK score=23/35 (66%) rounds=4 latency=4159.4s tokens=37020 cost=$0.0000
+[kimi-k3.1-pro] [54/82] input_0389.json OK score=33/35 (94%) rounds=5 latency=4193.3s tokens=73246 cost=$0.0000
+[kimi-k3.1-pro] [55/82] input_0567.json OK score=23/35 (66%) rounds=5 latency=4279.5s tokens=113371 cost=$0.0000
+[kimi-k3.1-pro] [56/82] input_0249.json OK score=24/35 (69%) rounds=7 latency=4522.7s tokens=124930 cost=$0.0000
+[kimi-k3.1-pro] [57/82] input_0158.json OK score=28/35 (80%) rounds=7 latency=4795.4s tokens=122770 cost=$0.0000
+[kimi-k3.1-pro] [58/82] input_0233.json OK score=30/35 (86%) rounds=5 latency=1026.7s tokens=48635 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+[kimi-k3.1-pro] [59/82] input_0092.json OK score=22/35 (63%) rounds=7 latency=2337.6s tokens=125549 cost=$0.0000
+[kimi-k3.1-pro] [60/82] input_0484.json OK score=23/35 (66%) rounds=6 latency=2345.5s tokens=83376 cost=$0.0000
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+[kimi-k3.1-pro] [61/82] input_0196.json OK score=28/35 (80%) rounds=4 latency=4909.8s tokens=47863 cost=$0.0000
+[kimi-k3.1-pro] [62/82] input_0520.json OK score=24/35 (69%) rounds=4 latency=4799.3s tokens=60925 cost=$0.0000
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APITimeoutError) — retry 1/15 in 10s
+        detail: Request timed out.
+      Network error (APITimeoutError) — retry 1/15 in 10s
+        detail: Request timed out.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 4/15 in 120s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 5/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      429 rate limit — waiting 5s (attempt 1)
+      429 rate limit — waiting 5s (attempt 1)
+      Network error (APIConnectionError) — retry 6/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 9/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 7/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 10/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 8/15 in 300s
+        detail: Connection error.
+Method: tool-call | Models: 1 | Cases: 82 (seed=42)
+Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=569, budget=$17.00, max_transient_retries=10
+  kimi-k3.1-pro                       rpm=35  concurrency=4
+
+[kimi-k3.1-pro] Starting — rpm=35, concurrency=5
+[kimi-k3.1-pro] Resuming: 62 done, 20 remaining
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 1/15 in 10s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 2/15 in 30s
+        detail: Connection error.
+      Network error (APIConnectionError) — retry 3/15 in 60s
+        detail: Connection error.
+[kimi-k3.1-pro] [63/82] input_0203.json OK score=35/35 (100%) rounds=4 latency=9251.5s tokens=32664 cost=$0.0000
+[kimi-k3.1-pro] [64/82] input_0220.json OK score=24/35 (69%) rounds=9 latency=9485.8s tokens=81674 cost=$0.0000
+[kimi-k3.1-pro] [65/82] input_0253.json OK score=21/35 (60%) rounds=5 latency=9660.1s tokens=77476 cost=$0.0000
+[kimi-k3.1-pro] [66/82] input_0432.json OK score=22/35 (63%) rounds=5 latency=753.1s tokens=66827 cost=$0.0000
+[kimi-k3.1-pro] [67/82] input_0474.json OK score=23/35 (66%) rounds=4 latency=627.7s tokens=36047 cost=$0.0000
+[kimi-k3.1-pro] [68/82] input_0434.json OK score=22/35 (63%) rounds=7 latency=11050.8s tokens=119604 cost=$0.0000
+[kimi-k3.1-pro] [69/82] input_0291.json OK score=24/35 (69%) rounds=9 latency=1907.3s tokens=167400 cost=$0.0000
+[kimi-k3.1-pro] [70/82] input_0413.json OK score=22/35 (63%) rounds=6 latency=1698.0s tokens=128878 cost=$0.0000
+      429 rate limit — waiting 5s (attempt 1)
+[kimi-k3.1-pro] [71/82] input_0127.json OK score=26/35 (74%) rounds=7 latency=11432.1s tokens=155184 cost=$0.0000
+[kimi-k3.1-pro] [72/82] input_0167.json OK score=21/35 (60%) rounds=5 latency=362.7s tokens=47850 cost=$0.0000
+[kimi-k3.1-pro] [73/82] input_0480.json OK score=25/35 (71%) rounds=5 latency=501.7s tokens=44608 cost=$0.0000
+[kimi-k3.1-pro] [74/82] input_0301.json OK score=34/35 (97%) rounds=3 latency=536.5s tokens=37143 cost=$0.0000
+[kimi-k3.1-pro] [75/82] input_0274.json OK score=20/35 (57%) rounds=6 latency=974.6s tokens=100203 cost=$0.0000
+[kimi-k3.1-pro] [76/82] input_0353.json OK score=33/35 (94%) rounds=3 latency=531.1s tokens=33362 cost=$0.0000
+[kimi-k3.1-pro] [77/82] input_0221.json OK score=28/35 (80%) rounds=5 latency=665.2s tokens=70707 cost=$0.0000
+[kimi-k3.1-pro] [78/82] input_0082.json OK score=22/35 (63%) rounds=7 latency=1433.4s tokens=142893 cost=$0.0000
+[kimi-k3.1-pro] [79/82] input_0559.json OK score=23/35 (66%) rounds=5 latency=672.0s tokens=60691 cost=$0.0000
+[kimi-k3.1-pro] [80/82] input_0239.json OK score=22/35 (63%) rounds=6 latency=911.7s tokens=102252 cost=$0.0000
+[kimi-k3.1-pro] [81/82] input_0115.json OK score=22/35 (63%) rounds=6 latency=865.2s tokens=89603 cost=$0.0000
+[kimi-k3.1-pro] [82/82] input_0285.json OK score=21/35 (60%) rounds=5 latency=1201.3s tokens=112176 cost=$0.0000
+
+=== Evaluation Report: nim/moonshotai/kimi-k3.1-pro [tool-call] ===
+Overall accuracy:    74.9% (82 cases)
+Failed to parse:     0 cases (scored as 0)
+Mean rounds:         5.6 per case
+
+Per-section accuracy:
+  Salary (7 fields)             83.6%
+  Capital Gains (2 fields)      62.8%
+  Other Sources (3 fields)      100.0%
+  Aggregates (2 fields)         37.8%
+  Deductions (9 fields)         92.5%
+  Tax Computation (12 fields)   58.6%
+
+What the score is made of:
+  Derived (31 fields, computed):   71.7%
+  Copied  (4 fields, from input): 100.0%
+
+Cost / efficiency:
+  Mean latency:          1761.1 sec/case
+  Mean tokens:           86,280 total (66,162 prompt + 20,118 completion)
+  Total tokens (all):    7,074,956
+  Total cost:            $0.0000 ($0.0000/case)
+[kimi-k3.1-pro] CSV: /Users/pranavbiju/Thesis_code/tests/evaluation_results/nim_moonshotai_kimi-k3.1-pro__tool-call.shard2of7_results.csv
+
+Part.shard2of7: summaries not written; merge part checkpoints, then run rescore.py
+
+Log saved: /Users/pranavbiju/Thesis_code/tests/evaluation_logs/run_tool-call_20261119_013648.log
