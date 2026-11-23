@@ -1157,3 +1157,26 @@ Also merged from `main`: `llamacpp/deepseek-r1-distill-70b` (zero-shot
 zero-shot completed to 569 (38.2) with tool-call extended to 569 (1.5;
 395 parse failures, a failed run, not a model result). Gemma script remains
 at 50 cases. `HANDOFF_GEMMA.md` deleted on `main`.
+
+### 80CCD(1B) under-claimed when 80C fills the 80CCE cap; answer key regenerated, all models rescored (24 Nov 2026)
+
+| Area | Change | Rule / Notes |
+|---|---|---|
+| `tax_calculator.py` — 80CCD(1) | NPS self-contribution is claimed under 80CCD(1) only up to the room 80C and 80CCC leave under the 1,50,000 80CCE cap; the rest goes to 80CCD(1B) (up to 50,000) | Previously all of it went to 80CCD(1) (up to 10% of Basic+DA), the 80CCE cap then scaled it down proportionally and 80CCD(1B) only took what exceeded the 10% limit, so the squeezed-out contribution was simply lost. s.80CCD(1B) allows the deduction "whether or not any deduction is allowed under sub-section (1)"; no taxpayer would file the smaller claim. When the cap does not bind the split is unchanged. |
+| Affected cases | 243 old-regime cases rewritten (`_expected` only; inputs, including TDS, untouched so stored model outputs stay valid). In 187 the deduction grew (80CCD(1B) 0 → up to 50,000) and Total Deductions, Taxable Income and every tax field changed; in 56 only the 80C/80CCC/80CCD(1) split moved, which the combined scored field does not see. | No case in the dataset fills the cap only partly (253 fill it from 80C alone, 19 never reach it), so the new split is never ambiguous. |
+| How it was found | Kimi K3.1 Pro's 80CCD(1B) accuracy was 68% against 95–100% on every other deduction; 180 of its 184 misses were in these 187 cases, where it (like Nemotron and Mistral) claimed the full 50,000 under 80CCD(1B). Outside them it scored 99%. | GPT-OSS 120B had matched the old engine value in 127 of the 187 cases, which is why its score falls slightly. |
+| `calculator_tests/` | Test 33 (cap full → NPS to 80CCD(1B); fails on the old engine with 80CCD(1)=37,500, 80CCD(1B)=0) and Test 34 (cap not binding → split unchanged). 36/36 pass. | |
+| `tests/check_invariants.py` | GTI identity read EPF interest from its old nested path and omitted Other Interest, flagging 321 correct cases | Now 15 flagged, all P06 zero-salary cases where the engine correctly limits Chapter VI-A deductions to income other than 111A/112A gains; the checker compares against GTI only. Not related to this fix. |
+
+Rescored with `rescore.py --update-checkpoints` (no API calls; 0 drift afterwards). Field accuracy, zero-shot / script / tool-call:
+
+| Model | Before | After |
+|---|---|---|
+| Kimi K3.1 Pro | 74.9 / 74.9 / 75.3 | 77.8 / 77.6 / 78.0 |
+| Nemotron 3 Ultra | 61.7 / 63.4 / 58.2 | 63.0 / 64.9 / 59.4 |
+| Mistral Large 4 | 57.4 / 60.2 / 58.1 | 58.9 / 61.7 / 59.4 |
+| GPT-OSS 120B | 52.4 / 50.5 / 44.3 | 52.1 / 50.0 / 44.1 |
+| MiniMax M3.1 Flash | 49.4 / 49.6 / 49.9 | 49.2 / 49.2 / 49.7 |
+| DeepSeek-R1 70B | 37.5 / 38.9 / 33.9 | 37.5 / 38.4 / 34.0 |
+
+Kimi's fully correct cases rise to 63 / 69 / 62. Paired bootstrap, script − zero-shot: Nemotron +1.9 [+1.1, +2.7], Mistral +2.9 [+2.3, +3.5], GPT-OSS −2.1 [−2.7, −1.4], DeepSeek-R1 +0.9 [−0.1, +1.8] (no longer significant), Kimi and MiniMax ≈ 0. Tool-call − zero-shot: Mistral +0.6 [−0.1, +1.2] (no longer significant), Nemotron −3.6, DeepSeek-R1 −3.5, GPT-OSS −8.1.

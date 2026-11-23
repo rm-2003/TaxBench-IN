@@ -1,0 +1,57 @@
+{
+    "_description": "80C fills the 80CCE cap (PPF 1,00,000 + ELSS 1,00,000), NPS self 50,000. No 80CCE room left, so the whole NPS contribution goes to 80CCD(1B): 80CCD(1)=0, 80CCD(1B)=50,000, Total Deductions 2,00,000",
+    "Age": 35,
+    "Employment Type": "private",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+        "Basic Salary": 600000,
+        "Dearness Allowance": 0,
+        "HRA": 0,
+        "Conveyance Allowance": 0,
+        "Medical Allowance": 0,
+        "Bonuses and Incentives": 0,
+        "Overtime Pay": 0,
+        "LTA": 0,
+        "Special Allowance": 0,
+        "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0,
+    "LTA Travel Expenses Claimed": 0,
+    "Professional Tax": 0,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [],
+    "Short Term Capital Loss": [],
+    "Savings Bank Interest": 0,
+    "Deposit Interest": 0,
+    "Other Interest": 0,
+    "EPF Taxable Interest": 0,
+    "PPF": 100000,
+    "EPF": {
+        "Employee Contribution": {
+            "Deducted from Salary": 0,
+            "Voluntary": 0
+        },
+        "Employer Contribution": 0
+    },
+    "ELSS": 100000,
+    "NSC": 0,
+    "Sukanya Samriddhi Yojana": 0,
+    "SCSS": 0,
+    "Pension Scheme Premium": {
+        "Amount": 0,
+        "Number of Years Paid": 0
+    },
+    "NPS": {
+        "Tier-1 Self Contribution": 50000,
+        "Tier-1 Employer Contribution": 0,
+        "Tier-2": 0
+    },
+    "Education Loan Interest": {
+        "Interest Paid": 0,
+        "Year of Repayment": 0
+    },
+    "Health Insurance": [],
+    "Donations": [],
+    "TDS": 0
+}

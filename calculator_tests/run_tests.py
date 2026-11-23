@@ -336,6 +336,33 @@ TESTS = [
             ("Tax Computation.Tax at Slab Rates", 10000),
         ],
     },
+    {
+        "name": "Test 33 — 80CCE full: NPS self-contribution goes to 80CCD(1B)",
+        "input": "test33_80ccd1b_takes_nps_when_80cce_full.json",
+        "checks": [
+            # 80C alone fills the 1,50,000 80CCE cap, so there is no room for
+            # 80CCD(1). The engine used to claim NPS under 80CCD(1) anyway, scale
+            # it to 34,090.91 inside the cap and leave 80CCD(1B) at 0 -- a
+            # deduction 50,000 smaller than the taxpayer is entitled to. 187
+            # generated old-regime cases were affected.
+            ("Deductions.80C", 150000),
+            ("Deductions.80CCD(1)", 0),
+            ("Deductions.80CCD(1B)", 50000),
+            ("Deductions.Total Deductions", 200000),
+        ],
+    },
+    {
+        "name": "Test 34 — 80CCE not binding: NPS stays under 80CCD(1)",
+        "input": "test34_80ccd1_unchanged_when_80cce_not_binding.json",
+        "checks": [
+            # Guards the other side of the Test 33 fix: with room under the cap
+            # the split is exactly what it was before.
+            ("Deductions.80C", 50000),
+            ("Deductions.80CCD(1)", 50000),
+            ("Deductions.80CCD(1B)", 0),
+            ("Deductions.Total Deductions", 100000),
+        ],
+    },
 ]
 
 

@@ -73,7 +73,8 @@ def check_case(inp, exp):
        + g(cg, "LTCG (Other)")
        + g(exp, "Income from Other Sources", "Savings Bank Interest")
        + g(exp, "Income from Other Sources", "Deposit Interest")
-       + g(exp, "Income from Other Sources", "Other Interest", "EPF Taxable Interest"))
+       + g(exp, "Income from Other Sources", "Other Interest")
+       + g(exp, "Income from Other Sources", "EPF Taxable Interest"))
 
     # --- deductions total equals its parts, and taxable income follows ---
     # s.80A(2) caps the aggregate at gross total income, so the reported total is

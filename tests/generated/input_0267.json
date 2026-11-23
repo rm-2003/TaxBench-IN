@@ -184,34 +184,34 @@
     },
     "Gross Total Income": 9927500.0,
     "Deductions": {
-      "80C": 102272.73,
-      "80CCC": 13636.36,
-      "80CCD(1)": 34090.91,
-      "80CCD(1B)": 0.0,
+      "80C": 132352.94,
+      "80CCC": 17647.06,
+      "80CCD(1)": -0.0,
+      "80CCD(1B)": 50000.0,
       "80CCD(2)": 50000,
       "80D": 65000.0,
       "80E": 0.0,
       "80G": 10000.0,
       "80TTA": 10000,
       "80TTB": 0.0,
-      "Total Deductions": 285000.0
+      "Total Deductions": 335000.0
     },
-    "Total Taxable Income": 9642500.0,
+    "Total Taxable Income": 9592500.0,
     "Tax Computation": {
-      "Tax at Slab Rates": 2570400.0,
+      "Tax at Slab Rates": 2555400.0,
       "Tax on STCG (Section 111A)": 0.0,
       "Tax on STCG (Other)": 0.0,
       "Tax on LTCG (Section 112A)": 40562.5,
       "Tax on LTCG (Non-Equity)": 0.0,
       "Tax on LTCG (Other)": 0.0,
-      "Total Tax Before Rebate": 2610962.5,
+      "Total Tax Before Rebate": 2595962.5,
       "Less: Rebate under Section 87A": 0.0,
-      "Tax After Rebate": 2610962.5,
-      "Surcharge": 261096.25,
-      "Health and Education Cess": 114882.35,
-      "Total Tax Liability": 2986941.1,
+      "Tax After Rebate": 2595962.5,
+      "Surcharge": 259596.25,
+      "Health and Education Cess": 114222.35,
+      "Total Tax Liability": 2969781.1,
       "Less: TDS": 1781868.66,
-      "Net Tax Payable / Refund": 1205072.44
+      "Net Tax Payable / Refund": 1187912.44
     }
   }
 }

@@ -1,0 +1,57 @@
+{
+    "_description": "80CCE cap not binding (PPF 50,000), NPS self 50,000 within 10% of Basic+DA (60,000): all of it stays under 80CCD(1), 80CCD(1B)=0, as before the 80CCD(1B) fix",
+    "Age": 35,
+    "Employment Type": "private",
+    "Tax Regime": "old",
+    "City": "metro",
+    "Gross Salary": {
+        "Basic Salary": 600000,
+        "Dearness Allowance": 0,
+        "HRA": 0,
+        "Conveyance Allowance": 0,
+        "Medical Allowance": 0,
+        "Bonuses and Incentives": 0,
+        "Overtime Pay": 0,
+        "LTA": 0,
+        "Special Allowance": 0,
+        "Entertainment Allowance": 0
+    },
+    "Actual Rent Paid": 0,
+    "LTA Travel Expenses Claimed": 0,
+    "Professional Tax": 0,
+    "Stock Sale Transactions": [],
+    "Long Term Capital Loss": [],
+    "Short Term Capital Loss": [],
+    "Savings Bank Interest": 0,
+    "Deposit Interest": 0,
+    "Other Interest": 0,
+    "EPF Taxable Interest": 0,
+    "PPF": 50000,
+    "EPF": {
+        "Employee Contribution": {
+            "Deducted from Salary": 0,
+            "Voluntary": 0
+        },
+        "Employer Contribution": 0
+    },
+    "ELSS": 0,
+    "NSC": 0,
+    "Sukanya Samriddhi Yojana": 0,
+    "SCSS": 0,
+    "Pension Scheme Premium": {
+        "Amount": 0,
+        "Number of Years Paid": 0
+    },
+    "NPS": {
+        "Tier-1 Self Contribution": 50000,
+        "Tier-1 Employer Contribution": 0,
+        "Tier-2": 0
+    },
+    "Education Loan Interest": {
+        "Interest Paid": 0,
+        "Year of Repayment": 0
+    },
+    "Health Insurance": [],
+    "Donations": [],
+    "TDS": 0
+}

@@ -635,7 +635,14 @@ def calculate(inp: dict) -> dict:
     # because the employer's contribution has to be added to salary income there.
     nps_self       = g(nps, "Tier-1 Self Contribution")
     c80ccd1_limit  = 0.10 * basic_da
-    c80ccd1        = min(nps_self, c80ccd1_limit)
+    # Claim under 80CCD(1) only what fits in the 80CCE room left by 80C and
+    # 80CCC; the rest goes to 80CCD(1B) below. Taking it all under 80CCD(1) and
+    # letting the 80CCE cap scale it down threw the squeezed-out contribution
+    # away, although s.80CCD(1B) allows it "whether or not any deduction is
+    # allowed under sub-section (1)" -- a smaller deduction than any taxpayer
+    # would claim. Unchanged whenever the 80CCE cap does not bind.
+    c80cce_room    = max(0.0, 150_000 - c80 - c80ccc)
+    c80ccd1        = min(nps_self, c80ccd1_limit, c80cce_room)
 
     # 80CCE — combined cap of 1,50,000
     c80cce_uncapped = c80 + c80ccc + c80ccd1
