@@ -1,9 +1,7 @@
-"""
-run_tests.py
-Runs all test cases against tax_calculator.py and reports pass/fail.
+"""Unit tests for tax_calculator.py: one hand-computed case per rule or edge case.
 
 Usage (from repo root):
-    python3 tests/run_tests.py
+    python3 calculator_tests/run_tests.py
 """
 
 import json
@@ -52,11 +50,8 @@ TESTS = [
         "name": "Test 3c — LTCG, acquired AFTER 1-Feb-2018: no grandfathering",
         "input": "test3c_ltcg_no_grandfathering_post_2018.json",
         "checks": [
-            # Same figures as 3b but bought in 2020, so the FMV of 200 must be
-            # ignored and the actual cost of 100 used: (300-100)*10 - 50 = 1950.
-            # Before the date test was added this returned 950 -- a 2018
-            # provision applied to a 2020 purchase, which understated LTCG on
-            # 166 transactions across 29% of the generated benchmark.
+            # Same figures as 3b but bought in 2020, so the FMV of 200 must be ignored
+            # and the actual cost of 100 used: (300-100)*10 - 50 = 1950.
             ("Capital Gains.LTCG (Section 112A)", 1950),
         ],
     },
@@ -64,9 +59,8 @@ TESTS = [
         "name": "Test 3d — grandfathering step-up capped at sale consideration",
         "input": "test3d_ltcg_grandfather_clamped_at_sale.json",
         "checks": [
-            # FMV 500 above the sale price of 300: cost = max(100, min(500,300))
-            # = 300, so the gain is 0. The old max(cost_price, fmv) would have
-            # taken 500 and invented a 2,000 loss from a break-even sale.
+            # FMV 500 above the sale price of 300: cost = max(100, min(500,300)) = 300,
+            # so the gain is 0.
             ("Capital Gains.LTCG (Section 112A)", 0),
         ],
     },
@@ -222,17 +216,8 @@ TESTS = [
             # 1,00,000 of equity LTCG sits entirely inside the 1,25,000 relief,
             # so s.112A tax is nil.
             ("Tax Computation.Tax on LTCG (Section 112A)", 0),
-            # The 25,000 of UNUSED relief must not spill onto the G-Secs gain:
-            # that is charged under s.112, which has no such allowance. So the
-            # whole 2,00,000 is taxed at 12.5% = 25,000.
-            #
-            # This test previously expected 21,875 -- i.e. (2,00,000 - 25,000)
-            # at 12.5% -- and was named "shared 1.25L exemption", so the
-            # assertion and the title both presented the defect as the rule.
-            # It undertaxed non-equity LTCG on 94 of the 569 generated cases
-            # and taxed it at zero on 44. Third instance in this codebase of a
-            # test written from the implementation rather than the statute; see
-            # test3b (grandfathering) and test28 (employer NPS).
+            # The 25,000 of UNUSED relief must not spill onto the G-Secs gain: that is
+            # charged under s.112, which has no such allowance.
             ("Tax Computation.Tax on LTCG (Non-Equity)", 25000),
         ],
     },
@@ -270,10 +255,7 @@ TESTS = [
         "name": "Test 28 — 80CCD(2): employer NPS is taxable salary before it is deducted",
         "input": "test28_80ccd2_employer_nps_in_salary.json",
         "checks": [
-            # 13,00,000 of components + the 50,000 employer contribution. The
-            # contribution is salary under s.17(1)(viii); deducting it under
-            # 80CCD(2) without adding it here gave a double benefit and put
-            # Total Taxable Income 50,000 low on 367 of the 569 generated cases.
+            # 13,00,000 of components + the 50,000 employer contribution.
             ("Under Head Salaries.Gross Salary", 1350000),
             ("Under Head Salaries.Net Salary", 1275000),
             ("Gross Total Income", 1290000),
@@ -287,10 +269,7 @@ TESTS = [
         "name": "Test 29 — Other Interest is a reportable sibling of EPF Taxable Interest",
         "input": "test29_other_interest_reportable.json",
         "checks": [
-            # The input's Other Interest used to enter Gross Total Income with
-            # nowhere to be reported, because the output nested EPF Taxable
-            # Interest inside a key of the same name. "GTI = sum of the reported
-            # heads" failed on 336 of 569 cases for exactly that reason.
+            # Other Interest and EPF Taxable Interest are reported as separate fields.
             ("Income from Other Sources.Other Interest", 3000),
             ("Income from Other Sources.EPF Taxable Interest", 2000),
             ("Gross Total Income", 20000),
@@ -304,10 +283,7 @@ TESTS = [
         "name": "Test 30 — no 14% imputation for a government employee",
         "input": "test30_no_govt_nps_imputation.json",
         "checks": [
-            # Basic 5,00,000 + DA 1,00,000 and 0 declared. The old code imputed
-            # 14% = 84,000, added it to salary and deducted it again, so the
-            # ground truth for all 212 government cases depended on a figure
-            # absent from the input and from the prompt.
+            # Basic 5,00,000 + DA 1,00,000 and 0 declared.
             ("Under Head Salaries.Gross Salary", 600000),
             ("Deductions.80CCD(2)", 0),
             ("Under Head Salaries.Net Salary", 550000),
@@ -318,9 +294,8 @@ TESTS = [
         "name": "Test 31 — old regime, senior citizen (60-79): 3,00,000 basic exemption",
         "input": "test31_old_regime_senior_exemption.json",
         "checks": [
-            # Taxable 5,50,000 at age 65: (5,00,000-3,00,000) at 5% = 10,000
-            # plus (5,50,000-5,00,000) at 20% = 10,000. The single 2,50,000
-            # table gave 22,500, overtaxing 48 generated cases by 2,500 each.
+            # Taxable 5,50,000 at age 65: (5,00,000-3,00,000) at 5% = 10,000 plus
+            # (5,50,000-5,00,000) at 20% = 10,000.
             ("Total Taxable Income", 550000),
             ("Tax Computation.Tax at Slab Rates", 20000),
         ],
@@ -330,8 +305,6 @@ TESTS = [
         "input": "test32_old_regime_super_senior_exemption.json",
         "checks": [
             # The 5% band vanishes: the exemption already reaches its top.
-            # (5,50,000 - 5,00,000) at 20% = 10,000. No generated case is 80+,
-            # so this path had no coverage whatsoever.
             ("Total Taxable Income", 550000),
             ("Tax Computation.Tax at Slab Rates", 10000),
         ],
@@ -340,11 +313,7 @@ TESTS = [
         "name": "Test 33 — 80CCE full: NPS self-contribution goes to 80CCD(1B)",
         "input": "test33_80ccd1b_takes_nps_when_80cce_full.json",
         "checks": [
-            # 80C alone fills the 1,50,000 80CCE cap, so there is no room for
-            # 80CCD(1). The engine used to claim NPS under 80CCD(1) anyway, scale
-            # it to 34,090.91 inside the cap and leave 80CCD(1B) at 0 -- a
-            # deduction 50,000 smaller than the taxpayer is entitled to. 187
-            # generated old-regime cases were affected.
+            # 80C alone fills the 1,50,000 80CCE cap, so there is no room for 80CCD(1).
             ("Deductions.80C", 150000),
             ("Deductions.80CCD(1)", 0),
             ("Deductions.80CCD(1B)", 50000),

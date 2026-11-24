@@ -1180,3 +1180,18 @@ Rescored with `rescore.py --update-checkpoints` (no API calls; 0 drift afterward
 | DeepSeek-R1 70B | 37.5 / 38.9 / 33.9 | 37.5 / 38.4 / 34.0 |
 
 Kimi's fully correct cases rise to 63 / 69 / 62. Paired bootstrap, script − zero-shot: Nemotron +1.9 [+1.1, +2.7], Mistral +2.9 [+2.3, +3.5], GPT-OSS −2.1 [−2.7, −1.4], DeepSeek-R1 +0.9 [−0.1, +1.8] (no longer significant), Kimi and MiniMax ≈ 0. Tool-call − zero-shot: Mistral +0.6 [−0.1, +1.2] (no longer significant), Nemotron −3.6, DeepSeek-R1 −3.5, GPT-OSS −8.1.
+
+### Release cleanup (24 Nov 2026)
+
+- Removed from the repository: raw run logs (`tests/evaluation_logs/`, now gitignored), runs not
+  reported in the paper (Gemma 4 12B, the partial Ollama DeepSeek-R1 tool-call run, the
+  pre-schema-fix checkpoints), the prompt-tuning script, the Modal deployment scripts, and the
+  early design notes and JSON templates at the repository root.
+- `evaluate_llm.py`: default model list and `MODEL_CONFIG` reduced to the six evaluated models;
+  the unused Gemini, Modal and Ollama routes and the free-to-paid fallback removed. Long
+  explanatory comments condensed across all scripts; code otherwise unchanged (identical syntax
+  trees, and `rescore.py --dry-run` reports 0 differences on all 19 runs).
+- `tax_calculator.py` accepts a benchmark case file directly as well as a bare input object.
+- `check_invariants.py`: the Total Deductions check now also excludes special-rate gains
+  (s.111A(2), s.112A(6)), as the engine does; all 569 cases pass with 0 violations.
+- New `README.md` and `requirements.txt`.

@@ -1,14 +1,6 @@
 #!/usr/bin/env python3
 """Oracle-free validation of the ground truth.
 
-run_generated_tests.py only proves the stored _expected matches what the
-calculator currently outputs — it is circular and cannot detect a wrong rule.
-These checks instead assert properties that must hold whatever the correct tax
-is: internal sum identities, bounds, signs, and monotonicity. A violation is a
-real bug; passing does not prove correctness, but it rules out whole classes of
-error (missing components, ordering mistakes, sign errors, bad marginal relief)
-without needing an independent implementation.
-
 Usage:
     python3 tests/check_invariants.py
     python3 tests/check_invariants.py --monotonic-sample 40
@@ -77,12 +69,15 @@ def check_case(inp, exp):
        + g(exp, "Income from Other Sources", "EPF Taxable Interest"))
 
     # --- deductions total equals its parts, and taxable income follows ---
-    # s.80A(2) caps the aggregate at gross total income, so the reported total is
-    # the sum of the claimed sections OR the GTI ceiling, whichever is lower.
+    # s.80A(2) caps the aggregate at GTI, and s.111A(2)/s.112A(6) exclude special-rate
+    # gains from what deductions may be set against.
     ded_parts = sum(val for key, val in ded.items()
                     if key != "Total Deductions" and isinstance(val, (int, float)))
-    eq("Total Deductions = min(sum of sections, GTI)",
-       g(ded, "Total Deductions"), min(ded_parts, g(exp, "Gross Total Income")))
+    special_gains = (g(cg, "STCG (Section 111A)") + g(cg, "LTCG (Section 112A)")
+                     + g(cg, "LTCG (Non-Equity)", "Total"))
+    eq("Total Deductions = min(sum of sections, GTI less special-rate gains)",
+       g(ded, "Total Deductions"),
+       min(ded_parts, max(0.0, g(exp, "Gross Total Income") - special_gains)))
     eq("Taxable Income = GTI - Total Deductions",
        g(exp, "Total Taxable Income"),
        g(exp, "Gross Total Income") - g(ded, "Total Deductions"))

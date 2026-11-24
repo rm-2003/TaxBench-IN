@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""LLM benchmark evaluator for Indian tax calculator.
+"""Evaluation harness for TaxBench-IN: runs LLMs on AY2026-Bench and scores them field by field.
 
-Feeds generated test cases to LLMs via three methods (zero-shot, script,
-tool-call), scores outputs against ground truth, and produces CSV reports.
+Methods: zero-shot (answer the JSON directly), script (write and run Python) and
+tool-call (use a calculator tool). Results are checkpointed per model and method, so an
+interrupted run resumes where it stopped.
 
 Usage:
-    python3 tests/evaluate_llm.py                                  # zero-shot, all models
-    python3 tests/evaluate_llm.py --method tool-call
-    python3 tests/evaluate_llm.py --method script --model "openai/gpt-oss-120b:free"
-    python3 tests/evaluate_llm.py --method tool-call --max-rounds 30
+    python3 tests/evaluate_llm.py --method zero-shot --model nim/moonshotai/kimi-k3.1-pro
+    python3 tests/evaluate_llm.py --method script --model llamacpp/gpt-oss-120b
+    python3 tests/evaluate_llm.py --method tool-call --model nvidia/nemotron-3-ultra-550b-a55b:free
 """
 
 import argparse
@@ -55,35 +55,10 @@ COST_CHECK_INTERVAL = 5
 FREE_COOLDOWN_SECS = 120
 FREE_COOLDOWN_MAX_RETRIES = 2
 STREAM_MAX_SECS = 3600  # total cap on one streamed response (models with "stream": True)
-API_TIMEOUT_SECS = 600  # per-attempt request timeout; without this a stuck
-                         # provider blocks the case (and its concurrency slot)
-                         # forever, as observed with nemotron-3-ultra hanging
-                         # 20+ min on a single request. 600s gives ~2x headroom
-                         # over the slowest model's observed average latency
-                         # (hy3-preview, 336s/case) so a legitimately slow but
-                         # working reasoning model isn't cut off mid-response,
-                         # while still failing well before a genuine hang.
-EMPTY_COMPLETION_RETRIES = 4  # raised from 2 after 30 Sep: the provider went
-                               # through a bad patch (26 empties in 56 cases) and
-                               # 8 cases exhausted all 3 attempts, landing in the
-                               # results as PARSE_FAIL 0/37 with 0 completion
-                               # tokens. That is an infrastructure failure scored
-                               # as a model failure: completed-only accuracy for
-                               # that batch was 65.5%, in line with 64.6% and
-                               # 64.4% for the two before it, while the raw figure
-                               # fell to 56.1%. Retries are nearly free here —
-                               # an empty response is not billed against the
-                               # 50/day free-model quota (56 cases cost 55
-                               # requests despite the 26 empties), so the only
-                               # cost of more attempts is wall-clock time.
-                               # a 200 OK with 0 completion tokens is a distinct
-                               # failure mode from a 429/503 — api_call_with_retry
-                               # treats it as success since the HTTP call itself
-                               # succeeded, so it's never retried by that logic.
-                               # Observed on nemotron-3-ultra: whole stretches of
-                               # cases coming back with genuinely empty content,
-                               # burning scarce daily-cap requests on 0-score
-                               # PARSE_FAILs instead of a real answer.
+API_TIMEOUT_SECS = 600  # per-attempt request timeout, so a hung provider cannot block a case forever
+# A 200 OK with no completion text is retried separately: the HTTP call succeeded, so
+# api_call_with_retry would otherwise score the empty answer as a parse failure.
+EMPTY_COMPLETION_RETRIES = 4
 
 # ---------------------------------------------------------------------------
 # Evaluation defaults (overridable via CLI)
@@ -93,22 +68,7 @@ MAX_TOOL_NUDGES = 2  # continue-prompts per tool-call case after a reply with no
 TOOL_NUDGE = ("Your last reply contained neither calculate calls nor the final JSON. "
               "Continue: use the calculate tool for any remaining arithmetic, then "
               "reply with only the final JSON.")
-# Raised from 3 once run_script() stopped resending the whole retry history.
-# Under the old behaviour each extra round added a superseded script to the
-# prompt, so more retries made things strictly worse. With only the most recent
-# script and error sent, the prompt is flat at ~6,800 tokens per round against a
-# 16,384 ceiling, and the rounds became productive rather than degenerate:
-# input_0287 spent all three of its old retries re-emitting JSON instead of
-# Python (the same "Could not find Python code" error three times, anchored on
-# its own prior reply), and under the trim instead progressed to real scripts
-# that failed on the known "Other Interest" schema defect and then on a bare
-# variable-name typo — recoverable, but out of rounds. Rounds 1-4 are unchanged
-# by this value, so a run at 6 contains a run at 3 as a strict prefix and the
-# two conditions are separable after the fact from rounds_used.
-# Network failures (connection refused/reset, read timeouts, Wi-Fi drops) get
-# their own, longer retry budget that does not use up MAX_TRANSIENT_RETRIES:
-# waits of 10s, 30s, 1 min, 2 min, then 5 min each, up to NETWORK_MAX_RETRIES
-# (~1 h in all), so a short outage is waited out instead of SKIPping the case.
+# Network failures (timeouts, resets) are retried on their own, longer budget (~1 h).
 NETWORK_RETRY_WAITS = [10, 30, 60, 120, 300]
 NETWORK_MAX_RETRIES = 15
 MAX_SCRIPT_RETRIES = 6
@@ -122,90 +82,31 @@ MAX_CASES = 500
 # Models & per-model config
 # ---------------------------------------------------------------------------
 MODELS = [
-    # Strong
-    "openai/gpt-oss-120b",
-    "tencent/hy3-preview:free",
-    # Mid
-    "deepseek/deepseek-chat-v3-0324",
-    "meta-llama/llama-3.3-70b-instruct",
-    "google/gemma-4-31b-it:free",
-    # Weak
-    "openai/gpt-oss-20b",
-    "nvidia/nemotron-nano-9b-v2:free",
-    # "qwen/qwen3.5-9b",
+    "nim/moonshotai/kimi-k3.1-pro",
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "nim/mistralai/mistral-large-4-1t-a52b",
+    "llamacpp/gpt-oss-120b",
+    "nim/minimaxai/minimax-m3.1-flash",
+    "llamacpp/deepseek-r1-distill-70b",
 ]
 
 MODEL_CONFIG = {
-    # Free models: conservative to avoid 429 storms
-    "tencent/hy3-preview:free":          {"rpm": 20, "concurrency": 8},
-    "google/gemma-4-31b-it:free":        {"rpm": 12, "concurrency": 4},
-    "nvidia/nemotron-nano-9b-v2:free":   {"rpm": 20, "concurrency": 8},
-    # Paid models: push harder
-    "openai/gpt-oss-120b":               {"rpm": 25, "concurrency": 8},
-    "openai/gpt-oss-20b":                {"rpm": 25, "concurrency": 8},
-    "deepseek/deepseek-chat-v3-0324":    {"rpm": 25, "concurrency": 8},
-    "meta-llama/llama-3.3-70b-instruct": {"rpm": 25, "concurrency": 8},
-    "qwen/qwen3.5-9b":                   {"rpm": 25, "concurrency": 8},
-    # Gemini (direct, not via OpenRouter) — this key's actual free-tier burst
-    # tolerance is much lower than the nominal 10 rpm; concurrency=3 tripped
-    # 429s immediately in testing, so start conservative (single in-flight).
-    "gemini-3.8-flash":                  {"rpm": 4, "concurrency": 1},
-    # Local Ollama — no quota and no cost, so the only limit is the machine.
-    # concurrency stays at 1: local generation is memory-bandwidth-bound, so
-    # parallel requests split the same bandwidth instead of adding throughput.
-    # reasoning_effort="none" suppresses the thinking trace, which otherwise
-    # consumes most of the context and dominates runtime: 277 -> 41 completion
-    # tokens (34.0s -> 6.0s) on an identical probe prompt. The benchmark scores
-    # 37 numeric answer fields, not reasoning quality, and it makes this model
-    # comparable to the non-reasoning models already in the table.
-    "ollama/gemma4-12b-ctx8k":           {"rpm": 600, "concurrency": 1,
-                                          "reasoning_effort": "none"},
-    # Same weights at num_ctx 16384, for the script method only: a generated tax
-    # script runs ~2,500 tokens, and a retry round must also carry the previous
-    # script in full plus the traceback, which does not fit in 8192.
-    "ollama/gemma4-12b-ctx16k":          {"rpm": 600, "concurrency": 1,
-                                          "reasoning_effort": "none"},
-    # Local llama.cpp server. Keep one in-flight case: a single 120B model
-    # instance is already saturating the allocated GPUs, and concurrent
-    # benchmark cases would compete for the same decode resources.
-    "llamacpp/gpt-oss-120b":             {"rpm": 600, "concurrency": 1},
-    # Further local models run by Navya (llama.cpp, or Ollama hosted on Modal).
-    "llamacpp/gemma-4-12b":              {"rpm": 600, "concurrency": 1},
-    "llamacpp/deepseek-r1-distill-70b":  {"rpm": 600, "concurrency": 1},
-    "llamacpp/llama-3.3-70b":            {"rpm": 600, "concurrency": 1},
-    "ollama/deepseek-r1-70b":            {"rpm": 600, "concurrency": 1},
-    # Same Nemotron weights via NVIDIA's own API (build.nvidia.com) instead of
-    # OpenRouter's :free route, which is itself served by Nvidia. No daily cap;
-    # the free tier is rate-limited per minute (~40 rpm), so stay under it.
+    # Self-hosted llama.cpp: one case in flight, the model already saturates the GPUs.
+    "llamacpp/gpt-oss-120b":                 {"rpm": 600, "concurrency": 1},
+    "llamacpp/deepseek-r1-distill-70b":      {"rpm": 600, "concurrency": 1},
+    # NVIDIA NIM free tier is limited to ~40 requests per minute per account.
     "nim/nvidia/nemotron-3-ultra-550b-a55b": {"rpm": 35, "concurrency": 4},
-    # Mistral Large 4 (~1T total / ~52B active MoE, per its ID) via NVIDIA's
-    # API, same per-minute limit as above. All three methods run on this route.
-    # A real case takes ~26 min (26k reasoning tokens) and a non-streamed request
-    # never returns inside API_TIMEOUT_SECS, so this model is streamed.
+    # Long reasoning traces: streamed so a slow answer is not cut off by API_TIMEOUT_SECS.
     "nim/mistralai/mistral-large-4-1t-a52b": {"rpm": 35, "concurrency": 4, "stream": True},
-    # MiniMax M3.1 Flash (428B total / 23B active MoE per NVIDIA's model card,
-    # released 22 Oct 2026) via NVIDIA's API. First token takes ~1.5 min under
-    # load, then ~25 tokens/s, so streamed like Mistral Large 4.
-    "nim/minimaxai/minimax-m3.1-flash":    {"rpm": 35, "concurrency": 4, "stream": True},
-    # Kimi K3.1 Pro (~2.8T total / ~104B active MoE per Moonshot's model card)
-    # via NVIDIA's API. Fast (~1 s to first token, ~40 tokens/s on 18 Nov);
-    # streamed anyway so a long answer never meets API_TIMEOUT_SECS.
-    "nim/moonshotai/kimi-k3.1-pro":        {"rpm": 35, "concurrency": 4, "stream": True},
-    # Llama 3.3 70B Instruct (bf16, 2x H100) served by vLLM on Modal; see
-    # deploy/modal_llama33_70b.py. Own deployment, so no shared rate limit:
-    # concurrency is bounded by the server's batching, not a quota.
-    "modal/llama-3.3-70b-instruct":     {"rpm": 600, "concurrency": 16},
-}
-
-FREE_FALLBACKS = {
-    "google/gemma-4-31b-it:free": "google/gemma-4-31b-it",
+    "nim/minimaxai/minimax-m3.1-flash":      {"rpm": 35, "concurrency": 4, "stream": True},
+    "nim/moonshotai/kimi-k3.1-pro":          {"rpm": 35, "concurrency": 4, "stream": True},
 }
 
 DEFAULT_MODEL_CONFIG = {"rpm": 12, "concurrency": 4}
 DEFAULT_BUDGET = 17.00  # USD — max spend before halting
 
 # ---------------------------------------------------------------------------
-# Scored field definitions (37 fields)
+# Scored field definitions (35 fields)
 # ---------------------------------------------------------------------------
 SALARY_FIELDS = [
     ("gross_salary", ("Under Head Salaries", "Gross Salary")),
@@ -220,18 +121,12 @@ SALARY_FIELDS = [
 OTHER_SOURCES_FIELDS = [
     ("savings_bank_interest", ("Income from Other Sources", "Savings Bank Interest")),
     ("deposit_interest", ("Income from Other Sources", "Deposit Interest")),
-    # Flat now, a sibling of "Other Interest" rather than its child. The old
-    # nesting is kept as a fallback read below so the 816 zero-shot answers
-    # collected under it stay scorable without re-running a single case.
+    # Flat now, a sibling of "Other Interest" rather than its child.
     ("epf_taxable_interest", ("Income from Other Sources", "EPF Taxable Interest")),
 ]
 
-# Where a field used to live, consulted only when the current path finds nothing
-# in a model's ANSWER. Expected values always use the current path, so this never
-# changes what counts as correct -- it only lets answers written against an older
-# output schema still be read. "Other Interest" was a container holding the EPF
-# figure until it became a reportable amount in its own right; without this,
-# flattening it would have invalidated every zero-shot run ever collected.
+# Where a field used to live, consulted only when the current path finds nothing in a
+# model's ANSWER.
 LEGACY_FIELD_PATHS = {
     "epf_taxable_interest": ("Income from Other Sources", "Other Interest", "EPF Taxable Interest"),
 }
@@ -252,16 +147,7 @@ DEDUCTION_LEAF_FIELDS = [
     ("total_deductions", ("Deductions", "Total Deductions")),
 ]
 
-# `tax_stcg_other` and `tax_ltcg_other` were REMOVED from scoring. Both were 0
-# in all 569 cases, so neither could discriminate between models: emitting a
-# constant 0 scored 100% while reasoning about them was punished. STCG on
-# non-equity assets is charged at slab rates and therefore folded into
-# "Tax at Slab Rates", a convention the system prompt never stated, so 26% to
-# 86% of every model's answers were marked wrong for reporting the attributable
-# tax instead -- defensibly the more informative answer. Documenting the
-# convention would only have converted a trap into free marks; a field constant
-# across the whole dataset carries no signal either way. The fields remain in
-# the required output schema, they are simply not scored.
+# `tax_stcg_other` and `tax_ltcg_other` were REMOVED from scoring.
 TAX_FIELDS = [
     ("tax_at_slab_rates", ("Tax Computation", "Tax at Slab Rates")),
     ("tax_stcg_111a", ("Tax Computation", "Tax on STCG (Section 111A)")),
@@ -289,9 +175,8 @@ ALL_FIELD_NAMES = (
     + [f[0] for f in TAX_FIELDS]
 )
 
-# Scored fields whose expected value is the input value verbatim in all 569
-# cases: they measure transcription, not tax computation. Nemotron answers these
-# at ~94% against ~57% on the rest, so pooling them overstates every model.
+# Scored fields whose expected value is the input value verbatim in all 569 cases: they
+# measure transcription, not tax computation.
 TRIVIAL_FIELDS = [
     "savings_bank_interest",
     "deposit_interest",
@@ -391,23 +276,18 @@ class CaseResult:
     messages: list | None  # conversation transcript for failed/low-score cases
 
 
-LOCAL_PREFIX = "ollama/"
 LLAMACPP_PREFIX = "llamacpp/"
-LOCAL_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-LLAMACPP_BASE_URL = os.environ.get(
-    "LLAMACPP_BASE_URL", "http://localhost:8080/v1"
-)
+LLAMACPP_BASE_URL = os.environ.get("LLAMACPP_BASE_URL", "http://localhost:8080/v1")
 LOCAL_TIMEOUT_SECS = 3600  # Local generation can be slow; allow long requests.
 
 
 def is_local_model(model):
     """Whether a model is served locally (and therefore has no API cost)."""
-    return bool(model) and model.startswith((LOCAL_PREFIX, LLAMACPP_PREFIX))
+    return bool(model) and model.startswith(LLAMACPP_PREFIX)
 
 
 NIM_PREFIX = "nim/"
 NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
-MODAL_PREFIX = "modal/"  # own vLLM deployment on Modal; URL and key from env
 
 
 def is_nim_model(model):
@@ -418,63 +298,25 @@ def api_model_name(model):
     """Strip a routing prefix so the request carries the server/provider model ID."""
     if not model:
         return model
-    for prefix in (LOCAL_PREFIX, LLAMACPP_PREFIX, NIM_PREFIX, MODAL_PREFIX):
+    for prefix in (LLAMACPP_PREFIX, NIM_PREFIX):
         if model.startswith(prefix):
             return model[len(prefix):]
     return model
 
 
 # ---------------------------------------------------------------------------
-# Provider client — OpenRouter for most models, Gemini's own OpenAI-compatible
-# endpoint for "gemini-*" model IDs (these aren't available on OpenRouter's
-# free tier, so they're evaluated directly against Google's API instead), and a
-# local Ollama server for "ollama/*" IDs and llama.cpp for "llamacpp/*" IDs
-# (no quota, no cost — used for local evaluation).
+# Provider client: llama.cpp for "llamacpp/*", NVIDIA NIM for "nim/*",
+# OpenRouter for everything else. All three speak the OpenAI API.
 # ---------------------------------------------------------------------------
 def get_client(model=None):
     if model and model.startswith(LLAMACPP_PREFIX):
-        return OpenAI(
-            base_url=LLAMACPP_BASE_URL,
-            api_key="llamacpp",
-            timeout=LOCAL_TIMEOUT_SECS,
-        )
-    if model and model.startswith(LOCAL_PREFIX):
-        # An Ollama server deployed on Modal (OLLAMA_BASE_URL pointing at it)
-        # authenticates with a Modal proxy token pair sent as headers.
-        modal_key = os.environ.get("MODAL_KEY")
-        modal_secret = os.environ.get("MODAL_SECRET")
-        if bool(modal_key) != bool(modal_secret):
-            raise RuntimeError("Both MODAL_KEY and MODAL_SECRET must be set.")
-        headers = {"Modal-Key": modal_key, "Modal-Secret": modal_secret} if modal_key else {}
-        return OpenAI(
-            base_url=LOCAL_BASE_URL,
-            api_key="ollama",
-            default_headers=headers,
-            timeout=LOCAL_TIMEOUT_SECS,
-        )
-    if model and model.startswith(MODAL_PREFIX):
-        base_url = os.environ.get("MODAL_VLLM_BASE_URL")
-        api_key = os.environ.get("MODAL_VLLM_API_KEY")
-        if not base_url or not api_key:
-            print("ERROR: Set MODAL_VLLM_BASE_URL and MODAL_VLLM_API_KEY environment variables.")
-            sys.exit(1)
-        return OpenAI(base_url=base_url, api_key=api_key, timeout=API_TIMEOUT_SECS)
+        return OpenAI(base_url=LLAMACPP_BASE_URL, api_key="llamacpp", timeout=LOCAL_TIMEOUT_SECS)
     if is_nim_model(model):
         api_key = os.environ.get("NVIDIA_API_KEY")
         if not api_key:
             print("ERROR: Set NVIDIA_API_KEY environment variable.")
             sys.exit(1)
         return OpenAI(base_url=NIM_BASE_URL, api_key=api_key, timeout=API_TIMEOUT_SECS)
-    if model and model.startswith("gemini-"):
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            print("ERROR: Set GEMINI_API_KEY environment variable.")
-            sys.exit(1)
-        return OpenAI(
-            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-            api_key=api_key,
-            timeout=API_TIMEOUT_SECS,
-        )
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         print("ERROR: Set OPENROUTER_API_KEY environment variable.")
@@ -602,18 +444,7 @@ def load_system_prompt():
 def build_messages(method, system_prompt, input_json):
     user_content = "Here is the taxpayer input:\n" + json.dumps(input_json, indent=2)
     if method == "script":
-        # The override is not decoration. The shared system prompt ends with
-        # "No explanation, no preamble, no markdown code fences, no text before
-        # or after the JSON", which is right for zero-shot and tool-call but
-        # directly forbids what extract_code() needs here: it looks for a
-        # ```python fence first, so a model that OBEYS the system prompt in
-        # script mode emits bare JSON, no code is found, and the round is spent
-        # on "Could not find Python code in your response". nemotron did exactly
-        # this on the first v2 case and said so in its own words -- "tag must be
-        # only the JSON object." That suggests I should not output a script' --
-        # and gemma's input_0552 burned all 7 rounds and 98 minutes on repeated
-        # instances of that same error, which was previously read as the model
-        # anchoring on its own bad format rather than as it following orders.
+        # The script instruction must explicitly override the system prompt's "reply with JSON".
         user_content += (
             "\n\nWrite a Python script that reads the input JSON from the file "
             "'input.json' in the current working directory, computes the tax output, "
@@ -626,9 +457,7 @@ def build_messages(method, system_prompt, input_json):
             "script must PRINT, not what you should reply with."
         )
     elif method == "tool-call":
-        # Batching is mandatory, not optional. With one calculate call per round a
-        # 37-field return cannot finish inside MAX_ROUNDS: observed 19 sequential
-        # single-call rounds still mid-computation at the cutoff, scoring 0.
+        # Without batching, a full return does not fit in MAX_TOOL_ROUNDS rounds.
         user_content += (
             "\n\nUse the calculate tool for ALL arithmetic — never perform mental "
             "math.\n"
@@ -651,12 +480,7 @@ def build_messages(method, system_prompt, input_json):
 # Response helpers
 # ---------------------------------------------------------------------------
 def get_response_text(message):
-    """Extract final text, with reasoning-field fallbacks for compatible servers.
-
-    llama.cpp may expose a parsed reasoning block as `reasoning_content`;
-    other providers may use `reasoning`. Prefer `content`, which should contain
-    the final answer, and only fall back when it is empty.
-    """
+    """Extract final text, with reasoning-field fallbacks for compatible servers."""
     text = message.content or ""
     if not text:
         text = (
@@ -745,21 +569,12 @@ def extract_json(text):
 
 
 def extract_code(text):
-    # Take the LONGEST fenced block, not the first. A model that opens with a
-    # short illustrative snippet before the real script would otherwise have the
-    # snippet executed: nemotron's input_0411 round 1 emitted a 358-char stub
-    # followed by the real 13,499-char script, and the stub was what ran. That
-    # case recovered at rounds=2 and scored 21/35, so the arm's accuracy stands,
-    # but a round was spent on an artefact of extraction rather than on anything
-    # the model got wrong.
+    # Take the LONGEST fenced block, not the first.
     fenced = re.findall(r"```(?:python)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
     if fenced:
         return max(fenced, key=len)
-    # Unterminated fence: the response was cut off mid-script, so there is an
-    # opening ``` but no closing one. Without this branch the fallback below
-    # returned the fence line as part of the code and every such case died with
-    # "SyntaxError: invalid syntax" on line 1 instead of surfacing the real
-    # problem (a truncated response).
+    # Unterminated fence: the response was cut off mid-script, so there is an opening
+    # ``` but no closing one.
     unterminated = re.search(r"```(?:python)?[^\S\n]*\n(.*)", text, re.DOTALL)
     if unterminated:
         return re.sub(r"\n\s*```[^\S\n]*$", "", unterminated.group(1))
@@ -784,12 +599,7 @@ def execute_calculate(operation, operands):
 
 
 class ProviderError(Exception):
-    """An upstream provider failure that OpenRouter returned inside a 200 body.
-
-    Carries `status_code` so api_call_with_retry's existing classification --
-    which reads that attribute off the exception -- treats it exactly like the
-    same status arriving as a real HTTP error.
-    """
+    """An upstream provider failure that OpenRouter returned inside a 200 body."""
 
     def __init__(self, message, status_code=None):
         super().__init__(message)
@@ -797,15 +607,7 @@ class ProviderError(Exception):
 
 
 def _upstream_error(resp):
-    """Return a ProviderError if `resp` carries a provider failure, else None.
-
-    Two shapes count. An explicit `error` object is authoritative. Failing
-    that, a response with no usable `choices` cannot be a completion: there is
-    nothing for the caller to read, and every observed instance has been an
-    upstream fault. A model that declines to answer still returns a choice
-    with empty content, which this deliberately leaves alone so the
-    empty-completion retries keep handling it.
-    """
+    """Return a ProviderError if `resp` carries a provider failure, else None."""
     err = getattr(resp, "error", None)
     if err is None and hasattr(resp, "model_extra"):
         err = (resp.model_extra or {}).get("error")
@@ -827,12 +629,7 @@ class RateLimitExhausted(Exception):
 
 
 def _create_streaming(client, **kwargs):
-    """Stream a completion and return it as an ordinary ChatCompletion.
-
-    Callers read the result exactly as they read a non-streamed response. A
-    stream that ends without a finish_reason, or exceeds STREAM_MAX_SECS, raises
-    a 503 ProviderError so it is retried or SKIPped, never scored as an answer.
-    """
+    """Stream a completion and return it as an ordinary ChatCompletion."""
     t0 = time.monotonic()
     content, reasoning = [], []
     tool_calls = {}
@@ -906,26 +703,13 @@ def _is_network_error(e):
 def _is_daily_cap_error(err_str):
     """True if a 429's message indicates a hard per-day quota (no point retrying
     today), as opposed to a transient per-minute rate limit.
-
-    Providers phrase this differently: OpenRouter says "...free-models-per-day"
-    (matched by "daily"/"limit exceeded"); Gemini's quotaId is
-    "GenerateRequestsPerDayPerProjectPerModel-FreeTier" — no "daily" substring,
-    hence the separate normalized "perday" check.
     """
     normalized = err_str.replace("-", "").replace("_", "")
     return "daily" in err_str or "limit exceeded" in err_str or "perday" in normalized
 
 
 def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
-    """Wraps client.chat.completions.create with retry + 429 handling.
-
-    Automatically attempts response_format=json_object first, falls back
-    without it if the model/provider doesn't support it.
-
-    Returns the API response.  Raises on non-recoverable errors.
-    model_delay_state is a mutable dict: {"consecutive_429": int, "delay": float,
-                                          "json_format_supported": bool}
-    """
+    """Wraps client.chat.completions.create with retry + 429 handling."""
     use_json_format = model_delay_state.get("json_format_supported", False)
     requested_model = kwargs.get("model", "")
     active_model = api_model_name(requested_model)
@@ -953,18 +737,8 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
             else:
                 resp = client.chat.completions.create(**call_kwargs)
 
-            # OpenRouter delivers upstream provider failures as an `error`
-            # object inside an HTTP 200 body with no `choices`, so the SDK does
-            # not raise and the 500/502/503 branch below never fires. Left
-            # undetected the call looks like a successful completion of zero
-            # tokens: on 1 Oct the Nvidia endpoint answered every request with
-            # "Service temporarily overloaded" (503) and the script arm recorded
-            # four cases as PARSE_FAIL 0/37 at rounds=1 in 45 seconds before it
-            # was stopped. An upstream outage must never be scored as a model
-            # failure, so translate it into the exception the classification
-            # below already knows how to handle; if the retries are exhausted it
-            # propagates and the case is SKIPped rather than checkpointed as a
-            # zero, which is what makes it recoverable by a later run.
+            # OpenRouter reports upstream failures inside a 200 body; raise them so the
+            # case is retried or skipped, never scored as a model failure.
             upstream = _upstream_error(resp)
             if upstream is not None:
                 raise upstream
@@ -1004,19 +778,8 @@ def api_call_with_retry(client, model_delay_state, rate_limiter, **kwargs):
                 if model_delay_state["consecutive_429"] >= 3:
                     model_delay_state["delay"] = min(model_delay_state["delay"] * 2, 120)
 
-                # If a paid fallback exists, switch permanently for this call
-                fallback = FREE_FALLBACKS.get(active_model)
-                if fallback:
-                    print(f"      429 on free tier — switching {active_model} → {fallback}")
-                    active_model = fallback
-                    paid_cfg = MODEL_CONFIG.get(fallback, DEFAULT_MODEL_CONFIG)
-                    rate_limiter = RateLimiter(paid_cfg["rpm"])
-                    model_delay_state["fallback_model"] = fallback
-                    model_delay_state["rate_limiter"] = rate_limiter
-                    continue
-
                 if _is_daily_cap_error(err_str):
-                    raise  # true daily cap with no fallback — let caller handle
+                    raise  # daily cap: let the caller skip the case
 
                 wait = [5, 15, 45, 120][min(attempt, 3)]
                 print(f"      429 rate limit — waiting {wait}s (attempt {attempt+1})")
@@ -1072,33 +835,10 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
     escalated = False      # whether the "you repeated yourself" nudge has been spent
 
     for attempt in range(1 + max_retries):
-        # Send only the most recent script and its error, never the whole retry
-        # history. `messages` grows by two entries per round and used to be sent
-        # entire, so round 4 re-read three superseded scripts (~3,500 tokens
-        # each) plus three tracebacks before writing the fourth: a 14,000-19,000
-        # token prompt against num_ctx 16,384, which in the worst cases left no
-        # room to emit a script at all. 17 of 18 rounds=4 cases scored 0 for this
-        # reason, and accumulated prompt size separated the outcomes perfectly --
-        # the sole survivor was the one case under 29,000 summed prompt tokens,
-        # every failure above 36,180. build_messages() returns exactly
-        # [system, user], so messages[:2] is always the base.
-        #
-        # Round 2 already sends exactly this shape and succeeds 13 of 13 at
-        # 48.4%, so the trim makes every later round structurally identical to
-        # one with a perfect success rate rather than introducing a new regime.
-        #
-        # `messages` itself keeps accumulating: it is what gets returned and
-        # stored in the checkpoint, and the full sequence of attempts is the
-        # record of what the model actually tried on a failed case. Only the
-        # copy sent to the model is trimmed.
+        # Send only the most recent script and its error, never the whole retry history.
         sent = messages if len(messages) <= 4 else messages[:2] + messages[-2:]
-        # Re-request an empty completion instead of ending the case on it, the
-        # way run_zero_shot already does. A 200 OK carrying no text is an
-        # infrastructure event, not an answer, and this round is the model's
-        # only chance to produce a script: the old code returned on the first
-        # one, burning every remaining retry and recording PARSE_FAIL 0/37 at
-        # rounds=1. `rounds` counts script attempts, so it is incremented once
-        # however many times the completion had to be re-requested.
+        # Re-request an empty completion instead of ending the case on it, the way
+        # run_zero_shot already does.
         raw = ""
         for empty_attempt in range(1 + EMPTY_COMPLETION_RETRIES):
             resp = api_call_with_retry(client, mds, rate_limiter, model=model,
@@ -1113,45 +853,18 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
                       f"{empty_attempt + 1}/{EMPTY_COMPLETION_RETRIES}")
         rounds += 1
         if not raw.strip():
-            # Still nothing after every retry. Raise rather than return None:
-            # a return is checkpointed as a scored zero and permanently
-            # contaminates the results, whereas an exception makes the case a
-            # SKIP that a later run picks up, and CONSECUTIVE_SKIP_LIMIT then
-            # aborts the run if the provider is down rather than grinding
-            # through all 50 cases writing zeros.
+            # Still nothing after every retry.
             raise ProviderError(
                 f"empty completion after {EMPTY_COMPLETION_RETRIES} retries")
-        # Append the response in full, exactly once per round. Truncating it to 500
-        # chars left the model looking at a fragment of its own script cut off
-        # mid-expression, right beside a "'{' was never closed" error it was asked
-        # to fix — the stub was itself an instance of that error. The error and
-        # timeout branches below used to append the full text a second time, so
-        # every retry round also paid for the script twice in prompt tokens.
+        # Append the response in full, exactly once per round.
         messages.append({"role": "assistant", "content": raw})
         code = extract_code(raw)
         if not code:
             messages.append({"role": "user", "content": "Error: Could not find Python code in your response. Please provide the complete script."})
             continue
 
-        # The trimmed context plus temperature=0 makes a retry round a
-        # deterministic function of [system, user, last script, last error]. So
-        # once a repair round fails, the NEXT round receives byte-identical
-        # input and returns a byte-identical script, forever. gemma's
-        # input_0255 regenerated the same 7,843-char script five times (rounds
-        # 3-7, identical sha256), burning ~45,000 tokens and ~75 minutes on
-        # rounds that could not possibly have succeeded, and scored 0.
-        #
-        # Re-running an identical script would reproduce an identical error, so
-        # there is nothing to learn from executing it. Instead, break the
-        # determinism by changing the input: one escalated message quoting the
-        # error and forbidding a verbatim repeat. Temperature stays at 0
-        # throughout -- escaping the fixed point by sampling would buy the same
-        # effect at the cost of reproducibility. If the model repeats itself
-        # even after the escalation, it is genuinely stuck and the remaining
-        # retries are forfeit rather than spent.
-        # A set rather than just the previous script, so a two-round cycle is
-        # caught as well as a stuck repeat -- any script already tried will fail
-        # the same way whenever it reappears.
+        # The trimmed context plus temperature=0 makes a retry round a deterministic
+        # function of [system, user, last script, last error].
         code_hash = hashlib.sha256(code.encode()).hexdigest()
         if code_hash in seen_codes:
             if escalated:
@@ -1191,20 +904,8 @@ def run_script(client, model, system_prompt, input_json, mds, max_retries, scrip
                 output = extract_json(result.stdout)
                 if output is not None:
                     # Keep the transcript whenever it took more than one round.
-                    # Returning None here discarded the retry history of every
-                    # case that eventually succeeded, which is most of them --
-                    # 14 of nemotron's 15 and 35 of gemma's 50 -- so the only
-                    # stored transcripts were total failures and there was no
-                    # way to ask why the mean is 2.7 rounds rather than 1. A
-                    # first-round success has no history worth keeping, hence
-                    # the condition rather than always returning `messages`.
                     return output, rounds, tracker, (messages if rounds > 1 else None)
-                # Exit code 0 but nothing parseable on stdout. The usual cause is a
-                # script that defines its entrypoint and never calls it (no __main__
-                # guard), so Python executes the definitions and exits cleanly having
-                # printed nothing. This is trivially recoverable by saying so, but the
-                # old code returned here and burned the case with every retry unused —
-                # input_0287 scored 0/37 at rounds=1 after 1,802s for exactly this.
+                # Exit code 0 but nothing parseable on stdout.
                 if result.stdout.strip():
                     complaint = (
                         "Your script ran successfully but what it printed was not valid JSON. "
@@ -1252,12 +953,8 @@ def run_tool_call(client, model, system_prompt, input_json, mds, max_rounds, rat
             rounds += 1
             text = get_response_text(msg)
             output = extract_json(text)
-            # A reply with no tool calls and no JSON is the model thinking aloud
-            # mid-computation, not a final answer: on 23 Oct nemotron stopped
-            # after 1-2 correct tool rounds with "Now I have: ... HRA exemption =
-            # 800,000 ..." (input_0289) and "Let me continue with the"
-            # (input_0199), and both were scored PARSE_FAIL 0/35. Send it back
-            # with a nudge, at most MAX_TOOL_NUDGES times per case.
+            # A reply with no tool calls and no JSON is the model thinking aloud, not a final
+            # answer: ask it to continue, at most MAX_TOOL_NUDGES times per case.
             if output is None and nudges < MAX_TOOL_NUDGES and rounds < max_rounds:
                 nudges += 1
                 print(f"      tool-call: reply had no tool calls and no JSON "
@@ -1322,9 +1019,7 @@ def score_case(expected, actual):
     def leaf(name, *keys):
         ev = get_nested(expected, *keys)
         av = get_nested(actual, *keys) if actual else None
-        # An answer written against an older output schema is read at its old
-        # location. Only the answer is ever looked up this way; `expected` is
-        # regenerated and always uses the current path.
+        # An answer written against an older output schema is read at its old location.
         if av is None and actual and name in LEGACY_FIELD_PATHS:
             av = get_nested(actual, *LEGACY_FIELD_PATHS[name])
         if ev is None or av is None:
@@ -1534,14 +1229,8 @@ def evaluate_case(client, model, method, case, mds, args, rate_limiter):
     scores, pct_errors = score_case(case["expected"], output)
     total = sum(scores.values())
 
-    # Keep the transcript for any case that needed more than one round, not
-    # just the ones that scored badly. A case can retry three times and still
-    # finish at 27/37, and the retry history is the only record of WHY the mean
-    # is 2.7 rounds -- whether the model is tripping over harness-side problems
-    # we could fix (no __main__ call, stdout noise, the 20s timeout) or making
-    # genuine mistakes. run_script already returns `messages` when rounds > 1;
-    # this gate used to discard them again, so 17 of 17 nemotron cases stored
-    # nothing despite 16 of them retrying.
+    # Keep the transcript for any case that needed more than one round, not just the
+    # ones that scored badly.
     store_transcript = not parsed or total < 19 or rounds > 1
 
     return CaseResult(
@@ -1768,12 +1457,7 @@ def print_console_summary(model, method, results):
         flds = SECTION_MAP[key]
         print(f"  {label + f' ({len(flds)} fields)':<30}{section_acc(flds):.1f}%")
 
-    # Four of the scored fields are copied verbatim from the input in all 569
-    # cases, so they test transcription rather than tax computation and inflate
-    # the headline figure. Reported separately rather than dropped: a model that
-    # loses them has made a real mistake, it is just not a tax mistake. The two
-    # fields that were CONSTANT across the dataset (tax_stcg_other,
-    # tax_ltcg_other) were dropped outright -- see the note on TAX_FIELDS.
+    # Four fields copy the input verbatim; report accuracy with and without them.
     scored  = list(results[0].scores.keys())
     trivial = [f for f in scored if f in TRIVIAL_FIELDS]
     derived = [f for f in scored if f not in TRIVIAL_FIELDS]
@@ -1841,17 +1525,10 @@ def run_model(client, model, method, cases, args):
     completed_files = set(completed)
 
     def process_case(case):
-        rl = model_delay_state.get("rate_limiter", rate_limiter)
-        return evaluate_case(client, model, method, case, model_delay_state, args, rl)
+        return evaluate_case(client, model, method, case, model_delay_state, args, rate_limiter)
 
     def _run_batch(batch_cases):
-        """Run cases with incremental submission.
-
-        Feeds new cases as old ones complete (sliding window of *concurrency*).
-        On RateLimitExhausted: stop feeding new cases, let in-flight drain.
-        If any in-flight succeeds, reset the flag and resume feeding.
-        Returns (results, rate_limit_halted, skipped_cases).
-        """
+        """Run cases with incremental submission."""
         global _abandoned_inflight
         case_iter = iter(batch_cases)
         batch_results = []
@@ -1860,10 +1537,7 @@ def run_model(client, model, method, cases, args):
         rate_limit_paused = False
         stop = False
 
-        # Not a `with` block: its exit waits for every in-flight case, and on
-        # 9 Nov a consecutive-failure stop then hung 1.5 h on requests that never
-        # returned. After that stop the in-flight cases are abandoned instead
-        # (finished cases are already checkpointed; a rerun redoes the rest).
+        # Not a `with` block: its exit would wait on hung requests after a stop.
         executor = ThreadPoolExecutor(max_workers=concurrency)
         try:
             future_to_case = {}
@@ -2021,21 +1695,15 @@ def main():
     parser.add_argument("--model", type=str, default=None, help="Provider/model ID (e.g. llamacpp/gpt-oss-120b); if omitted runs all models")
     parser.add_argument("--max-rounds", type=int, default=MAX_TOOL_ROUNDS)
     parser.add_argument("--max-script-retries", type=int, default=MAX_SCRIPT_RETRIES)
-    # Attempts per API call before a transient (500/502/503) failure SKIPs the
-    # case. Tool-call makes ~5-10 calls per case and one exhausted call discards
-    # the whole case, so an overloaded free endpoint needs a larger budget here
-    # than zero-shot does. Waits after the third attempt stay at 32s.
+    # Attempts per API call before a transient (500/502/503) failure SKIPs the case.
     parser.add_argument("--max-transient-retries", type=int, default=MAX_TRANSIENT_RETRIES)
-    # Overrides the per-model concurrency. On the 50-request/day free tier a
-    # daily-cap 429 discards every in-flight case, so tool-call runs (~11
-    # requests per case) should use 1 to lose at most one partial case.
+    # Overrides the per-model concurrency.
     parser.add_argument("--concurrency", type=int, default=None)
     # Model ID whose checkpoint (same method) lists cases to skip: lets one arm
     # be finished on a second provider route without duplicating cases.
     parser.add_argument("--skip-done-by", type=str, default=None)
-    # Run only part k of n of the selected cases (every n-th case from offset
-    # k-1), writing to its own checkpoint, so several processes or API keys can
-    # share one arm. Merge the shard checkpoints into the main one afterwards.
+    # Run only part k of n of the selected cases (every n-th case from offset k-1),
+    # writing to its own checkpoint, so several processes or API keys can share one arm.
     parser.add_argument("--shard", type=str, default=None, help="k/n, e.g. 1/3")
     parser.add_argument("--case-range", type=str, default=None,
                         help="a:b, run only cases[a:b] of the seed order (applied before --shard); "

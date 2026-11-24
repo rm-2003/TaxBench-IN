@@ -1,7 +1,0 @@
-Method: script | Models: 1 | Cases: 50 (seed=42)
-Constants: max_rounds=20, max_script_retries=6, script_timeout=20s, max_cases=50, budget=$17.00
-  nemotron-3-ultra-550b-a55b:free     rpm=12  concurrency=4
-  Cost guard: initial usage = $0.0000, budget = $17.00
-
-[nemotron-3-ultra-550b-a55b:free] Starting — rpm=12, concurrency=4
-[nemotron-3-ultra-550b-a55b:free] [1/50] input_0199.json OK score=23/37 (62%) rounds=3 latency=271.0s tokens=41961 cost=$0.0000

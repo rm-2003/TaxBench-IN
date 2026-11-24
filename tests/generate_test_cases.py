@@ -1,10 +1,4 @@
-"""
-Generates synthetic benchmark test cases for the Indian Income Tax Calculator.
-
-Supports three modes:
-- pairwise: covering array across all 19 parameters (~200-400 cases)
-- ota: baseline + one variation each (63 cases)
-- profiles: 10 taxpayer profiles creating 569 dense cases
+"""Generates synthetic benchmark test cases for the Indian Income Tax Calculator.
 
 Usage:
     python3 tests/generate_test_cases.py [pairwise|ota|profiles]
@@ -822,11 +816,7 @@ def resolve_cross_dependencies(case, meta):
 # ---------------------------------------------------------------------------
 
 def build_case(combo, profile=None):
-    """Build one test case from a combo dict {param_name: factor_name}.
-
-    `profile` is the taxpayer archetype key (e.g. "P01_mid_salary_private_new_metro")
-    for profile-mode cases, or None/"pairwise"/"ota" for the other generation modes.
-    """
+    """Build one test case from a combo dict {param_name: factor_name}."""
     merged = copy.deepcopy(BASE_INPUT)
     stock_txns = []
     mf_txns = []

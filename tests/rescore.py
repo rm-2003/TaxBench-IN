@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 """Rescore checkpointed model outputs against the CURRENT ground truth.
 
-Checkpoints store each case's raw `llm_output`, so when `_expected` changes
-(e.g. a tax_calculator correctness fix regenerates the dataset) every model
-already evaluated can be re-graded offline with no API calls. Without this,
-models evaluated before the fix and after it are scored against different
-answer keys and their accuracies are not comparable.
-
-Rebuilds the per-model results CSVs, the per-method summary, and the
-cross-method pivot from the checkpoints.
-
 Usage:
     python3 tests/rescore.py --dry-run          # report drift, write nothing
     python3 tests/rescore.py                    # rebuild the derived CSVs
@@ -34,19 +25,14 @@ METHODS = ["zero-shot", "script", "tool-call"]
 
 
 def resolve_model_id(slug, method):
-    """Recover the real model ID for a checkpoint slug.
-
-    model_slug() flattens "/" and ":" to "_", which is not reversible, so prefer
-    the `model` column of the matching results CSV and fall back to matching
-    against the configured model lists.
-    """
+    """Recover the real model ID for a checkpoint slug."""
     csv_path = E.RESULTS_DIR / f"{slug}__{method}_results.csv"
     if csv_path.exists():
         with open(csv_path, newline="") as f:
             for row in csv.DictReader(f):
                 if row.get("model"):
                     return row["model"]
-    known = set(E.MODELS) | set(E.MODEL_CONFIG) | set(E.FREE_FALLBACKS.values())
+    known = set(E.MODELS) | set(E.MODEL_CONFIG)
     for m in known:
         if E.model_slug(m) == slug:
             return m

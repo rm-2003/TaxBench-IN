@@ -9,3 +9,6 @@ __pycache__/
 *.jsonl.merged*
 *.shard*_results.csv
 *.range*_results.csv
+
+# Raw run logs (kept locally, not part of the release)
+tests/evaluation_logs/

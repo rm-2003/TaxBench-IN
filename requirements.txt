@@ -1,0 +1,2 @@
+openai>=3.0       # evaluation harness (OpenAI-compatible clients for NIM, OpenRouter, llama.cpp)
+allpairspy>=2.5   # dataset generator (pairwise covering arrays)
