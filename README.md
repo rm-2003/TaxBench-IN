@@ -110,3 +110,7 @@ python3 tests/generate_test_cases.py profiles
 This rewrites `tests/generated/` with fresh inputs, which invalidates the stored model
 answers. To change only the answer key after an engine fix, recompute `_expected` with
 `tax_calculator.calculate` and run `tests/rescore.py`.
+
+Regeneration reproduces every stored input except `TDS` in 320 cases. TDS is set from the
+engine's liability at generation time, and the stored values were kept fixed when the engine
+was later corrected (see `CHANGELOG.md`), so the inputs the models saw never changed.

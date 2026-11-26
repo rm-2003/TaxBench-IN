@@ -566,7 +566,7 @@ PROFILES = {
             "hra_city": "metro_pct_binding",
             "lta": "claim_less_than_salary_lta",
             "employment_type": "private",
-            "entertainment_allowance": "none",
+            "entertainment_allowance": "high_5k_cap_binding",
             "tax_regime": "new",
             "age_and_interest": "young_low_interest",
             "deductions_80c_cce": "partial_under_cap",
@@ -696,7 +696,7 @@ PROFILES = {
             "salary_level": "above_2Cr",
             "hra_city": "metro_pct_binding",
             "employment_type": "private",
-            "entertainment_allowance": "none",
+            "entertainment_allowance": "high_5k_cap_binding",
             "tax_regime": "new",
             "age_and_interest": "young_high_interest",
             "nps": "with_employer",
@@ -766,9 +766,6 @@ def deep_merge(base, overrides):
 
 def resolve_cross_dependencies(case, meta):
     """Fix values that depend on other parameters in the same case."""
-    employment_type = case.get("Employment Type", "private")
-    if employment_type != "government":
-        gs["Entertainment Allowance"] = 0
     age = case.get("Age", 35)
     gs = case.get("Gross Salary", {})
     basic_da = gs.get("Basic Salary", 0) + gs.get("Dearness Allowance", 0)
